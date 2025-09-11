@@ -1,75 +1,117 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 const services = [
   {
     name: 'Vaccination',
     description: 'Protect your furry friend with our comprehensive vaccination packages. We offer core and lifestyle vaccines administered by experienced veterinarians.',
-    imageUrl: 'https://images.unsplash.com/photo-1628009368231-7bb7cfcb0def?w=500&auto=format',
-    price: 'Starting from ₹4,000',
+    imageUrl: '15.jpg',
+    price: 'Starting from ₹500',
     features: ['Core vaccines available', 'Pet vaccination record', 'Free consultation']
+  },
+  {
+    name: 'Major Surgery',
+    description: 'Comprehensive surgical care for complex and critical conditions with advanced anesthesia and monitoring.',
+    imageUrl: '31.jpeg',
+    price: 'Consultation required',
+    features: ['Pre-operative evaluation', 'Advanced anesthesia', 'ICU-level post-op care']
+  },
+  {
+    name: 'Soft Tissue Surgery',
+    description: 'Procedures involving skin, muscles, and internal organs including spay/neuter, mass removal, and more.',
+    imageUrl: '32.jpg',
+    price: 'Consultation required',
+    features: ['Spay/Neuter', 'Wound reconstruction', 'Abdominal procedures']
+  },
+  {
+    name: 'Orthopaedic Surgery',
+    description: 'Bone and joint surgeries for fractures, ligament injuries, and developmental conditions.',
+    imageUrl: '33.jpeg',
+    price: 'Consultation required',
+    features: ['Fracture repair', 'Cruciate ligament (TPLO/ELSS)', 'Joint stabilization']
+  },
+  {
+    name: 'Minor Surgery',
+    description: 'Quick outpatient procedures performed under local or short anesthesia.',
+    imageUrl: '4.jpg',
+    price: 'From ₹2,000',
+    features: ['Laceration repair', 'Abscess drainage', 'Simple lump removal']
+  },
+  {
+    name: 'Tumor Removal',
+    description: 'Mass and tumor excision with histopathology and comprehensive follow-up care.',
+    imageUrl: '35.jpeg',
+    price: 'Consultation required',
+    features: ['Pre-op staging', 'Wide-margin excision', 'Biopsy & lab reports']
   },
   {
     name: 'Surgery',
     description: 'State-of-the-art surgical facilities with advanced monitoring equipment and experienced surgical team.',
-    imageUrl: 'https://images.unsplash.com/photo-1584132967334-10e028bd69f7?w=500&auto=format',
+    imageUrl: '7.jpg',
     price: 'Consultation required',
     features: ['Pre-surgery assessment', 'Modern equipment', 'Post-op care']
   },
   {
     name: 'Grooming',
     description: 'Premium grooming services to keep your dog looking and feeling their absolute best. From basic baths to full makeovers.',
-    imageUrl: 'https://images.unsplash.com/photo-1516734212186-65266f46771f?w=500&auto=format',
-    price: 'From ₹3,499',
+    imageUrl: '25.jpg',
+    price: 'From ₹699',
     features: ['Bath & brush', 'Nail trimming', 'Ear cleaning']
   },
   {
     name: 'Premium Dog Feed',
     description: 'High-quality, nutritionally balanced dog food for all life stages. We carry top brands and prescription diets.',
-    imageUrl: 'https://images.unsplash.com/photo-1585846888147-c950544dd0d0?w=500&auto=format',
+    imageUrl: '18.jpg',
     price: 'Various options',
     features: ['Premium brands', 'Prescription diets', 'Nutritional advice']
   },
   {
     name: 'Luxury Leash & Collar',
     description: 'Stylish and durable accessories for your dog. From everyday wear to special occasions.',
-    imageUrl: 'https://images.unsplash.com/photo-1599839619722-39751411d7e6?w=500&auto=format',
+    imageUrl: '27.jpeg',
     price: 'From ₹2,000',
     features: ['Quality materials', 'Various sizes', 'Custom fitting']
   },
   {
     name: 'Veterinary Medicine',
     description: "Full-service pharmacy with prescription and over-the-counter medications for all your pet's needs.",
-    imageUrl: 'https://images.unsplash.com/photo-1512069766338-58bbe92f833d?w=500&auto=format',
+    imageUrl: '28.jpeg',
     price: 'Varies by prescription',
     features: ['Prescription filling', 'OTC medications', 'Expert advice']
   },
   {
     name: 'Dental Scaling',
     description: "Professional dental cleaning services to maintain your dog's oral health and prevent dental diseases.",
-    imageUrl: 'https://images.unsplash.com/photo-1612531823729-f6f2e6f4a114?w=500&auto=format',
-    price: 'From ₹8,999',
+    imageUrl: '2.jpg',
+    price: 'From ₹3999',
     features: ['Ultrasonic cleaning', 'Polishing', 'Dental check-up']
   },
   {
     name: 'Physiotherapy',
     description: 'Specialized rehabilitation services for injured or recovering pets. Customized treatment plans.',
     imageUrl: 'https://images.unsplash.com/photo-1450778869180-41d0601e046e?w=500&auto=format',
-    price: 'From ₹5,999/session',
+    price: 'From ₹1000/session',
     features: ['Custom treatment plans', 'Progress tracking', 'Home exercise plans']
   },
   {
     name: 'Medical Treatment',
     description: 'Comprehensive medical care for various conditions, from routine check-ups to specialized treatments.',
-    imageUrl: 'https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=500&auto=format',
+    imageUrl: '12.jpg',
     price: 'Consultation required',
     features: ['Expert diagnosis', 'Treatment plans', 'Follow-up care']
   },
   {
     name: 'Blood Tests',
     description: 'Advanced diagnostic testing with quick and accurate results for better healthcare decisions.',
-    imageUrl: 'https://images.unsplash.com/photo-1579154204601-01588f351e67?w=500&auto=format',
+    imageUrl: '16.jpg',
     price: 'From ₹6,999',
     features: ['Quick results', 'Complete analysis', 'Expert interpretation']
+  },
+  {
+    name: 'Blood Pressure Check',
+    description: 'Non-invasive blood pressure monitoring for early detection and management of hypertension in pets.',
+    imageUrl: '3.jpg',
+    price: 'From ₹299',
+    features: ['Oscillometric method', 'Hypertension screening', 'Report with vet advice']
   },
 ];
 
@@ -83,6 +125,9 @@ function openWhatsApp(serviceName) {
 }
 
 const Services = () => {
+  const [showAll, setShowAll] = useState(false);
+  const VISIBLE_COUNT = 6;
+  const visibleServices = showAll ? services : services.slice(0, VISIBLE_COUNT);
   return (
     <section className="py-20 bg-gradient-to-b from-gray-50 to-white" id="services">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -93,7 +138,7 @@ const Services = () => {
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {services.map((service, index) => (
+          {visibleServices.map((service, index) => (
             <div 
               key={service.name}
               className="bg-white rounded-xl shadow-lg overflow-hidden transform transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
@@ -107,6 +152,7 @@ const Services = () => {
                 <img 
                   src={service.imageUrl} 
                   alt={service.name} 
+                  loading="lazy"
                   className="w-full h-56 object-cover transition-transform duration-500 hover:scale-110"
                 />
                 <div className="absolute top-0 right-0 bg-blue-600 text-white px-4 py-2 rounded-bl-lg font-semibold">
@@ -142,6 +188,16 @@ const Services = () => {
             </div>
           ))}
         </div>
+        {services.length > VISIBLE_COUNT && (
+          <div className="mt-10 text-center">
+            <button
+              onClick={() => setShowAll(!showAll)}
+              className="px-6 py-3 rounded-full bg-blue-600 text-white font-semibold hover:bg-blue-700 transition"
+            >
+              {showAll ? 'View Less' : 'View More'}
+            </button>
+          </div>
+        )}
       </div>
     </section>
   );
