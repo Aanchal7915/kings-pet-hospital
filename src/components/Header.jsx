@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const whatsappNumber = '8930333373';
+const whatsappNumber = '+918930333373';
 function openWhatsApp(serviceName = '') {
   const message = encodeURIComponent(
     `Hello Kings Pet Hospital, I would like to book an appointment${serviceName ? ' for: ' + serviceName : ''}`
