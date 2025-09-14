@@ -157,7 +157,7 @@ const Header = () => {
             </div>
             <div className="md:w-1/2 transform transition-all duration-500 opacity-0 translate-y-4 animate-[fadeIn_0.5s_ease-out_0.3s_forwards]">
               <img 
-                src="https://images.unsplash.com/photo-1587764379873-97837921fd44?w=800&auto=format&fit=crop&q=80" 
+                src="50.jpg" 
                 alt="Happy dog with veterinarian" 
                 className="rounded-lg shadow-2xl transform transition-transform duration-500 hover:scale-105"
                 onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = '/logo.jpg'; }}

@@ -2,20 +2,16 @@ import React from 'react';
 
 const team = [
   {
-    name: 'Dr. Karan Singh',
-    role: 'Chief Veterinarian',
-    imageUrl: '29.jpg',
+    name: 'Dr. Mohit Bazzad',
+    role: 'B.VSC.& AH,PGCCVH',
+    imageUrl: '51.jpg',
   },
   {
     name: 'Dr. Neha Sharma',
-    role: 'Surgeon & Anesthesiologist',
-    imageUrl: 'https://images.unsplash.com/photo-1550831107-1553da8c8464?w=400&auto=format',
+    role: 'General Physician',
+    imageUrl: '56.jpg',
   },
-  {
-    name: 'Rahul Verma',
-    role: 'Physiotherapist',
-    imageUrl: "30.jpg",
-  },
+  
 ];
 
 const About = () => {
@@ -73,12 +69,12 @@ const About = () => {
           </div>
         </div>
 
-        <div className="opacity-0 animate-[fadeIn_0.5s_ease-out_0.3s_forwards]">
+        <div className="opacity-0 animate-[fadeIn_0.5s_ease-out_0.3s_forwards]==]]">
           <h3 className="text-3xl font-semibold text-gray-800 mb-8 text-center">Meet Our Team</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {team.map((member) => (
               <div key={member.name} className="bg-white rounded-xl shadow-lg overflow-hidden text-center transform transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
-                <img src={member.imageUrl} alt={member.name} className="w-full h-56 object-cover" />
+                <img src={member.imageUrl} alt={member.name} className="w-full h-60 object-cover" />
                 <div className="p-6">
                   <h4 className="text-xl font-semibold text-gray-800">{member.name}</h4>
                   <p className="text-blue-600 font-medium mt-1">{member.role}</p>
