@@ -75,16 +75,16 @@ const Header = ({ showHeroImage = false, showHero = true }) => {
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-8">
               {['Services', 'Gallery', 'About', 'Team', 'Blog', 'Contact'].map((item) => (
-                <a
+                <Link
                   key={item}
-                  href={getNavLink(item)}
+                  to={getNavLink(item)}
                   className={`transition-colors duration-300 font-medium ${isNavbarActive
                     ? 'text-gray-600 hover:text-blue-600'
                     : 'text-white hover:text-blue-200'
                     }`}
                 >
                   {item}
-                </a>
+                </Link>
               ))}
               <button
                 className={`px-6 py-2 rounded-full font-semibold transform transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 ${isNavbarActive
