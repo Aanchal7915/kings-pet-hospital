@@ -12,7 +12,8 @@ const AllBlogsPage = () => {
         window.scrollTo(0, 0);
         const fetchBlogs = async () => {
             try {
-                const { data } = await axios.get('http://localhost:5000/api/blogs');
+                const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+                const { data } = await axios.get(`${API_URL}/api/blogs`);
                 const activeBlogs = data.data.filter(blog => blog.status === 'Active');
                 setBlogs(activeBlogs);
                 setLoading(false);

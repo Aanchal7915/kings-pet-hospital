@@ -8,7 +8,8 @@ const BlogFeed = () => {
     useEffect(() => {
         const fetchBlogs = async () => {
             try {
-                const { data } = await axios.get('http://localhost:5000/api/blogs');
+                const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+                const { data } = await axios.get(`${API_URL}/api/blogs`);
                 // Filter only Active blogs and take first 3 for home page preview
                 const activeBlogs = data.data.filter(blog => blog.status === 'Active').slice(0, 3);
                 setBlogs(activeBlogs);

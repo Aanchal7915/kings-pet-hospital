@@ -18,9 +18,10 @@ const BlogDetailPage = () => {
 
         const fetchBlogData = async () => {
             try {
+                const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
                 const [blogRes, allBlogsRes] = await Promise.all([
-                    axios.get(`http://localhost:5000/api/blogs/${id}`),
-                    axios.get('http://localhost:5000/api/blogs')
+                    axios.get(`${API_URL}/api/blogs/${id}`),
+                    axios.get(`${API_URL}/api/blogs`)
                 ]);
 
                 setBlog(blogRes.data.data);
@@ -107,7 +108,7 @@ const BlogDetailPage = () => {
 
             <article className="pt-2">
                 {/* Modern Editorial Header */}
-                <header className="relative pt-20 pb-32 overflow-hidden bg-gray-50/50">
+                <header className="relative pt-20 pb-4 overflow-hidden bg-gray-50/50">
                     <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-full -z-10">
                         <div className="absolute top-10 left-0 w-72 h-72 bg-blue-400/10 rounded-full blur-[100px]"></div>
                         <div className="absolute bottom-0 right-0 w-96 h-96 bg-indigo-400/10 rounded-full blur-[120px]"></div>
@@ -140,7 +141,7 @@ const BlogDetailPage = () => {
                                 </span>
                             </div>
                             
-                            <div className="flex items-center gap-3 px-5 py-2.5 bg-white rounded-2xl shadow-sm border border-gray-100">
+                            <div className="hidden md:flex items-center gap-3 px-5 py-2.5 bg-white rounded-2xl shadow-sm border border-gray-100">
                                 <div className="p-2 bg-emerald-50 rounded-lg">
                                     <svg className="w-4 h-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -153,7 +154,7 @@ const BlogDetailPage = () => {
                 </header>
 
                 {/* Overlapping Cover Image */}
-                <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-20 mb-24 relative z-20">
+                <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-2 mb-8 relative z-20">
                     <div className="relative aspect-[16/9] md:aspect-[21/9] rounded-[3rem] overflow-hidden shadow-[0_50px_100px_-20px_rgba(0,0,0,0.25)] border-[12px] border-white group">
                         <img
                             src={blog.image}

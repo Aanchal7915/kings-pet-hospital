@@ -20,7 +20,8 @@ const AdminBlog = ({ isEmbedded = false }) => {
     // Fetch Blogs
     const fetchBlogs = async () => {
         try {
-            const { data } = await axios.get('http://localhost:5000/api/blogs');
+            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+            const { data } = await axios.get(`${API_URL}/api/blogs`);
             setBlogs(data.data);
             setFilteredBlogs(data.data);
             setLoading(false);
@@ -57,7 +58,8 @@ const AdminBlog = ({ isEmbedded = false }) => {
                 const config = {
                     headers: { Authorization: `Bearer ${token}` }
                 };
-                await axios.delete(`http://localhost:5000/api/blogs/${id}`, config);
+                const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+                await axios.delete(`${API_URL}/api/blogs/${id}`, config);
                 fetchBlogs();
             } catch (error) {
                 console.error(error);
@@ -75,10 +77,11 @@ const AdminBlog = ({ isEmbedded = false }) => {
                 headers: { Authorization: `Bearer ${token}` }
             };
 
+            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
             if (isEditing) {
-                await axios.put(`http://localhost:5000/api/blogs/${currentBlog._id}`, currentBlog, config);
+                await axios.put(`${API_URL}/api/blogs/${currentBlog._id}`, currentBlog, config);
             } else {
-                await axios.post('http://localhost:5000/api/blogs', currentBlog, config);
+                await axios.post(`${API_URL}/api/blogs`, currentBlog, config);
             }
             setShowModal(false);
             fetchBlogs();

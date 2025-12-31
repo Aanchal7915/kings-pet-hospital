@@ -13,7 +13,8 @@ const AdminSignup = () => {
         e.preventDefault();
         setError('');
         try {
-            const { data } = await axios.post('http://localhost:5000/api/auth/register', { name, email, password });
+            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+            const { data } = await axios.post(`${API_URL}/api/auth/register`, { name, email, password });
             localStorage.setItem('adminToken', data.token);
             navigate('/admin/dashboard');
         } catch (err) {

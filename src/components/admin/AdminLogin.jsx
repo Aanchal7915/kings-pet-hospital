@@ -12,7 +12,8 @@ const AdminLogin = () => {
         e.preventDefault();
         setError(''); // Clear previous errors
         try {
-            const { data } = await axios.post('http://localhost:5000/api/auth/login', { email, password });
+            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+            const { data } = await axios.post(`${API_URL}/api/auth/login`, { email, password });
             localStorage.setItem('adminToken', data.token);
             navigate('/admin/dashboard');
         } catch (err) {
