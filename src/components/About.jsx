@@ -74,7 +74,7 @@ const About = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center mb-10 md:mb-16">
           <div className="reveal">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4 text-gradient-animate animate-text-reveal">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4 text-gradient-animate animate-text-reveal pb-2 leading-tight">
               About Kings Pet Hospital
             </h2>
             <p className="text-lg text-gray-600 mb-4 leading-relaxed animate-text-slide text-hover-glow" style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}>
