@@ -164,7 +164,7 @@ const Header = ({ showHeroImage = false, showHero = true }) => {
 
       {/* Hero Section */} 
       {showHero && (
-  <div className="relative min-h-screen flex items-center overflow-hidden bg-blue-900">
+  <div className="pt-5 relative min-h-screen flex items-center overflow-hidden bg-blue-900">
     {/* --- BACKGROUND IMAGE SECTION --- */}
     <div className="absolute inset-0 z-0">
       <img
