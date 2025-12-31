@@ -9,7 +9,7 @@ const socialLinks = [
 const quickLinks = [{ title: 'Our Services', link: "services" }, { title: 'About Us', link: "about" }, { title: 'Book Appointment', link: "" }, { title: 'Pet Care Tips', link: "" }];
 const services = ['Vaccination', 'Surgery', 'Grooming', 'Dental Care', 'Physiotherapy'];
 const contactInfo = [
-  { type: 'address', text: 'Near sheela ciniplex sonipat road rohtak' },
+  { type: 'address', text: 'Near Sheela Cineplex, Sonipat Road, Rohtak, Haryana,124021' },
   { type: 'phone', text: '8930333373' },
   { type: 'email', text: 'kingspethospital@gmail.com' }
 ];

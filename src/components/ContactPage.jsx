@@ -5,7 +5,7 @@ import Footer from './Footer';
 const contactInfo = [
     {
         title: 'Visit Us',
-        details: 'Near sheela ciniplex sonipat road rohtak',
+        details: 'Near Sheela Cineplex, Sonipat Road, Rohtak, Haryana,124021',
         icon: (
             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
