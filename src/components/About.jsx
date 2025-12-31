@@ -67,12 +67,12 @@ const About = () => {
   }, [counters.years]);
 
   return (
-    <section id="about" className="py-20 bg-gradient-to-b from-white via-blue-50/30 to-white relative overflow-hidden">
+    <section id="about" className="py-10 md:py-20 bg-gradient-to-b from-white via-blue-50/30 to-white relative overflow-hidden">
       {/* Animated background */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-float"></div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid md:grid-cols-2 gap-12 items-center mb-16">
+        <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center mb-10 md:mb-16">
           <div className="reveal">
             <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4 text-gradient-animate animate-text-reveal">
               About Kings Pet Hospital
@@ -133,7 +133,7 @@ const About = () => {
 
         <div id="team" className="reveal" style={{ animationDelay: '0.3s' }}>
 
-          <h3 className="text-3xl md:text-4xl font-semibold text-gray-800 mb-8 text-center text-gradient-animate animate-text-reveal underline-animate">
+          <h3 className="text-3xl md:text-4xl font-semibold text-gray-800 mb-6 md:mb-8 text-center text-gradient-animate animate-text-reveal underline-animate">
             Meet Our Team
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">

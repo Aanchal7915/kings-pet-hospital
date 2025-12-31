@@ -157,7 +157,7 @@ const ContactPage = () => {
                 </div>
             </main>
 
-            <Footer />
+            <Footer showMap={true} />
         </div>
     );
 };

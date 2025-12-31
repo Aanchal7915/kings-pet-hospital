@@ -25,13 +25,13 @@ const Gallery = () => {
   const visibleItems = showAll ? mediaItems : mediaItems.slice(0, VISIBLE_COUNT);
 
   return (
-    <section id="gallery" className="py-20 bg-gradient-to-b from-white to-gray-50 relative overflow-hidden">
+    <section id="gallery" className="py-10 md:py-20 bg-gradient-to-b from-white to-gray-50 relative overflow-hidden">
       {/* Decorative background */}
       <div className="absolute top-20 right-10 w-64 h-64 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse-slow"></div>
       <div className="absolute bottom-20 left-10 w-64 h-64 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse-slow" style={{ animationDelay: '1s' }}></div>
-      
+
       <div className="max-w-7xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8 relative z-10">
-        <div className="text-center mb-10 reveal">
+        <div className="text-center mb-6 md:mb-10 reveal">
           <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4 text-gradient-animate animate-text-reveal underline-animate">
             Gallery
           </h2>
@@ -42,8 +42,8 @@ const Gallery = () => {
 
         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-5 lg:gap-6">
           {visibleItems.map((item, idx) => (
-            <div 
-              key={idx} 
+            <div
+              key={idx}
               className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-500 mb-4 md:mb-0 cursor-pointer transform hover:-translate-y-2"
               style={{
                 opacity: 0,
@@ -81,7 +81,7 @@ const Gallery = () => {
         </div>
 
         {mediaItems.length > VISIBLE_COUNT && (
-          <div className="mt-10 text-center">
+          <div className="mt-6 md:mt-10 text-center">
             <button
               onClick={() => setShowAll(!showAll)}
               className="px-8 py-4 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-110 hover:shadow-xl hover:shadow-blue-500/50 active:scale-95"
