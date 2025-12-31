@@ -140,7 +140,7 @@ const BlogDetailPage = () => {
                                     {new Date(blog.createdAt).toLocaleDateString('en-US', { month: 'long', day: '2-digit', year: 'numeric' })}
                                 </span>
                             </div>
-                            
+
                             <div className="hidden md:flex items-center gap-3 px-5 py-2.5 bg-white rounded-2xl shadow-sm border border-gray-100">
                                 <div className="p-2 bg-emerald-50 rounded-lg">
                                     <svg className="w-4 h-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -218,13 +218,19 @@ const BlogDetailPage = () => {
                         {/* Sidebar (Right Sticky) */}
                         <div className="lg:col-span-4 lg:pl-10">
                             <aside className="sticky top-40 space-y-16">
-                                
+
                                 {/* Professional CTA Card */}
                                 <div className="bg-gradient-to-br from-blue-600 to-indigo-900 p-10 rounded-[2.5rem] text-white shadow-2xl relative overflow-hidden group">
                                     <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-2xl group-hover:bg-white/20 transition-all duration-700"></div>
                                     <h3 className="text-3xl font-black mb-4 uppercase leading-tight italic">Health Priority?</h3>
                                     <p className="text-blue-100 mb-10 leading-relaxed font-medium">Book a professional check-up today for your pet's continued health.</p>
-                                    <button className="w-full py-5 bg-white text-blue-700 rounded-2xl font-black uppercase text-sm tracking-widest hover:shadow-xl hover:-translate-y-1 transition-all">
+                                    <button
+                                        onClick={() => {
+                                            const message = encodeURIComponent(`Hello Kings Pet Hospital, I would like to book an appointment for my pet.`);
+                                            window.open(`https://wa.me/+918222993333?text=${message}`, '_blank');
+                                        }}
+                                        className="w-full py-5 bg-white text-blue-700 rounded-2xl font-black uppercase text-sm tracking-widest hover:shadow-xl hover:-translate-y-1 transition-all"
+                                    >
                                         Book Now
                                     </button>
                                 </div>
