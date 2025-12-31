@@ -46,14 +46,18 @@ const ContactPage = () => {
             {/* Enhanced Hero Section */}
             <div className="relative pt-32 pb-20 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 overflow-hidden">
                 <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
-                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
-                    <span className="inline-block py-1 px-3 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-200 text-sm font-semibold mb-4 backdrop-blur-sm">
+                {/* Animated background elements */}
+                <div className="absolute top-20 left-20 w-64 h-64 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-float"></div>
+                <div className="absolute bottom-20 right-20 w-64 h-64 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-float" style={{ animationDelay: '1s' }}></div>
+                
+                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white z-10">
+                    <span className="inline-block py-1 px-3 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-200 text-sm font-semibold mb-4 backdrop-blur-sm animate-bounce-in">
                         👋 We are always ready to help
                     </span>
-                    <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
-                        We're Here for <span className="text-blue-400">You & Your Pet</span>
+                    <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6 animate-fade-in-up">
+                        We're Here for <span className="text-blue-400 bg-gradient-to-r from-blue-400 via-pink-400 to-purple-400 bg-clip-text text-transparent animate-gradient text-hover-glow">You & Your Pet</span>
                     </h1>
-                    <p className="text-lg md:text-xl text-blue-100 max-w-2xl mx-auto leading-relaxed">
+                    <p className="text-lg md:text-xl text-blue-100 max-w-2xl mx-auto leading-relaxed animate-fade-in-up text-hover-glow" style={{ animationDelay: '0.2s' }}>
                         Expert veterinary care is just a call or visit away. Reach out to us for appointments, emergencies, or general inquiries.
                     </p>
                 </div>
@@ -93,13 +97,20 @@ const ContactPage = () => {
                             {/* Contact Grid */}
                             <div className="grid md:grid-cols-2 gap-5">
                                 {contactInfo.map((item, index) => (
-                                    <div key={index} className={`flex items-start p-6 bg-white rounded-xl shadow-md border hover:border-blue-300 hover:shadow-xl transition-all duration-300 group ${index === 0 ? 'md:col-span-2 bg-gradient-to-r from-blue-50 to-white border-blue-100' : 'border-gray-100'}`}>
-                                        <div className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center mr-5 transition-colors ${index === 0 ? 'bg-blue-600 text-white shadow-lg' : 'bg-blue-50 text-blue-600 group-hover:bg-blue-600 group-hover:text-white'}`}>
+                                    <div 
+                                        key={index} 
+                                        className={`flex items-start p-6 bg-white rounded-xl shadow-md border hover:border-blue-300 hover:shadow-xl transition-all duration-500 group transform hover:-translate-y-2 hover:scale-105 cursor-pointer ${index === 0 ? 'md:col-span-2 bg-gradient-to-r from-blue-50 to-white border-blue-100' : 'border-gray-100'}`}
+                                        style={{
+                                            opacity: 0,
+                                            animation: `fadeInUp 0.6s ease-out ${index * 0.15}s forwards`
+                                        }}
+                                    >
+                                        <div className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center mr-5 transition-all duration-500 transform group-hover:scale-110 group-hover:rotate-6 ${index === 0 ? 'bg-blue-600 text-white shadow-lg' : 'bg-blue-50 text-blue-600 group-hover:bg-blue-600 group-hover:text-white'}`}>
                                             {item.icon}
                                         </div>
                                         <div>
-                                            <h3 className={`text-lg font-bold mb-1 ${index === 0 ? 'text-blue-900' : 'text-gray-800'}`}>{item.title}</h3>
-                                            <p className={`${index === 0 ? 'text-blue-700 font-medium' : 'text-gray-600 text-sm'}`}>{item.details}</p>
+                                            <h3 className={`text-lg font-bold mb-1 transition-all duration-300 text-hover-glow underline-animate ${index === 0 ? 'text-blue-900' : 'text-gray-800 group-hover:text-blue-600'}`}>{item.title}</h3>
+                                            <p className={`transition-all duration-300 ${index === 0 ? 'text-blue-700 font-medium' : 'text-gray-600 text-sm group-hover:text-gray-800'}`}>{item.details}</p>
                                         </div>
                                     </div>
                                 ))}
@@ -144,17 +155,21 @@ const ContactPage = () => {
                     </div>
 
                     {/* Google Map */}
-                    <div className="bg-white p-4 rounded-2xl shadow-lg border border-gray-100">
-                        <iframe
-                            src="https://maps.google.com/maps?q=Kings+Pet+Hospital+Rohtak&t=&z=15&ie=UTF8&iwloc=&output=embed"
-                            width="100%"
-                            height="450"
-                            style={{ border: 0, borderRadius: '1rem' }}
-                            allowFullScreen=""
-                            loading="lazy"
-                            referrerPolicy="no-referrer-when-downgrade"
-                            title="Kings Pet Hospital Location"
-                        ></iframe>
+                    <div className="bg-white p-4 rounded-2xl shadow-lg border border-gray-100 reveal transform hover:scale-[1.02] transition-all duration-500">
+                        <div className="relative overflow-hidden rounded-xl">
+                            <iframe
+                                src="https://maps.google.com/maps?q=Kings+Pet+Hospital+Rohtak&t=&z=15&ie=UTF8&iwloc=&output=embed"
+                                width="100%"
+                                height="450"
+                                style={{ border: 0, borderRadius: '1rem' }}
+                                allowFullScreen=""
+                                loading="lazy"
+                                referrerPolicy="no-referrer-when-downgrade"
+                                title="Kings Pet Hospital Location"
+                                className="transition-opacity duration-500"
+                            ></iframe>
+                            <div className="absolute inset-0 bg-gradient-to-t from-blue-600/5 to-transparent pointer-events-none"></div>
+                        </div>
                     </div>
 
                 </div>

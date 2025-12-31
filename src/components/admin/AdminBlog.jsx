@@ -138,7 +138,7 @@ const AdminBlog = ({ isEmbedded = false }) => {
             )}
 
             <div className={`max-w-7xl mx-auto ${isEmbedded ? 'p-0' : 'p-4 sm:p-6 lg:p-8'}`}>
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+                <div className="pl-3 flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
                     <div>
                         <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">
                             Manage Your Blogs
@@ -316,14 +316,14 @@ const AdminBlog = ({ isEmbedded = false }) => {
                             </div>
                             <button
                                 onClick={() => setShowModal(false)}
-                                className="bg-white/20 hover:bg-white/30 rounded-full w-10 h-10 flex items-center justify-center transition-all text-2xl"
+                                className="ml-4 bg-white/20 hover:bg-white/30 rounded-full w-10 h-10 flex items-center justify-center transition-all text-2xl"
                             >
                                 &times;
                             </button>
                         </div>
 
                         <form onSubmit={handleSubmit} className="p-5">
-                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
                                 {/* Left Side: Content */}
                                 <div className="space-y-4">
                                     <div>

@@ -122,12 +122,13 @@ ${formData.notes ? `*Notes:* ${formData.notes}` : ''}
     };
 
     return (
-        <div className="bg-white rounded-xl shadow-xl p-4 md:p-6 border-2 border-blue-100 max-w-lg mx-auto">
-            <div className="bg-gradient-to-r from-blue-600 to-blue-800 -mx-4 -mt-4 md:-mx-6 md:-mt-6 rounded-t-lg p-3 mb-4">
-                <h3 className="text-xl md:text-2xl font-bold text-white text-center">
+        <div className="bg-white rounded-xl shadow-xl p-4 md:p-6 border-2 border-blue-100 max-w-lg mx-auto transform transition-all duration-500 hover:shadow-2xl hover:scale-[1.02]">
+            <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 -mx-4 -mt-4 md:-mx-6 md:-mt-6 rounded-t-lg p-3 mb-4 relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-shimmer"></div>
+                <h3 className="text-xl md:text-2xl font-bold text-white text-center relative z-10">
                     📅 Book Appointment
                 </h3>
-                <p className="text-blue-100 text-center text-xs mt-0.5">
+                <p className="text-blue-100 text-center text-xs mt-0.5 relative z-10">
                     Quick & Easy Booking
                 </p>
             </div>
@@ -145,7 +146,7 @@ ${formData.notes ? `*Notes:* ${formData.notes}` : ''}
                             value={formData.petOwnerName}
                             onChange={handleChange}
                             placeholder="Full Name"
-                            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:border-blue-500 focus:outline-none transition-colors text-gray-800"
+                            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 text-gray-800 transform focus:scale-[1.02]"
                         />
                         {errors.petOwnerName && (
                             <p className="text-red-500 text-[10px] mt-0.5">{errors.petOwnerName}</p>
@@ -164,7 +165,7 @@ ${formData.notes ? `*Notes:* ${formData.notes}` : ''}
                             onChange={handleChange}
                             placeholder="10-digit Mobile"
                             maxLength="10"
-                            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:border-blue-500 focus:outline-none transition-colors text-gray-800"
+                            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 text-gray-800 transform focus:scale-[1.02]"
                         />
                         {errors.phone && (
                             <p className="text-red-500 text-[10px] mt-0.5">{errors.phone}</p>
@@ -184,7 +185,7 @@ ${formData.notes ? `*Notes:* ${formData.notes}` : ''}
                             value={formData.email}
                             onChange={handleChange}
                             placeholder="Email Address"
-                            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:border-blue-500 focus:outline-none transition-colors text-gray-800"
+                            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 text-gray-800 transform focus:scale-[1.02]"
                         />
                         {errors.email && (
                             <p className="text-red-500 text-[10px] mt-0.5">{errors.email}</p>
@@ -285,7 +286,7 @@ ${formData.notes ? `*Notes:* ${formData.notes}` : ''}
                 <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-2.5 px-4 rounded-md font-bold text-base transition-all duration-300 hover:from-blue-700 hover:to-blue-800 hover:shadow-md hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-blue-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-2"
+                    className="w-full bg-gradient-to-r from-blue-600 via-purple-600 to-blue-700 text-white py-2.5 px-4 rounded-md font-bold text-base transition-all duration-300 hover:from-blue-700 hover:via-purple-700 hover:to-blue-800 hover:shadow-lg hover:shadow-blue-500/50 hover:-translate-y-1 hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-blue-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-2 transform active:scale-95"
                 >
                     {isSubmitting ? (
                         <>

@@ -10,19 +10,37 @@ function openWhatsApp(serviceName = '') {
   window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
 }
 
-const Typewriter = ({ text }) => {
+const Typewriter = ({ text, speed = 50, className = '', delay = 0, onComplete }) => {
   const [displayText, setDisplayText] = useState('');
+  const [showCursor, setShowCursor] = useState(true);
+  
   useEffect(() => {
-    let i = 0;
-    const timer = setInterval(() => {
-      setDisplayText(text.substring(0, i + 1));
-      i++;
-      if (i >= text.length) clearInterval(timer);
-    }, 50);
-    return () => clearInterval(timer);
-  }, [text]);
+    let timer;
+    const startTimer = setTimeout(() => {
+      let i = 0;
+      timer = setInterval(() => {
+        setDisplayText(text.substring(0, i + 1));
+        i++;
+        if (i >= text.length) {
+          clearInterval(timer);
+          setShowCursor(false);
+          if (onComplete) onComplete();
+        }
+      }, speed);
+    }, delay);
 
-  return <span>{displayText}</span>;
+    return () => {
+      clearTimeout(startTimer);
+      if (timer) clearInterval(timer);
+    };
+  }, [text, speed, delay, onComplete]);
+
+  return (
+    <span className={className}>
+      {displayText}
+      {showCursor && <span className="inline-block w-0.5 h-[1em] bg-current ml-1 animate-pulse">|</span>}
+    </span>
+  );
 };
 
 const Header = ({ showHeroImage = false, showHero = true }) => {
@@ -173,11 +191,22 @@ const Header = ({ showHeroImage = false, showHero = true }) => {
     </div>
 
     {/* --- CONTENT SECTION (No Content Changes) --- */}
-    <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 w-full text-white">
+    <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-32 w-full text-white">
       <div className="flex flex-col md:flex-row items-center justify-between">
-        <div className="md:w-1/2 mb-12 md:mb-0 md:pr-8 animate-[fadeIn_0.5s_ease-out_forwards]">
-          <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold mb-6 min-h-[140px] drop-shadow-lg">
-            <Typewriter text="Your Pet Deserves The Best Care" />
+        <div className="md:w-1/2 mb-8 md:mb-0 md:pr-8 animate-[fadeIn_0.5s_ease-out_forwards]">
+          <h1 className="text-3xl md:text-5xl lg:text-7xl font-bold mb-4 md:mb-6 min-h-[80px] md:min-h-[140px] drop-shadow-lg">
+            <Typewriter 
+              text="Your Pet " 
+              speed={80} 
+              className="text-white" 
+              onComplete={() => {}}
+            />
+            <Typewriter 
+              text="Deserves The Best Care" 
+              speed={80} 
+              delay={800}
+              className="bg-gradient-to-r from-pink-300 via-pink-400 to-pink-300 bg-clip-text text-transparent animate-gradient"
+            />
           </h1>
           <p className="text-xl text-blue-100 mb-8 max-w-lg drop-shadow-md">
             Professional pet care services to keep your furry friend healthy and happy.
@@ -187,29 +216,29 @@ const Header = ({ showHeroImage = false, showHero = true }) => {
           {!showHeroImage && (
             <div className="space-y-4 mb-8">
               {[
-                '24/7 Emergency Care',
-                'Experienced Veterinarians',
-                'Advanced Medical Equipment'
+                { text: '24/7 Emergency Care', bgColor: 'bg-green-500/20', borderColor: 'border-green-400/30', iconColor: 'text-green-300' },
+                { text: 'Experienced Veterinarians', bgColor: 'bg-blue-500/20', borderColor: 'border-blue-400/30', iconColor: 'text-blue-300' },
+                { text: 'Advanced Medical Equipment', bgColor: 'bg-purple-500/20', borderColor: 'border-purple-400/30', iconColor: 'text-purple-300' }
               ].map((feature, idx) => (
                 <div key={idx} className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-sm border border-white/20 shadow-lg">
-                    <svg className="w-5 h-5 text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <div className={`w-10 h-10 ${feature.bgColor} rounded-full flex items-center justify-center backdrop-blur-sm border ${feature.borderColor} shadow-lg`}>
+                    <svg className={`w-5 h-5 ${feature.iconColor}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                     </svg>
                   </div>
-                  <span className="text-blue-50 text-lg font-medium drop-shadow-sm">{feature}</span>
+                  <span className="text-blue-50 text-lg font-medium drop-shadow-sm">{feature.text}</span>
                 </div>
               ))}
             </div>
           )}
 
           {!showHeroImage && (
-            <div className="flex items-center gap-4 p-4 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 inline-flex shadow-xl hover:bg-white/15 transition-colors cursor-pointer">
-              <svg className="w-8 h-8 text-blue-300 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="flex items-center gap-4 p-4 bg-green-500/80 backdrop-blur-md rounded-xl border border-green-400/30 inline-flex shadow-xl hover:bg-green-500/90 transition-colors cursor-pointer">
+              <svg className="w-8 h-8 text-white flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <p className="text-blue-50 text-sm font-medium">
-                Fill the form to book your appointment instantly via WhatsApp →
+              <p className="text-white text-sm font-medium">
+                Fill the form to book your appointment instantly via WhatsApp 
               </p>
             </div>
           )}
@@ -235,7 +264,7 @@ const Header = ({ showHeroImage = false, showHero = true }) => {
               onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = '/logo.jpg'; }}
             />
           ) : (
-            <div className="hidden md:block bg-white/95 backdrop-blur-sm p-2 rounded-[2rem] shadow-2xl border border-white/20">
+            <div className="bg-white/95 backdrop-blur-sm p-2 rounded-[2rem] shadow-2xl border border-white/20">
               <BookingForm />
             </div>
            

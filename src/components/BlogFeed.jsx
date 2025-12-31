@@ -26,23 +26,33 @@ const BlogFeed = () => {
         <section id="blog" className="py-24 bg-gray-50/50">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Header Section */}
+                
                 <div className="text-center mb-16 space-y-4">
-                    <span className="text-blue-600 font-bold tracking-widest uppercase text-sm">Our Journal</span>
-                    <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight">
+                    
+                    <span className="inline-block text-blue-600 font-bold tracking-widest uppercase text-sm bg-blue-50 px-4 py-2 rounded-full animate-bounce-in text-hover-glow">
+                        Our Journal
+                    </span>
+                    <br/>
+                    <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight text-gradient-animate animate-text-reveal underline-animate">
                         Latest News & Updates
                     </h2>
-                    <div className="w-20 h-1.5 bg-blue-600 mx-auto rounded-full"></div>
-                    <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
+                    <div className="w-20 h-1.5 bg-gradient-to-r from-blue-600 to-purple-600 mx-auto rounded-full animate-scale-in"></div>
+                    <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed animate-text-slide text-hover-glow" style={{ animationDelay: '0.3s', animationFillMode: 'forwards' }}>
                         Stay informed with our latest tips, stories, and hospital updates for your furry friends.
                     </p>
                 </div>
 
+
                 {/* Blog Grid */}
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10 mb-16">
-                    {blogs.map((blog) => (
+                    
+                    {blogs.map((blog, index) => (
                         <article 
                             key={blog._id} 
-                            className="group bg-white rounded-3xl shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100 overflow-hidden flex flex-col"
+                            className="group bg-white rounded-3xl shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100 overflow-hidden flex flex-col transform hover:-translate-y-2"
+                                style={{
+                                    animationDelay: `${index * 0.15}s`
+                                }}
                         >
                             {/* Image Container */}
                             <Link to={`/blog/${blog._id}`} className="relative block h-64 overflow-hidden">
@@ -69,12 +79,12 @@ const BlogFeed = () => {
                                 </div>
 
                                 <Link to={`/blog/${blog._id}`}>
-                                    <h3 className="text-2xl font-bold text-gray-800 mb-4 line-clamp-2 group-hover:text-blue-600 transition-colors leading-snug">
+                                    <h3 className="text-2xl font-bold text-gray-800 mb-4 line-clamp-2 group-hover:text-blue-600 transition-all duration-300 leading-snug text-hover-glow underline-animate">
                                         {blog.title}
                                     </h3>
                                 </Link>
 
-                                <p className="text-gray-600 mb-6 line-clamp-3 text-sm leading-relaxed">
+                                <p className="text-gray-600 mb-6 line-clamp-3 text-sm leading-relaxed transition-all duration-300 group-hover:text-gray-800">
                                     {blog.content && blog.content.length > 20
                                         ? blog.content.replace(/<[^>]*>?/gm, '') // Strips HTML tags if any
                                         : `Expert insights and professional care tips for "${blog.title}". Read the full story to learn more from our medical team.`}
