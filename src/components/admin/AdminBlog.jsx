@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-const AdminBlog = () => {
+const AdminBlog = ({ isEmbedded = false }) => {
     const [blogs, setBlogs] = useState([]);
     const [filteredBlogs, setFilteredBlogs] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -101,39 +101,40 @@ const AdminBlog = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 font-sans text-gray-800">
-            {/* Top Navigation */}
-            <nav className="bg-white shadow-sm sticky top-0 z-40 border-b border-gray-200">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex justify-between h-16">
-                        <div className="flex items-center gap-4">
-                            <button
-                                onClick={() => navigate('/admin/dashboard')}
-                                className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-600"
-                                title="Back to Dashboard"
-                            >
-                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                                </svg>
-                            </button>
-                            <h1 className="text-xl font-bold text-blue-600">Blog Management</h1>
-                        </div>
-                        <div className="flex items-center gap-4">
-                            <button
-                                onClick={() => {
-                                    localStorage.removeItem('adminToken');
-                                    navigate('/admin/login');
-                                }}
-                                className="text-sm font-medium text-gray-500 hover:text-red-600 transition-colors"
-                            >
-                                Logout
-                            </button>
+        <div className={`min-h-screen ${isEmbedded ? 'bg-transparent' : 'bg-gray-100 font-sans text-gray-800'}`}>
+            {!isEmbedded && (
+                <nav className="bg-white shadow-sm sticky top-0 z-40 border-b border-gray-200">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="flex justify-between h-16">
+                            <div className="flex items-center gap-4">
+                                <button
+                                    onClick={() => navigate('/admin/dashboard')}
+                                    className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-600"
+                                    title="Back to Dashboard"
+                                >
+                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                                    </svg>
+                                </button>
+                                <h1 className="text-xl font-bold text-blue-600">Blog Management</h1>
+                            </div>
+                            <div className="flex items-center gap-4">
+                                <button
+                                    onClick={() => {
+                                        localStorage.removeItem('adminToken');
+                                        navigate('/admin/login');
+                                    }}
+                                    className="text-sm font-medium text-gray-500 hover:text-red-600 transition-colors"
+                                >
+                                    Logout
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </nav>
+                </nav>
+            )}
 
-            <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+            <div className={`max-w-7xl mx-auto ${isEmbedded ? 'p-0' : 'p-4 sm:p-6 lg:p-8'}`}>
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
                     <div>
                         <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">
@@ -304,7 +305,7 @@ const AdminBlog = () => {
             {/* Modal for Add/Edit */}
             {showModal && (
                 <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">
-                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-5xl my-auto overflow-hidden animate-fade-in">
+                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-5xl my-auto overflow-hidden">
                         <div className="bg-gradient-to-r from-blue-700 to-indigo-700 p-6 flex justify-between items-center text-white">
                             <div>
                                 <h3 className="text-2xl font-bold">{isEditing ? 'Edit Blog Post' : 'Create New Blog Post'}</h3>
@@ -318,38 +319,37 @@ const AdminBlog = () => {
                             </button>
                         </div>
 
-                        <form onSubmit={handleSubmit} className="p-8">
-                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <form onSubmit={handleSubmit} className="p-5">
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                                 {/* Left Side: Content */}
-                                <div className="space-y-6">
+                                <div className="space-y-4">
                                     <div>
-                                        <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Blog Title</label>
+                                        <label className="block text-[10px] font-bold text-gray-700 mb-1 uppercase tracking-wide">Blog Title</label>
                                         <input
                                             type="text"
                                             value={currentBlog.title}
                                             onChange={(e) => setCurrentBlog({ ...currentBlog, title: e.target.value })}
-                                            className="w-full border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all border shadow-sm"
+                                            className="w-full border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all border shadow-sm"
                                             placeholder="Enter a catchy title..."
                                             required
                                         />
                                     </div>
 
                                     <div>
-                                        <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Image Selection</label>
+                                        <label className="block text-[10px] font-bold text-gray-700 mb-1 uppercase tracking-wide">Image URL</label>
                                         <input
                                             type="text"
                                             value={currentBlog.image}
                                             onChange={(e) => setCurrentBlog({ ...currentBlog, image: e.target.value })}
-                                            className="w-full border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all border shadow-sm"
+                                            className="w-full border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all border shadow-sm"
                                             placeholder="https://example.com/image.jpg"
                                         />
                                         {currentBlog.image && (
-                                            <div className="mt-3 p-2 bg-gray-50 border rounded-xl">
-                                                <p className="text-xs text-gray-500 mb-2 font-medium">Preview:</p>
+                                            <div className="mt-2 p-1.5 bg-gray-50 border rounded-lg">
                                                 <img
                                                     src={currentBlog.image}
                                                     alt="Preview"
-                                                    className="w-full h-48 object-cover rounded-lg shadow-inner"
+                                                    className="w-full h-24 object-cover rounded shadow-inner"
                                                     onError={(e) => e.target.style.display = 'none'}
                                                 />
                                             </div>
@@ -357,11 +357,11 @@ const AdminBlog = () => {
                                     </div>
 
                                     <div>
-                                        <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Blog Content</label>
+                                        <label className="block text-[10px] font-bold text-gray-700 mb-1 uppercase tracking-wide">Blog Content</label>
                                         <textarea
                                             value={currentBlog.content}
                                             onChange={(e) => setCurrentBlog({ ...currentBlog, content: e.target.value })}
-                                            className="w-full border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all border shadow-sm h-64 resize-none"
+                                            className="w-full border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all border shadow-sm h-32 resize-none"
                                             placeholder="Write your blog content here..."
                                             required
                                         ></textarea>
@@ -369,18 +369,18 @@ const AdminBlog = () => {
                                 </div>
 
                                 {/* Right Side: Settings & SEO */}
-                                <div className="space-y-6">
-                                    <div className="bg-gray-50 p-6 rounded-2xl border border-gray-200 shadow-sm">
-                                        <h4 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                                            <span className="w-2 h-6 bg-blue-500 rounded-full font-bold"></span>
+                                <div className="space-y-4">
+                                    <div className="bg-gray-50 p-4 rounded-xl border border-gray-200 shadow-sm">
+                                        <h4 className="text-xs font-bold text-gray-800 mb-3 flex items-center gap-2">
+                                            <span className="w-1.5 h-4 bg-blue-500 rounded-full"></span>
                                             Publish Settings
                                         </h4>
                                         <div>
-                                            <label className="block text-sm font-semibold text-gray-600 mb-2">Status</label>
+                                            <label className="block text-[10px] font-semibold text-gray-600 mb-1">Status</label>
                                             <select
                                                 value={currentBlog.status}
                                                 onChange={(e) => setCurrentBlog({ ...currentBlog, status: e.target.value })}
-                                                className="w-full border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all border bg-white shadow-sm"
+                                                className="w-full border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all border bg-white shadow-sm"
                                             >
                                                 <option value="Active">Active (Visible)</option>
                                                 <option value="Inactive">Inactive (Hidden)</option>
@@ -388,30 +388,29 @@ const AdminBlog = () => {
                                         </div>
                                     </div>
 
-                                    <div className="bg-indigo-50/50 p-6 rounded-2xl border border-indigo-100 shadow-sm">
-                                        <h4 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                                            <span className="w-2 h-6 bg-indigo-500 rounded-full"></span>
+                                    <div className="bg-indigo-50/50 p-4 rounded-xl border border-indigo-100 shadow-sm">
+                                        <h4 className="text-xs font-bold text-gray-800 mb-3 flex items-center gap-2">
+                                            <span className="w-1.5 h-4 bg-indigo-500 rounded-full"></span>
                                             SEO Optimization
                                         </h4>
-                                        <div className="space-y-4">
+                                        <div className="space-y-3">
                                             <div>
-                                                <label className="block text-sm font-semibold text-gray-600 mb-2">Meta Keywords</label>
+                                                <label className="block text-[10px] font-semibold text-gray-600 mb-1">Meta Keywords</label>
                                                 <input
                                                     type="text"
                                                     value={currentBlog.metaKeywords}
                                                     onChange={(e) => setCurrentBlog({ ...currentBlog, metaKeywords: e.target.value })}
-                                                    className="w-full border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all border bg-white shadow-sm"
-                                                    placeholder="e.g. pets, dogs, health"
+                                                    className="w-full border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all border bg-white shadow-sm"
+                                                    placeholder="pets, dogs, health"
                                                 />
-                                                <p className="text-[10px] text-gray-500 mt-1 ml-1 italic font-medium">* Separated by commas</p>
                                             </div>
                                             <div>
-                                                <label className="block text-sm font-semibold text-gray-600 mb-2">Meta Description</label>
+                                                <label className="block text-[10px] font-semibold text-gray-600 mb-1">Meta Description</label>
                                                 <textarea
                                                     value={currentBlog.metaDescription}
                                                     onChange={(e) => setCurrentBlog({ ...currentBlog, metaDescription: e.target.value })}
-                                                    className="w-full border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all border bg-white shadow-sm h-40 resize-none"
-                                                    placeholder="Enter a brief summary for search engines..."
+                                                    className="w-full border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all border bg-white shadow-sm h-24 resize-none"
+                                                    placeholder="Enter brief summary..."
                                                 ></textarea>
                                             </div>
                                         </div>
@@ -419,17 +418,17 @@ const AdminBlog = () => {
                                 </div>
                             </div>
 
-                            <div className="mt-8 pt-6 border-t border-gray-100 flex justify-end gap-3">
+                            <div className="mt-5 pt-4 border-t border-gray-100 flex justify-end gap-3">
                                 <button
                                     type="button"
                                     onClick={() => setShowModal(false)}
-                                    className="px-6 py-3 border border-gray-300 rounded-xl text-gray-600 hover:bg-gray-50 font-bold transition-all"
+                                    className="px-5 py-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 font-bold text-sm transition-all"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
-                                    className="px-8 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 font-bold shadow-lg shadow-blue-200 transition-all hover:-translate-y-0.5"
+                                    className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-bold text-sm shadow-lg shadow-blue-200 transition-all hover:-translate-y-0.5"
                                 >
                                     {isEditing ? 'Update Post' : 'Publish Blog Post'}
                                 </button>

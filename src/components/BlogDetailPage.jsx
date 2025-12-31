@@ -109,42 +109,78 @@ const BlogDetailPage = () => {
             </div>
 
             <article className="pt-20">
-                {/* Modern Editorial Header */}
-                <header className="relative pt-24 pb-32 overflow-hidden">
-                    <div className="absolute inset-0 bg-blue-50/40 -z-10 bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] [background-size:20px_20px] opacity-40"></div>
-                    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative text-center">
-                        <Link
-                            to="/blog"
-                            className="inline-flex items-center px-4 py-1.5 bg-white rounded-full text-blue-600 font-bold text-xs tracking-widest uppercase mb-10 hover:bg-blue-600 hover:text-white transition-all shadow-sm border border-blue-100 group"
-                        >
-                            <svg className="w-3.5 h-3.5 mr-2 transform group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                            </svg>
-                            The Pet Journal
-                        </Link>
+                {/* Sleek Editorial Header */}
+                <header className="relative pt-16 pb-24 overflow-hidden">
+                    {/* Decorative Background Element */}
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-full -z-10">
+                        <div className="absolute top-20 left-10 w-64 h-64 bg-blue-100/30 rounded-full blur-3xl"></div>
+                        <div className="absolute bottom-10 right-10 w-96 h-96 bg-indigo-100/20 rounded-full blur-3xl"></div>
+                    </div>
 
-                        <div className="flex justify-center items-center gap-6 mb-8">
-                            <span className="text-gray-400 font-black text-sm uppercase tracking-widest">
-                                {new Date(blog.createdAt).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' })}
-                            </span>
-                            <span className="w-1.5 h-1.5 rounded-full bg-blue-600"></span>
-                            <span className="text-blue-600 font-black text-sm uppercase tracking-widest">5 min read</span>
+                    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+                        {/* Breadcrumb / Category */}
+                        <div className="flex justify-center mb-8">
+                            <Link
+                                to="/blog"
+                                className="group flex items-center gap-2 px-5 py-2 bg-blue-50 text-blue-600 rounded-full font-bold text-xs uppercase tracking-widest hover:bg-blue-600 hover:text-white transition-all duration-300 shadow-sm"
+                            >
+                                <svg className="w-4 h-4 transform group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                                </svg>
+                                The Pet Journal
+                            </Link>
                         </div>
 
-                        <h1 className="text-4xl md:text-5xl lg:text-7xl font-[1000] text-gray-900 mb-10 leading-[1.05] tracking-tight">
-                            {blog.title}
-                        </h1>
+                        {/* Title Section */}
+                        <div className="text-center space-y-8">
+                            <h1 className="text-3xl md:text-5xl lg:text-6xl font-extrabold text-gray-900 leading-tight tracking-tight">
+                                {blog.title}
+                            </h1>
 
-                        <div className="flex flex-col items-center gap-4">
-                            <div className="flex -space-x-2">
-                                <img src="/logo.jpg" alt="Author" className="w-14 h-14 rounded-full border-4 border-white shadow-lg object-cover bg-white" />
-                                <div className="w-14 h-14 rounded-full border-4 border-white shadow-lg bg-indigo-600 flex items-center justify-center text-white font-bold text-lg select-none">
-                                    KP
+                            {/* Meta Info Pill */}
+                            <div className="flex items-center justify-center">
+                                <div className="inline-flex items-center gap-4 px-5 py-2 bg-white border border-gray-100 rounded-xl shadow-sm">
+                                    <div className="flex items-center gap-2">
+                                        <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                        </svg>
+                                        <span className="text-gray-500 font-bold text-xs uppercase tracking-wider">
+                                            {new Date(blog.createdAt).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })}
+                                        </span>
+                                    </div>
+                                    <div className="w-px h-3 bg-gray-200"></div>
+                                    <div className="flex items-center gap-2">
+                                        <svg className="w-4 h-4 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                        <span className="text-blue-600 font-bold text-xs uppercase tracking-wider">2 min read</span>
+                                    </div>
                                 </div>
                             </div>
-                            <div>
-                                <p className="text-gray-900 font-black text-lg">Kings Pet Hospital</p>
-                                <p className="text-blue-600 font-bold text-sm uppercase tracking-wider">Expert Medical Faculty</p>
+
+                            {/* Navbar-Style Author Section */}
+                            <div className="pt-4 flex items-center justify-center">
+                                <div className="flex flex-col items-center">
+                                    <div className="flex items-center space-x-3 mb-2">
+                                        <img
+                                            src="/logo.jpg"
+                                            alt="Kings Pet Hospital logo"
+                                            className="h-10 w-auto rounded-sm bg-white p-1 shadow-sm border border-gray-100"
+                                        />
+                                        <h2 className="text-2xl font-bold text-blue-600 tracking-tight">
+                                            Kings Pet Hospital
+                                        </h2>
+                                    </div>
+                                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-50/50 rounded-full border border-blue-100/30">
+                                        <span className="relative flex h-2 w-2">
+                                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                                        </span>
+                                        <p className="text-blue-700 font-black text-[9px] uppercase tracking-[0.2em] whitespace-nowrap">
+                                            Expert Medical Faculty
+                                        </p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -186,23 +222,31 @@ const BlogDetailPage = () => {
                         {/* Article Content Area */}
                         <div className="lg:col-span-7">
                             <div className="prose prose-xl prose-slate max-w-none">
-                                <div className="text-gray-800 leading-[1.8] text-xl md:text-2xl whitespace-pre-wrap font-serif selection:bg-blue-100 first-letter:text-8xl first-letter:font-black first-letter:text-blue-600 first-letter:float-left first-letter:mr-6 first-letter:mt-2 first-letter:leading-[0.8] drop-shadow-sm">
+                                <div className="text-gray-800 leading-[1.8] text-xl md:text-2xl whitespace-pre-wrap font-serif selection:bg-blue-100 drop-shadow-sm">
                                     {blog.content}
                                 </div>
                             </div>
 
                             {/* Author Box */}
-                            <div className="mt-24 p-8 bg-gray-50 rounded-[2rem] border border-gray-100 flex flex-col md:flex-row gap-8 items-center shadow-inner relative overflow-hidden group">
+                            <div className="mt-24 p-8 bg-gray-50 rounded-[2rem] border border-gray-100 shadow-inner relative overflow-hidden group">
                                 <div className="absolute top-0 right-0 p-8 opacity-[0.03] transform rotate-12 transition-transform group-hover:rotate-0 duration-700">
                                     <img src="/logo.jpg" alt="Watermark" className="w-40 h-40" />
                                 </div>
-                                <img src="/logo.jpg" alt="Author" className="w-24 h-24 rounded-full shadow-xl relative z-10 border-4 border-white" />
-                                <div className="text-center md:text-left relative z-10">
-                                    <h4 className="text-2xl font-black text-gray-900 mb-2">Kings Pet Medical Team</h4>
-                                    <p className="text-gray-600 leading-relaxed mb-4">
+                                <div className="relative z-10">
+                                    <div className="flex items-center space-x-3 mb-4">
+                                        <img
+                                            src="/logo.jpg"
+                                            alt="Kings Pet Hospital logo"
+                                            className="h-10 w-auto rounded-sm bg-white p-1 shadow-sm border border-gray-100"
+                                        />
+                                        <h4 className="text-2xl font-bold text-blue-600 tracking-tight">
+                                            Kings Pet Medical Team
+                                        </h4>
+                                    </div>
+                                    <p className="text-gray-600 leading-relaxed mb-4 max-w-2xl">
                                         Passionate about pet wellness and health education. Our team consists of qualified veterinarians and specialists dedicated to providing top-tier medical care for your furry family members.
                                     </p>
-                                    <Link to="/contact" className="text-blue-600 font-black uppercase text-xs tracking-[0.2em] hover:text-blue-800 transition-all flex items-center gap-2">
+                                    <Link to="/contact" className="text-blue-600 font-bold uppercase text-[10px] tracking-[0.2em] hover:text-blue-800 transition-all flex items-center gap-2">
                                         Consult with us
                                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
                                     </Link>
@@ -262,25 +306,7 @@ const BlogDetailPage = () => {
                 </div>
             </article>
 
-            {/* Newsletter Subscription Footer Section */}
-            <section className="bg-gray-950 py-32 rounded-t-[5rem] -mt-10 overflow-hidden relative">
-                <div className="absolute inset-0 bg-blue-600/10 mix-blend-overlay [background:radial-gradient(circle_at_50%_50%,rgba(37,99,235,0.2)_0%,transparent_70%)]"></div>
-                <div className="max-w-4xl mx-auto px-4 text-center relative z-10">
-                    <h2 className="text-4xl md:text-6xl font-black text-white mb-8 tracking-tighter">Stay updated with <br /><span className="text-blue-500">Pet Care Insights</span></h2>
-                    <p className="text-gray-400 text-lg md:text-xl mb-12 max-w-2xl mx-auto font-medium">Join 5,000+ pet parents receiving our weekly health tips, expert advice, and hospital updates.</p>
-                    <div className="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto">
-                        <input
-                            type="email"
-                            placeholder="Your best email..."
-                            className="flex-grow px-8 py-5 bg-white/5 border border-white/10 rounded-3xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white/10 transition-all shadow-inner"
-                        />
-                        <button className="px-10 py-5 bg-blue-600 text-white rounded-3xl font-black shadow-2xl shadow-blue-900/40 hover:bg-blue-700 hover:-translate-y-1 transition-all whitespace-nowrap">
-                            Join Community
-                        </button>
-                    </div>
-                    <p className="text-gray-600 text-xs mt-8 font-bold uppercase tracking-widest">No spam, just pawsome content. Unsubscribe anytime.</p>
-                </div>
-            </section>
+
 
             <Footer />
 
@@ -289,14 +315,17 @@ const BlogDetailPage = () => {
                 .vertical-text {
                     writing-mode: vertical-rl;
                 }
-                @media (max-width: 640px) {
-                    .first-letter\\:text-8xl {
-                        font-size: 4.5rem !important;
-                    }
-                }
             `}} />
         </div>
     );
 };
 
 export default BlogDetailPage;
+
+
+
+
+
+
+
+

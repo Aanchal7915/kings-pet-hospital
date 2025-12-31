@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import AdminBlog from './AdminBlog';
 
 const AdminDashboard = () => {
     const navigate = useNavigate();
@@ -11,17 +12,33 @@ const AdminDashboard = () => {
 
     return (
         <div className="min-h-screen bg-gray-100">
-            <nav className="bg-white shadow-sm">
+            {/* Nav Bar */}
+            <nav className="bg-white shadow-sm sticky top-0 z-50">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex justify-between h-16">
-                        <div className="flex items-center">
-                            <h1 className="text-2xl font-bold text-blue-600">Admin Dashboard</h1>
+                    <div className="flex justify-between h-16 items-center">
+                        <div className="flex items-center gap-3">
+                            <img
+                                src="/logo.jpg"
+                                alt="Kings Pet Hospital logo"
+                                className="h-9 w-auto rounded-sm bg-white p-1 shadow-sm border border-gray-100"
+                            />
+                            <h1 className="text-xl font-black text-gray-900 tracking-tight">
+                                Kings Pet <span className="text-blue-600">Admin</span>
+                            </h1>
                         </div>
-                        <div className="flex items-center">
+
+                        <div className="flex items-center gap-4">
+                            <div className="text-right hidden sm:block">
+                                <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Logged in as</p>
+                                <p className="text-sm font-black text-gray-900">Administrator</p>
+                            </div>
                             <button
                                 onClick={handleLogout}
-                                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md transition-colors"
+                                className="bg-red-50 text-red-600 hover:bg-red-600 hover:text-white px-4 py-2 rounded-xl text-sm font-bold transition-all border border-red-100 shadow-sm flex items-center gap-2"
                             >
+                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                </svg>
                                 Logout
                             </button>
                         </div>
@@ -29,44 +46,10 @@ const AdminDashboard = () => {
                 </div>
             </nav>
 
-            <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-                <div className="px-4 py-6 sm:px-0">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {/* Blog Management Card */}
-                        <div
-                            onClick={() => navigate('/admin/blogs')}
-                            className="bg-white overflow-hidden shadow rounded-lg cursor-pointer hover:shadow-xl transition-all border border-gray-200"
-                        >
-                            <div className="p-5">
-                                <div className="flex items-center">
-                                    <div className="flex-shrink-0 bg-blue-500 rounded-md p-3">
-                                        <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
-                                        </svg>
-                                    </div>
-                                    <div className="ml-5 w-0 flex-1">
-                                        <dt className="text-sm font-medium text-gray-500 truncate">
-                                            Content Management
-                                        </dt>
-                                        <dd className="flex items-baseline">
-                                            <div className="text-2xl font-semibold text-gray-900">
-                                                Manage Blogs
-                                            </div>
-                                        </dd>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="bg-gray-50 px-5 py-3">
-                                <div className="text-sm">
-                                    <span className="font-medium text-blue-700 hover:text-blue-900">
-                                        View all blogs
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Add more cards here later */}
-                    </div>
+            {/* Direct Blog Management */}
+            <main>
+                <div className="max-w-7xl mx-auto py-4">
+                    <AdminBlog isEmbedded={true} />
                 </div>
             </main>
         </div>
