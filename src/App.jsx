@@ -9,6 +9,8 @@ import AdminDashboard from './components/admin/AdminDashboard';
 import AdminBlog from './components/admin/AdminBlog';
 import AllBlogsPage from './components/AllBlogsPage';
 import BlogDetailPage from './components/BlogDetailPage';
+import PrivacyPolicy from './components/PrivacyPolicy';
+import TermsOfService from './components/TermsOfService';
 
 function App() {
   return (
@@ -25,6 +27,8 @@ function App() {
         <Route path="/admin/forgot-password" element={<AdminForgotPassword />} />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/admin/blogs" element={<AdminBlog />} />
+        <Route path="/privacy" element={<PrivacyPolicy />} />
+        <Route path="/terms" element={<TermsOfService />} />
       </Routes>
     </Router>
   );
