@@ -49,7 +49,7 @@ const ContactPage = () => {
                 {/* Animated background elements */}
                 <div className="absolute top-20 left-20 w-64 h-64 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-float"></div>
                 <div className="absolute bottom-20 right-20 w-64 h-64 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-float" style={{ animationDelay: '1s' }}></div>
-                
+
                 <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white z-10">
                     <span className="inline-block py-1 px-3 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-200 text-sm font-semibold mb-4 backdrop-blur-sm animate-bounce-in">
                         👋 We are always ready to help
@@ -63,10 +63,10 @@ const ContactPage = () => {
                 </div>
             </div>
 
-            <main className="py-16 relative z-10 -mt-10">
+            <main className="pt-16 pb-0 relative z-10 -mt-10">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-                    <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start mb-16">
+                    <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start mb-0">
                         {/* Left Side: "Sir's Image" */}
                         <div className="w-full lg:w-4/12 flex-shrink-0">
                             <div className="sticky top-24">
@@ -97,8 +97,8 @@ const ContactPage = () => {
                             {/* Contact Grid */}
                             <div className="grid md:grid-cols-2 gap-5">
                                 {contactInfo.map((item, index) => (
-                                    <div 
-                                        key={index} 
+                                    <div
+                                        key={index}
                                         className={`flex items-start p-6 bg-white rounded-xl shadow-md border hover:border-blue-300 hover:shadow-xl transition-all duration-500 group transform hover:-translate-y-2 hover:scale-105 cursor-pointer ${index === 0 ? 'md:col-span-2 bg-gradient-to-r from-blue-50 to-white border-blue-100' : 'border-gray-100'}`}
                                         style={{
                                             opacity: 0,
@@ -151,24 +151,6 @@ const ContactPage = () => {
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-
-                    {/* Google Map */}
-                    <div className="bg-white p-4 rounded-2xl shadow-lg border border-gray-100 reveal transform hover:scale-[1.02] transition-all duration-500">
-                        <div className="relative overflow-hidden rounded-xl">
-                            <iframe
-                                src="https://maps.google.com/maps?q=Kings+Pet+Hospital+Rohtak&t=&z=15&ie=UTF8&iwloc=&output=embed"
-                                width="100%"
-                                height="450"
-                                style={{ border: 0, borderRadius: '1rem' }}
-                                allowFullScreen=""
-                                loading="lazy"
-                                referrerPolicy="no-referrer-when-downgrade"
-                                title="Kings Pet Hospital Location"
-                                className="transition-opacity duration-500"
-                            ></iframe>
-                            <div className="absolute inset-0 bg-gradient-to-t from-blue-600/5 to-transparent pointer-events-none"></div>
                         </div>
                     </div>
 
