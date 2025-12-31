@@ -9,13 +9,13 @@ const defaultMedia = [
   { type: 'image', src: '19.jpg' },
   { type: 'image', src: '13.jpg' },
   { type: 'image', src: '22.jpg' },
-  {type: 'video', src: '5.mp4' },
-  {type: 'video', src: '6.mp4' }, 
-  {type: 'video', src: '8.mp4' },
-  {type: 'video', src: '9.mp4' },
-  {type: 'video', src: '10.mp4' },
-  {type: 'video', src: '21.mp4' },
-  
+  { type: 'video', src: '5.mp4' },
+  { type: 'video', src: '6.mp4' },
+  { type: 'video', src: '8.mp4' },
+  { type: 'video', src: '9.mp4' },
+  { type: 'video', src: '10.mp4' },
+  { type: 'video', src: '21.mp4' },
+
 ];
 
 const Gallery = () => {
@@ -26,30 +26,30 @@ const Gallery = () => {
 
   return (
     <section id="gallery" className="py-20 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8">
         <div className="text-center mb-10">
           <h2 className="text-4xl font-bold text-gray-800 mb-4">Gallery</h2>
           <p className="text-gray-600">Photos and videos from our hospital and happy patients</p>
         </div>
 
-        
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-5 lg:gap-6">
           {visibleItems.map((item, idx) => (
-            <div key={idx} className="group relative overflow-hidden rounded-lg shadow hover:shadow-md transition">
+            <div key={idx} className="group relative overflow-hidden rounded-lg shadow hover:shadow-md transition mb-4 md:mb-0">
               {item.type === 'image' ? (
                 <img
                   src={item.src}
                   alt="gallery"
                   loading="lazy"
-                  className="w-full h-56 object-cover group-hover:scale-105 transition-transform duration-300"
+                  className="w-full h-40 md:h-48 lg:h-56 object-cover group-hover:scale-105 transition-transform duration-300"
                 />
               ) : (
                 <video
                   src={item.src}
                   controls
                   preload="metadata"
-                  className="w-full h-56 object-cover"
+                  className="w-full h-40 md:h-48 lg:h-56 object-cover"
                 />
               )}
             </div>

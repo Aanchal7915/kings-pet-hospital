@@ -115,7 +115,7 @@ const services = [
   },
 ];
 
-const whatsappNumber = '8930333373'; // Use country code, e.g., 91 for India
+const whatsappNumber = '918222993333'; // Use country code, e.g., 91 for India
 
 function openWhatsApp(serviceName) {
   const message = encodeURIComponent(
@@ -130,56 +130,56 @@ const Services = () => {
   const visibleServices = showAll ? services : services.slice(0, VISIBLE_COUNT);
   return (
     <section className="py-20 bg-gradient-to-b from-gray-50 to-white" id="services">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8">
         <div className="text-center mb-16 opacity-0 animate-[fadeIn_0.5s_ease-out_forwards]">
           <h2 className="text-4xl font-bold text-gray-800 mb-4">Our Premium Pet Services</h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             Providing top-quality care for your beloved furry friends with our comprehensive range of services
           </p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6 lg:gap-8">
           {visibleServices.map((service, index) => (
-            <div 
+            <div
               key={service.name}
-              className="bg-white rounded-xl shadow-lg overflow-hidden transform transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
-              style={{ 
-                opacity: 0, 
+              className="bg-white rounded-lg md:rounded-xl shadow-lg overflow-hidden transform transition-all duration-300 hover:shadow-xl hover:-translate-y-1 mb-4 md:mb-0"
+              style={{
+                opacity: 0,
                 animation: `fadeIn 0.5s ease-out ${index * 0.1}s forwards`,
                 transform: 'translateY(20px)'
               }}
             >
               <div className="relative overflow-hidden">
-                <img 
-                  src={service.imageUrl} 
-                  alt={service.name} 
+                <img
+                  src={service.imageUrl}
+                  alt={service.name}
                   loading="lazy"
-                  className="w-full h-56 object-cover transition-transform duration-500 hover:scale-110"
+                  className="w-full h-32 md:h-48 lg:h-56 object-cover transition-transform duration-500 hover:scale-110"
                 />
-                <div className="absolute top-0 right-0 bg-blue-600 text-white px-4 py-2 rounded-bl-lg font-semibold">
+                <div className="absolute top-0 right-0 bg-blue-600 text-white px-2 py-1 md:px-4 md:py-2 rounded-bl-lg text-xs md:text-sm font-semibold">
                   {service.price}
                 </div>
               </div>
-              <div className="p-6">
-                <h3 className="text-2xl font-semibold text-gray-800 mb-3 transition-colors duration-300 hover:text-blue-600">
+              <div className="p-3 md:p-5 lg:p-6">
+                <h3 className="text-sm md:text-xl lg:text-2xl font-semibold text-gray-800 mb-2 md:mb-3 transition-colors duration-300 hover:text-blue-600">
                   {service.name}
                 </h3>
-                <p className="text-gray-600 mb-4 line-clamp-2">
+                <p className="text-gray-600 mb-3 md:mb-4 text-xs md:text-sm lg:text-base">
                   {service.description}
                 </p>
-                <div className="border-t pt-4">
-                  <ul className="space-y-2">
+                <div className="border-t pt-2 md:pt-3 lg:pt-4">
+                  <ul className="space-y-1 md:space-y-2">
                     {service.features.map((feature, idx) => (
-                      <li key={idx} className="flex items-center text-gray-600">
-                        <svg className="w-5 h-5 text-blue-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <li key={idx} className="flex items-start text-gray-600">
+                        <svg className="w-3 h-3 md:w-4 md:h-4 lg:w-5 lg:h-5 text-blue-500 mr-1 md:mr-2 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                         </svg>
-                        <span className="text-sm">{feature}</span>
+                        <span className="text-xs md:text-sm leading-tight">{feature}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
                 <button
-                  className="w-full mt-6 bg-blue-600 text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 hover:bg-blue-700 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  className="w-full mt-3 md:mt-5 lg:mt-6 bg-blue-600 text-white px-3 py-2 md:px-5 md:py-2.5 lg:px-6 lg:py-3 rounded-full text-xs md:text-sm lg:text-base font-semibold transition-all duration-300 hover:bg-blue-700 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                   onClick={() => openWhatsApp(service.name)}
                 >
                   Book Now

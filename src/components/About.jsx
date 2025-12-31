@@ -11,7 +11,7 @@ const team = [
     role: 'General Physician',
     imageUrl: '56.jpg',
   },
-  
+
 ];
 
 const About = () => {
@@ -69,7 +69,7 @@ const About = () => {
           </div>
         </div>
 
-        <div className="animate-[fadeIn_0.5s_ease-out_0.3s_forwards]==]]">
+        <div id="team" className="animate-[fadeIn_0.5s_ease-out_0.3s_forwards]==]]">
           <h3 className="text-3xl font-semibold text-gray-800 mb-8 text-center">Meet Our Team</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {team.map((member) => (

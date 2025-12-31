@@ -1,21 +1,32 @@
 import React from 'react';
-import Header from './components/Header';
-import Footer from './components/Footer';
-import Services from './components/Services';
-import About from './components/About';
-import Gallery from './components/Gallery';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Home from './components/Home';
+import ContactPage from './components/ContactPage';
+import AdminLogin from './components/admin/AdminLogin';
+import AdminSignup from './components/admin/AdminSignup';
+import AdminForgotPassword from './components/admin/AdminForgotPassword';
+import AdminDashboard from './components/admin/AdminDashboard';
+import AdminBlog from './components/admin/AdminBlog';
+import AllBlogsPage from './components/AllBlogsPage';
+import BlogDetailPage from './components/BlogDetailPage';
 
 function App() {
   return (
-    <div className="min-h-screen bg-gray-50 font-sans antialiased">
-      <Header />
-      <main className="relative z-10">
-        <Services />
-        <Gallery />
-        <About />
-      </main>
-      <Footer />
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/contact" element={<ContactPage />} />
+        <Route path="/blog" element={<AllBlogsPage />} />
+        <Route path="/blog/:id" element={<BlogDetailPage />} />
+
+        {/* Admin Routes */}
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin/signup" element={<AdminSignup />} />
+        <Route path="/admin/forgot-password" element={<AdminForgotPassword />} />
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/admin/blogs" element={<AdminBlog />} />
+      </Routes>
+    </Router>
   );
 }
 
