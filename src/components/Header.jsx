@@ -13,7 +13,7 @@ function openWhatsApp(serviceName = '') {
 const Typewriter = ({ text, speed = 50, className = '', delay = 0, onComplete }) => {
   const [displayText, setDisplayText] = useState('');
   const [showCursor, setShowCursor] = useState(true);
-  
+
   useEffect(() => {
     let timer;
     const startTimer = setTimeout(() => {
@@ -84,7 +84,7 @@ const Header = ({ showHeroImage = false, showHero = true }) => {
                 alt="Kings Pet Hospital logo"
                 className="h-10 w-auto rounded-sm bg-white/90 p-1 shadow-sm"
               />
-              <h1 className={`text-2xl font-bold transition-colors duration-300 ${isNavbarActive ? 'text-blue-600' : 'text-white'
+              <h1 className={`text-xl md:text-2xl font-bold transition-colors duration-300 ${isNavbarActive ? 'text-blue-600' : 'text-white'
                 }`}>
                 Kings Pet Hospital
               </h1>
@@ -162,119 +162,119 @@ const Header = ({ showHeroImage = false, showHero = true }) => {
         </div>
       </nav>
 
-      {/* Hero Section */} 
+      {/* Hero Section */}
       {showHero && (
-  <div className="pt-5 relative min-h-screen flex items-center overflow-hidden bg-blue-900">
-    {/* --- BACKGROUND IMAGE SECTION --- */}
-    <div className="absolute inset-0 z-0">
-      <img
-        src='hero-3.webp'
-        alt="Dog Hero Background"
-        // CHANGE 1: 'object-cover' fills the screen. 'object-center' tries to keep the middle visible.
-        // If you strictly want the WHOLE image without cropping, change 'object-cover' to 'object-contain', 
-        // but that will leave empty spaces on the sides. 'object-cover' is best for Hero sections.
-        className="hidden md:block w-full h-full object-cover object-center opacity-60" 
-      />
-      <img
-        src='hero-2.jpg'
-        alt="Dog Hero Background"
-        // CHANGE 1: 'object-cover' fills the screen. 'object-center' tries to keep the middle visible.
-        // If you strictly want the WHOLE image without cropping, change 'object-cover' to 'object-contain', 
-        // but that will leave empty spaces on the sides. 'object-cover' is best for Hero sections.
-        className="block md:hidden w-full h-full object-center opacity-60" 
-      />
-      
-      {/* CHANGE 2: Professional Gradient Overlay 
+        <div className="pt-5 relative min-h-screen flex items-center overflow-hidden bg-blue-900">
+          {/* --- BACKGROUND IMAGE SECTION --- */}
+          <div className="absolute inset-0 z-0">
+            <img
+              src='hero-3.webp'
+              alt="Dog Hero Background"
+              // CHANGE 1: 'object-cover' fills the screen. 'object-center' tries to keep the middle visible.
+              // If you strictly want the WHOLE image without cropping, change 'object-cover' to 'object-contain', 
+              // but that will leave empty spaces on the sides. 'object-cover' is best for Hero sections.
+              className="hidden md:block w-full h-full object-cover object-center opacity-60"
+            />
+            <img
+              src='hero-2.jpg'
+              alt="Dog Hero Background"
+              // CHANGE 1: 'object-cover' fills the screen. 'object-center' tries to keep the middle visible.
+              // If you strictly want the WHOLE image without cropping, change 'object-cover' to 'object-contain', 
+              // but that will leave empty spaces on the sides. 'object-cover' is best for Hero sections.
+              className="block md:hidden w-full h-full object-center opacity-60"
+            />
+
+            {/* CHANGE 2: Professional Gradient Overlay 
           This makes the text on the left readable (darker) 
           and fades out to the right to show the image clearer. */}
-      <div className="absolute inset-0 bg-gradient-to-r from-blue-950/75 via-blue-900/40 to-blue-900/90"></div>
-    </div>
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-950/75 via-blue-900/40 to-blue-900/90"></div>
+          </div>
 
-    {/* --- CONTENT SECTION (No Content Changes) --- */}
-    <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-32 w-full text-white">
-      <div className="flex flex-col md:flex-row items-center justify-between">
-        <div className="md:w-1/2 mb-8 md:mb-0 md:pr-8 animate-[fadeIn_0.5s_ease-out_forwards]">
-          <h1 className="text-3xl md:text-5xl lg:text-7xl font-bold mb-4 md:mb-6 min-h-[80px] md:min-h-[140px] drop-shadow-lg">
-            <Typewriter 
-              text="Your Pet " 
-              speed={80} 
-              className="text-white" 
-              onComplete={() => {}}
-            />
-            <Typewriter 
-              text="Deserves The Best Care" 
-              speed={80} 
-              delay={800}
-              className="bg-gradient-to-r from-pink-300 via-pink-400 to-pink-300 bg-clip-text text-transparent animate-gradient"
-            />
-          </h1>
-          <p className="text-xl text-blue-100 mb-8 max-w-lg drop-shadow-md">
-            Professional pet care services to keep your furry friend healthy and happy.
-            Expert veterinarians, modern facilities, and loving attention.
-          </p>
+          {/* --- CONTENT SECTION (No Content Changes) --- */}
+          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-32 w-full text-white">
+            <div className="flex flex-col md:flex-row items-center justify-between">
+              <div className="md:w-1/2 mb-8 md:mb-0 md:pr-8 animate-[fadeIn_0.5s_ease-out_forwards]">
+                <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold mb-4 md:mb-6 min-h-[80px] md:min-h-[140px] drop-shadow-lg">
+                  <Typewriter
+                    text="Your Pet "
+                    speed={80}
+                    className="text-white"
+                    onComplete={() => { }}
+                  />
+                  <Typewriter
+                    text="Deserves The Best Care"
+                    speed={80}
+                    delay={800}
+                    className="bg-gradient-to-r from-pink-300 via-pink-400 to-pink-300 bg-clip-text text-transparent animate-gradient"
+                  />
+                </h1>
+                <p className="text-base md:text-xl text-blue-100 mb-8 max-w-lg drop-shadow-md">
+                  Professional pet care services to keep your furry friend healthy and happy.
+                  Expert veterinarians, modern facilities, and loving attention.
+                </p>
 
-          {!showHeroImage && (
-            <div className="space-y-4 mb-8">
-              {[
-                { text: '24/7 Emergency Care', bgColor: 'bg-green-500/20', borderColor: 'border-green-400/30', iconColor: 'text-green-300' },
-                { text: 'Experienced Veterinarians', bgColor: 'bg-blue-500/20', borderColor: 'border-blue-400/30', iconColor: 'text-blue-300' },
-                { text: 'Advanced Medical Equipment', bgColor: 'bg-purple-500/20', borderColor: 'border-purple-400/30', iconColor: 'text-purple-300' }
-              ].map((feature, idx) => (
-                <div key={idx} className="flex items-center gap-3">
-                  <div className={`w-10 h-10 ${feature.bgColor} rounded-full flex items-center justify-center backdrop-blur-sm border ${feature.borderColor} shadow-lg`}>
-                    <svg className={`w-5 h-5 ${feature.iconColor}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                    </svg>
+                {!showHeroImage && (
+                  <div className="space-y-4 mb-8">
+                    {[
+                      { text: '24/7 Emergency Care', bgColor: 'bg-green-500/20', borderColor: 'border-green-400/30', iconColor: 'text-green-300' },
+                      { text: 'Experienced Veterinarians', bgColor: 'bg-blue-500/20', borderColor: 'border-blue-400/30', iconColor: 'text-blue-300' },
+                      { text: 'Advanced Medical Equipment', bgColor: 'bg-purple-500/20', borderColor: 'border-purple-400/30', iconColor: 'text-purple-300' }
+                    ].map((feature, idx) => (
+                      <div key={idx} className="flex items-center gap-3">
+                        <div className={`w-10 h-10 ${feature.bgColor} rounded-full flex items-center justify-center backdrop-blur-sm border ${feature.borderColor} shadow-lg`}>
+                          <svg className={`w-5 h-5 ${feature.iconColor}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                          </svg>
+                        </div>
+                        <span className="text-blue-50 text-lg font-medium drop-shadow-sm">{feature.text}</span>
+                      </div>
+                    ))}
                   </div>
-                  <span className="text-blue-50 text-lg font-medium drop-shadow-sm">{feature.text}</span>
-                </div>
-              ))}
-            </div>
-          )}
+                )}
 
-          {!showHeroImage && (
-            <div className="flex items-center gap-4 p-4 bg-green-500/80 backdrop-blur-md rounded-xl border border-green-400/30 inline-flex shadow-xl hover:bg-green-500/90 transition-colors cursor-pointer">
-              <svg className="w-8 h-8 text-white flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <p className="text-white text-sm font-medium">
-                Fill the form to book your appointment instantly via WhatsApp 
-              </p>
-            </div>
-          )}
+                {!showHeroImage && (
+                  <div className="flex items-center gap-4 p-4 bg-green-500/80 backdrop-blur-md rounded-xl border border-green-400/30 inline-flex shadow-xl hover:bg-green-500/90 transition-colors cursor-pointer">
+                    <svg className="w-8 h-8 text-white flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <p className="text-white text-sm font-medium">
+                      Fill the form to book your appointment instantly via WhatsApp
+                    </p>
+                  </div>
+                )}
 
-          {showHeroImage && (
-            <div className="flex flex-col sm:flex-row gap-4">
-              <button
-                className="px-8 py-3 bg-white text-blue-600 rounded-full font-semibold transition-all hover:bg-blue-50 shadow-lg hover:shadow-xl hover:-translate-y-1"
-                onClick={() => openWhatsApp()}
-              >
-                Book Now
-              </button>
+                {showHeroImage && (
+                  <div className="flex flex-col sm:flex-row gap-4">
+                    <button
+                      className="px-8 py-3 bg-white text-blue-600 rounded-full font-semibold transition-all hover:bg-blue-50 shadow-lg hover:shadow-xl hover:-translate-y-1"
+                      onClick={() => openWhatsApp()}
+                    >
+                      Book Now
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              <div className="md:w-1/2 lg:w-5/12 w-full animate-[fadeIn_0.5s_ease-out_0.3s_forwards]">
+                {showHeroImage ? (
+                  <img
+                    src="50.jpg"
+                    alt="Happy dog"
+                    className="rounded-3xl shadow-2xl transform transition-transform duration-500 hover:scale-105 border-4 border-white/20"
+                    onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = '/logo.jpg'; }}
+                  />
+                ) : (
+                  <div className="bg-white/95 backdrop-blur-sm p-2 rounded-[2rem] shadow-2xl border border-white/20">
+                    <BookingForm />
+                  </div>
+
+                )}
+              </div>
             </div>
-          )}
+          </div>
         </div>
-
-        <div className="md:w-1/2 lg:w-5/12 w-full animate-[fadeIn_0.5s_ease-out_0.3s_forwards]">
-          {showHeroImage ? (
-            <img
-              src="50.jpg"
-              alt="Happy dog"
-              className="rounded-3xl shadow-2xl transform transition-transform duration-500 hover:scale-105 border-4 border-white/20"
-              onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = '/logo.jpg'; }}
-            />
-          ) : (
-            <div className="bg-white/95 backdrop-blur-sm p-2 rounded-[2rem] shadow-2xl border border-white/20">
-              <BookingForm />
-            </div>
-           
-          )}
-        </div>
-      </div>
-    </div>
-  </div>
       )}
-      
+
     </header>
   );
 };

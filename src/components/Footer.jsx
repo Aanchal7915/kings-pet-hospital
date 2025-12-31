@@ -18,7 +18,7 @@ const contactInfo = [
 const Footer = () => {
   return (
     <>
-      <div className="w-full h-[400px] overflow-hidden grayscale hover:grayscale-0 transition-all duration-700 opacity-0 animate-[fadeIn_0.8s_ease-out_forwards]">
+      <div className="w-full h-[400px] overflow-hidden mt-16 transition-all duration-700 opacity-0 animate-[fadeIn_0.8s_ease-out_forwards]">
         <iframe
           src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3493.541!2d76.61!3d28.89!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390d85!2sNear%20Sheela%20Cineplex%2C%20Sonipat%20Road%2C%20Rohtak%2C%20Haryana!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
           width="100%"
