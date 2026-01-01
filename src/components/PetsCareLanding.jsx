@@ -169,7 +169,7 @@ const PetsCareLanding = () => {
 
                             {/* Main Headline - Updated to use Playfair Display (Serif) to match the reference */}
                             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-bold text-slate-900 leading-tight tracking-tight">
-                                Ensure <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-indigo-600">Healthier Lives</span> & accelerate recovery with smart <span className="italic text-slate-700">treatments</span>
+                                Ensure <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-indigo-600">Healthier Lives</span> & accelerate recovery with smart <span className="italic text-blue-600">treatments</span>
                             </h1>
 
                             {/* Description */}
@@ -211,18 +211,18 @@ const PetsCareLanding = () => {
                 </div>
 
                 {/* About Us Section */}
-                <section id="about" className="py-20 bg-white relative overflow-hidden">
+                <section id="about" className="py-10 md:py-20 bg-white relative overflow-hidden">
                     <div id="team" className="absolute top-0"></div>
                     <div id="gallery" className="absolute top-0"></div>
                     <div className="absolute top-0 right-0 w-1/3 h-full bg-blue-50/50 -skew-x-12 transform translate-x-20"></div>
 
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                         {/* Centered Header */}
-                        <div className="text-center mb-16 max-w-4xl mx-auto">
+                        <div className="text-center mb-8 md:mb-16 max-w-4xl mx-auto">
                             <div className="inline-block px-5 py-2 bg-blue-50 text-blue-600 font-bold rounded-full text-sm mb-6 tracking-wide uppercase">
                                 About Us
                             </div>
-                            <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-slate-900 leading-tight">
+                            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-slate-900 leading-tight">
                                 Committed to <span className="text-blue-600">Excellence</span> in <br className="hidden md:block" /> Veterinary Medicine
                             </h2>
                         </div>
@@ -238,17 +238,17 @@ const PetsCareLanding = () => {
                                     className="relative rounded-2xl shadow-xl w-full object-cover h-[500px] transform transition-transform duration-500 group-hover:-translate-y-2"
                                     onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = 'https://images.unsplash.com/photo-1599443015574-be5fe8a05783?q=80&w=2070'; }}
                                 />
-                                <div className="absolute -bottom-6 -right-6 bg-white p-6 rounded-xl shadow-lg border border-gray-100 max-w-xs animate-float">
-                                    <div className="flex items-center gap-4">
-                                        <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-green-600">
-                                            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <div className="absolute -bottom-6 right-4 md:-right-6 bg-white p-4 md:p-6 rounded-xl shadow-lg border border-gray-100 max-w-[240px] md:max-w-xs animate-float">
+                                    <div className="flex items-center gap-3 md:gap-4">
+                                        <div className="w-10 h-10 md:w-12 md:h-12 bg-green-100 rounded-full flex items-center justify-center text-green-600">
+                                            <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                             </svg>
                                         </div>
                                         <div>
-                                            <p className="text-sm text-gray-500 font-medium">Customer Review</p>
-                                            <div className="flex text-yellow-400 text-sm">★★★★★</div>
-                                            <p className="text-xs text-gray-400 mt-1">"The best care for my puppy!"</p>
+                                            <p className="text-xs md:text-sm text-gray-500 font-medium">Customer Review</p>
+                                            <div className="flex text-yellow-400 text-xs md:text-sm">★★★★★</div>
+                                            <p className="text-[10px] md:text-xs text-gray-400 mt-1">"The best care for my puppy!"</p>
                                         </div>
                                     </div>
                                 </div>
@@ -294,7 +294,7 @@ const PetsCareLanding = () => {
 
 
                 {/* Services Section */}
-                <section id="services" className="py-20 bg-white relative">
+                <section id="services" className="py-10 md:py-20 bg-white relative">
                     {/* Background Pattern */}
                     <div className="absolute inset-0 opacity-5 bg-[radial-gradient(#3b82f6_1px,transparent_1px)] [background-size:16px_16px]"></div>
 
@@ -306,7 +306,7 @@ const PetsCareLanding = () => {
                         </div>
 
                         {/* Compact Grid with smaller gap */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
                             {visibleServices.map((service, index) => (
                                 <div
                                     key={service.name}
@@ -327,27 +327,27 @@ const PetsCareLanding = () => {
                                     </div>
 
                                     {/* Compact Padding */}
-                                    <div className="p-4 flex flex-col flex-grow">
-                                        <h3 className="text-lg font-bold text-slate-900 mb-1.5 group-hover:text-blue-600 transition-colors">{service.name}</h3>
-                                        <p className="text-slate-500 text-xs mb-3 leading-relaxed flex-grow line-clamp-2">{service.description}</p>
+                                    <div className="p-2 md:p-3 flex flex-col flex-grow">
+                                        <h3 className="text-md md:text-lg font-bold text-slate-900 mb-1 group-hover:text-blue-600 transition-colors line-clamp-1">{service.name}</h3>
+                                        <p className="text-slate-500 text-[10px] md:text-xs mb-2 leading-relaxed flex-grow line-clamp-2">{service.description}</p>
 
-                                        <div className="space-y-1.5 pt-3 border-t border-slate-100">
+                                        <div className="space-y-0.5 pt-2 border-t border-slate-100">
                                             {service.features.slice(0, 3).map((feature, idx) => (
-                                                <div key={idx} className="flex items-start text-[11px] text-slate-600">
-                                                    <svg className="w-3.5 h-3.5 text-green-500 mr-1.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <div key={idx} className="flex items-start text-[9px] md:text-[11px] text-slate-600">
+                                                    <svg className="w-3 h-3 text-green-500 mr-1 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                                     </svg>
-                                                    {feature}
+                                                    <span className="truncate">{feature}</span>
                                                 </div>
                                             ))}
                                         </div>
 
                                         <button
                                             onClick={() => openWhatsApp(service.name)}
-                                            className="mt-4 w-full py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-all duration-300 shadow-sm hover:shadow-md flex items-center justify-center gap-2"
+                                            className="mt-2 md:mt-3 w-full py-1.5 md:py-2 bg-blue-600 text-white text-xs md:text-sm font-semibold rounded-lg hover:bg-blue-700 transition-all duration-300 shadow-sm hover:shadow-md flex items-center justify-center gap-2"
                                         >
                                             Book Service
-                                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                                             </svg>
                                         </button>
@@ -360,7 +360,7 @@ const PetsCareLanding = () => {
                         <div className="mt-10 text-center">
                             <button
                                 onClick={() => setShowAllServices(!showAllServices)}
-                                className="px-8 py-3 rounded-full bg-slate-900 text-white font-semibold text-sm hover:bg-slate-800 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center gap-2 mx-auto"
+                                className="px-8 py-3 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold text-sm hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center gap-2 mx-auto"
                             >
                                 {showAllServices ? 'Show Less' : 'View More Services'}
                                 <svg className={`w-4 h-4 transition-transform duration-300 ${showAllServices ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">

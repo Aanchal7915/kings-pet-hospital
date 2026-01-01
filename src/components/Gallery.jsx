@@ -25,14 +25,14 @@ const Gallery = () => {
   const visibleItems = showAll ? mediaItems : mediaItems.slice(0, VISIBLE_COUNT);
 
   return (
-    <section id="gallery" className="py-10 md:py-20 bg-gradient-to-b from-white to-gray-50 relative overflow-hidden">
+    <section  className="py-10 md:py-20 bg-gradient-to-b from-white to-gray-50 relative overflow-hidden">
       {/* Decorative background */}
       <div className="absolute top-20 right-10 w-64 h-64 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse-slow"></div>
       <div className="absolute bottom-20 left-10 w-64 h-64 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse-slow" style={{ animationDelay: '1s' }}></div>
 
       <div className="max-w-7xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8 relative z-10">
         <div className="text-center mb-6 md:mb-10 reveal">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4 text-gradient-animate animate-text-reveal underline-animate">
+          <h2 id="gallery" className="text-4xl md:text-5xl font-bold text-gray-800 mb-4 text-gradient-animate animate-text-reveal underline-animate">
             Gallery
           </h2>
           <p className="text-gray-600 text-lg animate-text-slide text-hover-glow" style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}>
@@ -71,11 +71,11 @@ const Gallery = () => {
                   </div>
                 </div>
               )}
-              <div className="absolute bottom-0 left-0 right-0 p-3 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300 z-20">
+              {/* <div className="absolute bottom-0 left-0 right-0 p-3 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300 z-20">
                 <div className="bg-white/95 backdrop-blur-sm rounded-lg p-2">
                   <p className="text-xs font-semibold text-gray-800">View Full Size</p>
                 </div>
-              </div>
+              </div> */}
             </div>
           ))}
         </div>

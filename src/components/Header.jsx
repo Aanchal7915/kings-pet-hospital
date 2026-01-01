@@ -92,8 +92,20 @@ const Header = ({ showHeroImage = false, showHero = true }) => {
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-8">
-              {['Services', 'Gallery', 'About', 'Team', 'Blog', 'Contact'].map((item) => (
-                <Link
+              {['Services', 'Gallery', 'About', 'Team', 'Blog', 'Contact'].map((item) => {
+                if (getNavLink(item)[0] == '#') {
+                  return <a
+                    key={item}
+                    href={getNavLink(item)}
+                    className={`transition-colors duration-300 font-medium ${isNavbarActive
+                      ? 'text-gray-600 hover:text-blue-600'
+                      : 'text-white hover:text-blue-200'
+                      }`}
+                  >
+                    {item}
+                  </a>
+                }
+                return <Link
                   key={item}
                   to={getNavLink(item)}
                   className={`transition-colors duration-300 font-medium ${isNavbarActive
@@ -103,7 +115,8 @@ const Header = ({ showHeroImage = false, showHero = true }) => {
                 >
                   {item}
                 </Link>
-              ))}
+              }
+              )}
               <button
                 className={`px-6 py-2 rounded-full font-semibold transform transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 ${isNavbarActive
                   ? 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500'
@@ -140,16 +153,26 @@ const Header = ({ showHeroImage = false, showHero = true }) => {
           {isMenuOpen && (
             <div className="md:hidden">
               <div className="px-2 pt-2 pb-3 space-y-1 bg-white rounded-lg mt-2 shadow-lg">
-                {['Services', 'Gallery', 'About', 'Team', 'Blog', 'Contact'].map((item) => (
-                  <a
+                {['Services', 'Gallery', 'About', 'Team', 'Blog', 'Contact'].map((item) => {
+                  if(getNavLink(item)[0] == '#') {
+                    return <a
                     key={item}
                     href={getNavLink(item)}
                     className="block px-3 py-2 text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-300"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    {item}
+                    {item}  
                   </a>
-                ))}
+                  }
+                  return <Link
+                  key={item}
+                  to={getNavLink(item)}
+                  className="block px-3 py-2 text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-300"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {item}
+                </Link>
+                })}
                 <button
                   className="w-full mt-2 px-6 py-3 bg-blue-600 text-white rounded-full font-semibold transition-all duration-300 hover:bg-blue-700"
                   onClick={() => openWhatsApp()}
@@ -264,7 +287,11 @@ const Header = ({ showHeroImage = false, showHero = true }) => {
                     onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = '/logo.jpg'; }}
                   />
                 ) : (
-                  <div className="bg-white/95 backdrop-blur-sm p-2 rounded-[2rem] shadow-2xl border border-white/20">
+                  <div
+                  className='p-0 m-0'
+                  //  className="bg-white/95 backdrop-blur-sm rounded-[2rem] shadow-2xl border border-white/20"
+                   >
+                  
                     <BookingForm />
                   </div>
 

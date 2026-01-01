@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { SlCalender } from "react-icons/sl";
+import { MdLock } from "react-icons/md";
 
 const petServices = [
     'Vaccination',
@@ -131,11 +133,12 @@ ${formData.notes ? `*Notes:* ${formData.notes}` : ''}
     };
 
     return (
-        <div className="bg-white rounded-xl shadow-xl p-4 md:p-6 border-2 border-blue-100 max-w-lg mx-auto transform transition-all duration-500 hover:shadow-2xl hover:scale-[1.02]">
+        <div className="bg-white rounded-xl shadow-xl p-4 md:p-6 max-w-lg mx-auto transform transition-all duration-500 hover:shadow-2xl hover:scale-[1.02]">
             <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 -mx-4 -mt-4 md:-mx-6 md:-mt-6 rounded-t-lg p-3 mb-4 relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-shimmer"></div>
                 <h3 className="text-xl md:text-2xl font-bold text-white text-center relative z-10">
-                    📅 Book Appointment
+                    <SlCalender className='inline text-xl' /> {'   '}
+                    Book Appointment
                 </h3>
                 <p className="text-blue-100 text-center text-xs mt-0.5 relative z-10">
                     Quick & Easy Booking
@@ -334,7 +337,7 @@ ${formData.notes ? `*Notes:* ${formData.notes}` : ''}
             </form>
 
             <p className="text-center text-[10px] text-gray-500 mt-3">
-                🔒 Information secured & sent via WhatsApp
+                <MdLock className="inline text-[15px]" /> Information secured & sent via WhatsApp
             </p>
         </div>
     );
