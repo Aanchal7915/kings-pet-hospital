@@ -139,7 +139,7 @@ const Services = () => {
             Providing top-quality care for your beloved furry friends with our comprehensive range of services
           </p>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6 lg:gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6 lg:gap-6">
           {visibleServices.map((service, index) => (
             <div
               key={service.name}
@@ -156,33 +156,33 @@ const Services = () => {
                   src={service.imageUrl}
                   alt={service.name}
                   loading="lazy"
-                  className="w-full h-32 md:h-48 lg:h-56 object-cover transition-transform duration-700 group-hover:scale-125"
+                  className="w-full h-32 md:h-44 lg:h-40 object-cover transition-transform duration-700 group-hover:scale-125"
                 />
-                <div className="absolute top-0 right-0 bg-gradient-to-br from-blue-600 to-purple-600 text-white px-2 py-1 md:px-4 md:py-2 rounded-bl-lg text-xs md:text-sm font-semibold shadow-lg transform group-hover:scale-110 transition-transform duration-300">
+                <div className="absolute top-0 right-0 bg-gradient-to-br from-blue-600 to-purple-600 text-white px-2 py-1 md:px-3 md:py-1.5 rounded-bl-lg text-xs md:text-sm font-semibold shadow-lg transform group-hover:scale-110 transition-transform duration-300">
                   {service.price}
                 </div>
               </div>
-              <div className="p-3 md:p-5 lg:p-6">
-                <h3 className="text-sm md:text-xl lg:text-2xl font-semibold text-gray-800 mb-2 md:mb-3 transition-all duration-300 hover:text-blue-600 text-hover-glow underline-animate">
+              <div className="p-3 md:p-4 lg:p-4">
+                <h3 className="text-sm md:text-lg lg:text-xl font-semibold text-gray-800 mb-1.5 md:mb-2 transition-all duration-300 hover:text-blue-600 text-hover-glow underline-animate">
                   {service.name}
                 </h3>
-                <p className="text-gray-600 mb-3 md:mb-4 text-xs md:text-sm lg:text-base leading-relaxed transition-all duration-300 hover:text-gray-800">
+                <p className="text-gray-600 mb-2 md:mb-3 text-xs md:text-sm lg:text-sm leading-relaxed transition-all duration-300 hover:text-gray-800 line-clamp-2">
                   {service.description}
                 </p>
-                <div className="border-t pt-2 md:pt-3 lg:pt-4">
-                  <ul className="space-y-1 md:space-y-2">
+                <div className="border-t pt-2 md:pt-2 lg:pt-2">
+                  <ul className="space-y-0.5 md:space-y-1">
                     {service.features.map((feature, idx) => (
                       <li key={idx} className="flex items-start text-gray-600">
-                        <svg className="w-3 h-3 md:w-4 md:h-4 lg:w-5 lg:h-5 text-blue-500 mr-1 md:mr-2 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg className="w-3 h-3 md:w-3.5 md:h-3.5 lg:w-4 lg:h-4 text-blue-500 mr-1 md:mr-2 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                         </svg>
-                        <span className="text-xs md:text-sm leading-tight">{feature}</span>
+                        <span className="text-[10px] md:text-xs lg:text-sm leading-tight">{feature}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
                 <button
-                  className="w-full mt-3 md:mt-5 lg:mt-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-3 py-2 md:px-5 md:py-2.5 lg:px-6 lg:py-3 rounded-full text-xs md:text-sm lg:text-base font-semibold transition-all duration-300 hover:from-blue-700 hover:to-purple-700 hover:-translate-y-1 hover:shadow-lg hover:shadow-blue-500/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transform active:scale-95"
+                  className="w-full mt-2.5 md:mt-4 lg:mt-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-3 py-1.5 md:px-4 md:py-2 lg:px-5 lg:py-2.5 rounded-full text-xs md:text-sm lg:text-sm font-semibold transition-all duration-300 hover:from-blue-700 hover:to-purple-700 hover:-translate-y-1 hover:shadow-lg hover:shadow-blue-500/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transform active:scale-95"
                   onClick={() => openWhatsApp(service.name)}
                 >
                   <span className="flex items-center justify-center gap-2">

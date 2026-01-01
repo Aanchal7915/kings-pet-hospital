@@ -203,7 +203,7 @@ const PetsCareLanding = () => {
 
                             {/* Description */}
                             <p className="text-xs sm:text-lg text-slate-600 max-w-2xl mx-auto lg:mx-0 leading-relaxed mb-1 lg:mb-0">
-                                We provide high-quality veterinary services and amplify them with strategic medical management, advanced diagnostics, and compassionate care.
+                                We provide high-quality veterinary services and amplify them with strategic medical management, advanced diagnostics, and compassionate care. Our dedicated team is committed to the long-term well-being of your pets, offering personalized attention for everything from routine check-ups to complex surgeries.
                             </p>
 
                             {/* Stats/Metrics Row */}
