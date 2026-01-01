@@ -126,8 +126,37 @@ function openWhatsApp(serviceName) {
     window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
 }
 
+// Simple Counter Component for Number Animation
+const Counter = ({ end, duration = 2000, suffix = '' }) => {
+    const [count, setCount] = useState(0);
+
+    React.useEffect(() => {
+        let startTime;
+        let animationFrame;
+
+        const animate = (timestamp) => {
+            if (!startTime) startTime = timestamp;
+            const progress = timestamp - startTime;
+            const percentage = Math.min(progress / duration, 1);
+
+            setCount(Math.floor(percentage * end));
+
+            if (progress < duration) {
+                animationFrame = requestAnimationFrame(animate);
+            }
+        };
+
+        animationFrame = requestAnimationFrame(animate);
+
+        return () => cancelAnimationFrame(animationFrame);
+    }, [end, duration]);
+
+    return <span>{count}{suffix}</span>;
+};
+
 const PetsCareLanding = () => {
     const [showAllServices, setShowAllServices] = useState(false);
+    // ... existing ...
 
     const visibleServices = showAllServices ? services : services.slice(0, 6);
 
@@ -155,45 +184,45 @@ const PetsCareLanding = () => {
 
                 {/* Decorative blob similar to image if any, or just clean space. Keeping it clean as per "Avani" reference which is quite clean. */}
 
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-16 relative z-10">
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 lg:py-16 relative z-10">
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-8 items-center">
 
                         {/* Left Side: Content & Metrics (Matching the reference layout) */}
-                        <div className="lg:col-span-7 flex flex-col space-y-5 lg:space-y-8 animate-slide-in-left text-center lg:text-left pt-2 lg:pt-0">
+                        <div className="lg:col-span-7 flex flex-col space-y-3 lg:space-y-8 animate-slide-in-left text-center lg:text-left pt-2 lg:pt-0">
 
                             {/* Top Badge/Tagline */}
-                            <div className="inline-flex items-center justify-center lg:justify-start gap-2 text-amber-600 font-semibold uppercase tracking-wider text-xs md:text-sm">
-                                <span className="text-lg">✨</span>
+                            <div className="inline-flex items-center justify-center lg:justify-start gap-2 text-amber-600 font-semibold uppercase tracking-wider text-[10px] md:text-sm">
+                                <span className="text-sm md:text-lg">✨</span>
                                 <span>Trusted Pet Care Since 2018</span>
                             </div>
 
-                            {/* Main Headline - Updated to use Playfair Display (Serif) to match the reference */}
-                            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-bold text-slate-900 leading-tight tracking-tight">
+                            {/* Main Headline */}
+                            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-serif font-bold text-slate-900 leading-tight tracking-tight">
                                 Ensure <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-indigo-600">Healthier Lives</span> & accelerate recovery with smart <span className="italic text-blue-600">treatments</span>
                             </h1>
 
                             {/* Description */}
-                            <p className="text-sm sm:text-lg text-slate-600 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
-                                We provide high-quality veterinary services and amplify them with strategic medical management, advanced diagnostics, and compassionate care for your furry companions.
+                            <p className="text-xs sm:text-lg text-slate-600 max-w-2xl mx-auto lg:mx-0 leading-relaxed mb-1 lg:mb-0">
+                                We provide high-quality veterinary services and amplify them with strategic medical management, advanced diagnostics, and compassionate care.
                             </p>
 
                             {/* Stats/Metrics Row */}
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 pt-2 border-t border-gray-100 mt-2">
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-6 pt-1 md:pt-2 border-t border-gray-100 mt-1 md:mt-2">
                                 <div>
-                                    <h3 className="text-3xl font-bold text-blue-600">1500+</h3>
-                                    <p className="text-sm text-gray-500 font-medium mt-1">Happy Pets</p>
+                                    <h3 className="text-xl md:text-3xl font-bold text-blue-600"><Counter end={1500} suffix="+" /></h3>
+                                    <p className="text-xs md:text-sm text-gray-500 font-medium mt-0.5 md:mt-1">Happy Pets</p>
                                 </div>
                                 <div>
-                                    <h3 className="text-3xl font-bold text-green-600">2000+</h3>
-                                    <p className="text-sm text-gray-500 font-medium mt-1">Surgeries Done</p>
+                                    <h3 className="text-xl md:text-3xl font-bold text-green-600"><Counter end={2000} suffix="+" /></h3>
+                                    <p className="text-xs md:text-sm text-gray-500 font-medium mt-0.5 md:mt-1">Surgeries Done</p>
                                 </div>
                                 <div>
-                                    <h3 className="text-3xl font-bold text-amber-500">98%</h3>
-                                    <p className="text-sm text-gray-500 font-medium mt-1">Success Rate</p>
+                                    <h3 className="text-xl md:text-3xl font-bold text-amber-500">98%</h3>
+                                    <p className="text-xs md:text-sm text-gray-500 font-medium mt-0.5 md:mt-1">Success Rate</p>
                                 </div>
                                 <div>
-                                    <h3 className="text-3xl font-bold text-purple-600">10+</h3>
-                                    <p className="text-sm text-gray-500 font-medium mt-1">Years Exp.</p>
+                                    <h3 className="text-xl md:text-3xl font-bold text-purple-600">10+</h3>
+                                    <p className="text-xs md:text-sm text-gray-500 font-medium mt-0.5 md:mt-1">Years Exp.</p>
                                 </div>
                             </div>
                         </div>
