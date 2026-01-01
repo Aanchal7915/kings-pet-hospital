@@ -7,7 +7,7 @@ const petServices = [
     'Dental Care',
     'Health Checkup',
     'Emergency Care',
-    'Other Services'
+    'Other'
 ];
 
 const whatsappNumber = '+918222993333';
@@ -18,6 +18,7 @@ const BookingForm = () => {
         phone: '',
         email: '',
         service: [],
+        otherService: '',
         preferredDate: '',
         notes: ''
     });
@@ -83,8 +84,14 @@ const BookingForm = () => {
         const isPhoneValid = validateField('phone', formData.phone);
         const isEmailValid = validateField('email', formData.email);
         const isServiceValid = validateField('service', formData.service);
+        let isOtherServiceValid = true;
 
-        if (!isNameValid || !isPhoneValid || !isEmailValid || !isServiceValid) {
+        if (formData.service.includes('Other') && !formData.otherService.trim()) {
+            setErrors(prev => ({ ...prev, otherService: 'Please specify the service' }));
+            isOtherServiceValid = false;
+        }
+
+        if (!isNameValid || !isPhoneValid || !isEmailValid || !isServiceValid || !isOtherServiceValid) {
             return;
         }
 
@@ -97,7 +104,8 @@ const BookingForm = () => {
 *Owner Name:* ${formData.petOwnerName}
 *Phone:* ${formData.phone}
 *Email:* ${formData.email}
-*Services:* ${formData.service.join(', ')}
+    *Services:* ${formData.service.join(', ')}
+${formData.service.includes('Other') && formData.otherService ? `*Other Service Details:* ${formData.otherService}` : ''}
 ${formData.preferredDate ? `*Preferred Date:* ${formData.preferredDate}` : ''}
 ${formData.notes ? `*Notes:* ${formData.notes}` : ''}
     `.trim();
@@ -112,6 +120,7 @@ ${formData.notes ? `*Notes:* ${formData.notes}` : ''}
                 phone: '',
                 email: '',
                 service: [],
+                otherService: '',
                 preferredDate: '',
                 notes: ''
             });
@@ -249,6 +258,26 @@ ${formData.notes ? `*Notes:* ${formData.notes}` : ''}
                                 </button>
                             </span>
                         ))}
+                    </div>
+                )}
+
+                {/* Other Service Specification */}
+                {formData.service.includes('Other') && (
+                    <div className="animate-fadeIn">
+                        <label className="block text-xs font-bold text-gray-700 mb-1">
+                            Please Specify Service *
+                        </label>
+                        <input
+                            type="text"
+                            name="otherService"
+                            value={formData.otherService}
+                            onChange={handleChange}
+                            placeholder="Please specify..."
+                            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 text-gray-800 transform focus:scale-[1.02]"
+                        />
+                        {errors.otherService && (
+                            <p className="text-red-500 text-[10px] mt-0.5">{errors.otherService}</p>
+                        )}
                     </div>
                 )}
 
