@@ -11,6 +11,7 @@ import AllBlogsPage from './components/AllBlogsPage';
 import BlogDetailPage from './components/BlogDetailPage';
 import PrivacyPolicy from './components/PrivacyPolicy';
 import TermsOfService from './components/TermsOfService';
+import PetsCareLanding from './components/PetsCareLanding';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/contact" element={<ContactPage />} />
+        <Route path="/pets-care" element={<PetsCareLanding />} />
         <Route path="/blog" element={<AllBlogsPage />} />
         <Route path="/blog/:id" element={<BlogDetailPage />} />
 
