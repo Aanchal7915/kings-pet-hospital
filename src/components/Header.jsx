@@ -64,9 +64,19 @@ const Header = ({ showHeroImage = false, showHero = true }) => {
 
   const getNavLink = (item) => {
     const sectionId = item.toLowerCase();
+
+    // Handle specific cases
     if (item === 'Contact') return '/contact';
+
+    // On home page, Blog and other sections should be anchor links
+    if (isHome) {
+      if (item === 'Blog') return '#blog';
+      return `#${sectionId}`;
+    }
+
+    // On other pages, Blog goes to the full blog page
     if (item === 'Blog') return '/blog';
-    if (isHome) return `#${sectionId}`;
+
     return `/#${sectionId}`;
   };
 
@@ -154,24 +164,24 @@ const Header = ({ showHeroImage = false, showHero = true }) => {
             <div className="md:hidden">
               <div className="px-2 pt-2 pb-3 space-y-1 bg-white rounded-lg mt-2 shadow-lg">
                 {['Services', 'Gallery', 'About', 'Team', 'Blog', 'Contact'].map((item) => {
-                  if(getNavLink(item)[0] == '#') {
+                  if (getNavLink(item)[0] == '#') {
                     return <a
+                      key={item}
+                      href={getNavLink(item)}
+                      className="block px-3 py-2 text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-300"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      {item}
+                    </a>
+                  }
+                  return <Link
                     key={item}
-                    href={getNavLink(item)}
+                    to={getNavLink(item)}
                     className="block px-3 py-2 text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-300"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    {item}  
-                  </a>
-                  }
-                  return <Link
-                  key={item}
-                  to={getNavLink(item)}
-                  className="block px-3 py-2 text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-300"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {item}
-                </Link>
+                    {item}
+                  </Link>
                 })}
                 <button
                   className="w-full mt-2 px-6 py-3 bg-blue-600 text-white rounded-full font-semibold transition-all duration-300 hover:bg-blue-700"
@@ -288,10 +298,10 @@ const Header = ({ showHeroImage = false, showHero = true }) => {
                   />
                 ) : (
                   <div
-                  className='p-0 m-0'
+                    className='p-0 m-0'
                   //  className="bg-white/95 backdrop-blur-sm rounded-[2rem] shadow-2xl border border-white/20"
-                   >
-                  
+                  >
+
                     <BookingForm />
                   </div>
 

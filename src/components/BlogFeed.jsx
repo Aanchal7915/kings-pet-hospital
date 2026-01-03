@@ -4,35 +4,35 @@ import axios from 'axios';
 
 const BlogFeed = () => {
     const [blogs, setBlogs] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchBlogs = async () => {
             try {
                 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
                 const { data } = await axios.get(`${API_URL}/api/blogs`);
-                // Filter only Active blogs and take first 3 for home page preview
                 const activeBlogs = data.data.filter(blog => blog.status === 'Active').slice(0, 3);
                 setBlogs(activeBlogs);
+                setLoading(false);
             } catch (error) {
                 console.log(error);
+                setLoading(false);
             }
         };
         fetchBlogs();
     }, []);
 
-    if (blogs.length === 0) return null;
-
     return (
-        <section id="blog" className="py-24 bg-gray-50/50">
+        <section id="blog" className="py-24 bg-gray-50/50 min-h-[600px]">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Header Section */}
-                
+
                 <div className="text-center mb-16 space-y-4">
-                    
+
                     <span className="inline-block text-blue-600 font-bold tracking-widest uppercase text-sm bg-blue-50 px-4 py-2 rounded-full animate-bounce-in text-hover-glow">
                         Our Journal
                     </span>
-                    <br/>
+                    <br />
                     <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight text-gradient-animate animate-text-reveal underline-animate">
                         Latest News & Updates
                     </h2>
@@ -43,90 +43,103 @@ const BlogFeed = () => {
                 </div>
 
 
-                {/* Blog Grid */}
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10 mb-16">
-                    
-                    {blogs.map((blog, index) => (
-                        <article 
-                            key={blog._id} 
-                            className="group bg-white rounded-3xl shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100 overflow-hidden flex flex-col transform hover:-translate-y-2"
+                {loading ? (
+                    /* Loading Skeleton */
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10 mb-16">
+                        {[1, 2, 3].map((i) => (
+                            <div key={i} className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100 animate-pulse">
+                                <div className="h-48 bg-gray-200 rounded-2xl mb-6"></div>
+                                <div className="h-6 bg-gray-200 rounded w-3/4 mb-4"></div>
+                                <div className="h-4 bg-gray-200 rounded w-full mb-2"></div>
+                                <div className="h-4 bg-gray-200 rounded w-5/6"></div>
+                            </div>
+                        ))}
+                    </div>
+                ) : blogs.length > 0 ? (
+                    /* Blog Grid */
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10 mb-16">
+
+                        {blogs.map((blog, index) => (
+                            <article
+                                key={blog._id}
+                                className="group bg-white rounded-3xl shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100 overflow-hidden flex flex-col transform hover:-translate-y-2"
                                 style={{
                                     animationDelay: `${index * 0.15}s`
                                 }}
-                        >
-                            {/* Image Container */}
-                            <Link to={`/blog/${blog._id}`} className="relative block h-64 overflow-hidden">
-                                <div className="absolute inset-0 bg-blue-900/10 group-hover:bg-transparent z-10 transition-colors duration-500"></div>
-                                <img
-                                    src={blog.image}
-                                    alt={blog.title}
-                                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                                    onError={(e) => { e.currentTarget.src = 'https://images.unsplash.com/photo-1516733725897-1aa73b87c8e8?q=80&w=1000&auto=format&fit=crop'; }}
-                                />
-                                <div className="absolute top-4 left-4 z-20">
-                                    <span className="bg-white/90 backdrop-blur-md text-blue-600 px-3 py-1 rounded-lg text-xs font-bold uppercase shadow-sm">
-                                        Pet Health
-                                    </span>
-                                </div>
-                            </Link>
-
-                            {/* Content Container */}
-                            <div className="p-8 flex flex-col flex-grow">
-                                <div className="flex items-center text-gray-400 text-xs mb-4 space-x-2">
-                                    <span>Kings Pet Hospital</span>
-                                    <span>•</span>
-                                    <span>Latest Update</span>
-                                </div>
-
-                                <Link to={`/blog/${blog._id}`}>
-                                    <h3 className="text-2xl font-bold text-gray-800 mb-4 line-clamp-2 group-hover:text-blue-600 transition-all duration-300 leading-snug text-hover-glow underline-animate">
-                                        {blog.title}
-                                    </h3>
+                            >
+                                {/* Image Container */}
+                                <Link to={`/blog/${blog._id}`} className="relative block h-64 overflow-hidden">
+                                    <div className="absolute inset-0 bg-blue-900/10 group-hover:bg-transparent z-10 transition-colors duration-500"></div>
+                                    <img
+                                        src={blog.image}
+                                        alt={blog.title}
+                                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                        onError={(e) => { e.currentTarget.src = 'https://images.unsplash.com/photo-1516733725897-1aa73b87c8e8?q=80&w=1000&auto=format&fit=crop'; }}
+                                    />
+                                    <div className="absolute top-4 left-4 z-20">
+                                        <span className="bg-white/90 backdrop-blur-md text-blue-600 px-3 py-1 rounded-lg text-xs font-bold uppercase shadow-sm">
+                                            Pet Health
+                                        </span>
+                                    </div>
                                 </Link>
 
-                                <p className="text-gray-600 mb-6 line-clamp-3 text-sm leading-relaxed transition-all duration-300 group-hover:text-gray-800">
-                                    {blog.content && blog.content.length > 20
-                                        ? blog.content.replace(/<[^>]*>?/gm, '') // Strips HTML tags if any
-                                        : `Expert insights and professional care tips for "${blog.title}". Read the full story to learn more from our medical team.`}
-                                </p>
+                                {/* Content Container */}
+                                <div className="p-8 flex flex-col flex-grow">
+                                    <div className="flex items-center text-gray-400 text-xs mb-4 space-x-2">
+                                        <span>Kings Pet Hospital</span>
+                                        <span>•</span>
+                                        <span>Latest Update</span>
+                                    </div>
 
-                                <div className="mt-auto pt-6 border-t border-gray-50">
-                                    <Link 
-                                        to={`/blog/${blog._id}`} 
-                                        className="text-blue-600 font-extrabold flex items-center text-sm group/btn"
-                                    >
-                                        READ ARTICLE
-                                        <svg className="w-5 h-5 ml-2 transform group-hover/btn:translate-x-2 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                                        </svg>
+                                    <Link to={`/blog/${blog._id}`}>
+                                        <h3 className="text-2xl font-bold text-gray-800 mb-4 line-clamp-2 group-hover:text-blue-600 transition-all duration-300 leading-snug text-hover-glow underline-animate">
+                                            {blog.title}
+                                        </h3>
                                     </Link>
+
+                                    <p className="text-gray-600 mb-6 line-clamp-3 text-sm leading-relaxed transition-all duration-300 group-hover:text-gray-800">
+                                        {blog.content && blog.content.length > 20
+                                            ? blog.content.replace(/<[^>]*>?/gm, '') // Strips HTML tags if any
+                                            : `Expert insights and professional care tips for "${blog.title}". Read the full story to learn more from our medical team.`}
+                                    </p>
+
+                                    <div className="mt-auto pt-6 border-t border-gray-50">
+                                        <Link
+                                            to={`/blog/${blog._id}`}
+                                            className="text-blue-600 font-extrabold flex items-center text-sm group/btn"
+                                        >
+                                            READ ARTICLE
+                                            <svg className="w-5 h-5 ml-2 transform group-hover/btn:translate-x-2 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                                            </svg>
+                                        </Link>
+                                    </div>
                                 </div>
-                            </div>
-                        </article>
-                    ))}
-                </div>
+                            </article>
+                        ))}
+                    </div>
+                ) : null}
 
                 {/* Footer Action */}
-                <div className="text-center">
-                    <Link
-                        to="/blog"
-                        className="group relative inline-flex items-center justify-center px-10 py-4 font-bold text-white transition-all duration-300 bg-blue-600 rounded-full hover:bg-blue-700 shadow-[0_10px_20px_rgba(37,99,235,0.3)] hover:shadow-[0_15px_30px_rgba(37,99,235,0.4)] transform hover:-translate-y-1"
-                    >
-                        <span>Explore All Articles</span>
-                        <svg className="w-6 h-6 ml-2 transform group-hover:rotate-45 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                        </svg>
-                    </Link>
-                </div>
+                {!loading && blogs.length > 0 && (
+                    <div className="text-center">
+                        <Link
+                            to="/blog"
+                            className="group relative inline-flex items-center justify-center px-10 py-4 font-bold text-white transition-all duration-300 bg-blue-600 rounded-full hover:bg-blue-700 shadow-[0_10px_20px_rgba(37,99,235,0.3)] hover:shadow-[0_15px_30px_rgba(37,99,235,0.4)] transform hover:-translate-y-1"
+                        >
+                            <span>Explore All Articles</span>
+                            <svg className="w-6 h-6 ml-2 transform group-hover:rotate-45 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                            </svg>
+                        </Link>
+                    </div>
+                )}
             </div>
         </section>
     );
 };
 
 export default BlogFeed;
-
-
-
 
 
 

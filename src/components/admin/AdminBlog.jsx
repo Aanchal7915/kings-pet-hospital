@@ -13,7 +13,7 @@ const AdminBlog = ({ isEmbedded = false }) => {
     // Modal State
     const [showModal, setShowModal] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
-    const [currentBlog, setCurrentBlog] = useState({ title: '', content: '', image: '', status: 'Active', metaKeywords: '', metaDescription: '' });
+    const [currentBlog, setCurrentBlog] = useState({ title: '', content: '', image: '', altText: '', status: 'Active', metaTitle: '', metaKeywords: '', metaDescription: '' });
 
     const navigate = useNavigate();
 
@@ -93,7 +93,7 @@ const AdminBlog = ({ isEmbedded = false }) => {
     };
 
     const resetForm = () => {
-        setCurrentBlog({ title: '', content: '', image: '', status: 'Active', metaKeywords: '', metaDescription: '' });
+        setCurrentBlog({ title: '', content: '', image: '', altText: '', status: 'Active', metaTitle: '', metaKeywords: '', metaDescription: '' });
         setIsEditing(false);
     };
 
@@ -347,11 +347,22 @@ const AdminBlog = ({ isEmbedded = false }) => {
                                             className="w-full border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all border shadow-sm"
                                             placeholder="https://example.com/image.jpg"
                                         />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-[10px] font-bold text-gray-700 mb-1 uppercase tracking-wide">Image Alt Text (Naming)</label>
+                                        <input
+                                            type="text"
+                                            value={currentBlog.altText}
+                                            onChange={(e) => setCurrentBlog({ ...currentBlog, altText: e.target.value })}
+                                            className="w-full border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all border shadow-sm"
+                                            placeholder="Elegant dog portrait"
+                                        />
                                         {currentBlog.image && (
                                             <div className="mt-2 p-1.5 bg-gray-50 border rounded-lg">
                                                 <img
                                                     src={currentBlog.image}
-                                                    alt="Preview"
+                                                    alt={currentBlog.altText || "Preview"}
                                                     className="w-full h-24 object-cover rounded shadow-inner"
                                                     onError={(e) => e.target.style.display = 'none'}
                                                 />
@@ -397,6 +408,16 @@ const AdminBlog = ({ isEmbedded = false }) => {
                                             SEO Optimization
                                         </h4>
                                         <div className="space-y-3">
+                                            <div>
+                                                <label className="block text-[10px] font-semibold text-gray-600 mb-1">Meta Title</label>
+                                                <input
+                                                    type="text"
+                                                    value={currentBlog.metaTitle}
+                                                    onChange={(e) => setCurrentBlog({ ...currentBlog, metaTitle: e.target.value })}
+                                                    className="w-full border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all border bg-white shadow-sm"
+                                                    placeholder="Enter meta title for SEO..."
+                                                />
+                                            </div>
                                             <div>
                                                 <label className="block text-[10px] font-semibold text-gray-600 mb-1">Meta Keywords</label>
                                                 <input

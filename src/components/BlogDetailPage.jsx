@@ -92,8 +92,9 @@ const BlogDetailPage = () => {
     return (
         <div className="min-h-screen bg-white selection:bg-blue-600 selection:text-white">
             <Helmet>
-                <title>{blog.title} | Kings Pet Hospital</title>
+                <title>{blog.metaTitle || blog.title} | Kings Pet Hospital</title>
                 <meta name="description" content={blog.metaDescription || blog.content.substring(0, 160)} />
+                <meta name="keywords" content={blog.metaKeywords || "pets, veterinary, hospital"} />
             </Helmet>
 
             <Header showHero={false} />
@@ -158,7 +159,7 @@ const BlogDetailPage = () => {
                     <div className="relative aspect-[16/9] md:aspect-[21/9] rounded-[3rem] overflow-hidden shadow-[0_50px_100px_-20px_rgba(0,0,0,0.25)] border-[12px] border-white group">
                         <img
                             src={blog.image}
-                            alt={blog.title}
+                            alt={blog.altText || blog.title}
                             className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
                             onError={(e) => { e.currentTarget.src = 'https://images.unsplash.com/photo-1516733725897-1aa73b87c8e8?q=80&w=2000'; }}
                         />
@@ -245,7 +246,7 @@ const BlogDetailPage = () => {
                                         {otherBlogs.map((other) => (
                                             <Link key={other._id} to={`/blog/${other._id}`} className="group flex gap-5 items-center">
                                                 <div className="w-20 h-20 rounded-2xl overflow-hidden shrink-0 shadow-sm border border-gray-100">
-                                                    <img src={other.image} alt={other.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                                                    <img src={other.image} alt={other.altText || other.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                                                 </div>
                                                 <div>
                                                     <h4 className="font-bold text-gray-900 leading-tight group-hover:text-blue-600 transition-colors line-clamp-2 uppercase text-sm mb-1">

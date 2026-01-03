@@ -3,6 +3,7 @@ import axios from 'axios';
 import Header from './Header';
 import Footer from './Footer';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 
 const AllBlogsPage = () => {
     const [blogs, setBlogs] = useState([]);
@@ -27,6 +28,12 @@ const AllBlogsPage = () => {
 
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col">
+            <Helmet>
+                <title>Pet Health Journal | Kings Pet Hospital - Rohtak</title>
+                <meta name="description" content="Read the latest pet care articles, health tips, and hospital updates from Kings Pet Hospital. Expert advice for your dogs and cats." />
+                <meta property="og:title" content="Pet Health Journal | Kings Pet Hospital" />
+                <meta property="og:description" content="Professional pet care insights and stories from our veterinary team." />
+            </Helmet>
             <Header showHero={false} />
 
             {/* Modern Hero Section */}
@@ -34,7 +41,7 @@ const AllBlogsPage = () => {
                 {/* Decorative background element */}
                 <div className="absolute inset-0 z-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
                 <div className="absolute -top-24 -left-24 w-96 h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
-                
+
                 <div className="relative z-10 px-4">
                     <span className="inline-block px-4 py-1.5 mb-4 text-xs font-bold tracking-[0.2em] uppercase bg-blue-500/30 backdrop-blur-md border border-blue-400/30 rounded-full">
                         Kings Pet Journal
@@ -73,8 +80,8 @@ const AllBlogsPage = () => {
                     /* Modernized Grid */
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
                         {blogs.map((blog) => (
-                            <article 
-                                key={blog._id} 
+                            <article
+                                key={blog._id}
                                 className="group bg-white rounded-[2.5rem] shadow-sm hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)] transition-all duration-500 border border-gray-100 flex flex-col overflow-hidden"
                             >
                                 {/* Featured Image with Glass Date Badge */}
@@ -102,7 +109,7 @@ const AllBlogsPage = () => {
                                             {blog.title}
                                         </h3>
                                     </Link>
-                                    
+
                                     <p className="text-gray-500 mb-8 line-clamp-3 text-sm leading-relaxed italic">
                                         {blog.content && blog.content.length > 20
                                             ? blog.content.replace(/<[^>]*>?/gm, '')
@@ -110,8 +117,8 @@ const AllBlogsPage = () => {
                                     </p>
 
                                     <div className="mt-auto pt-6 border-t border-gray-50 flex justify-between items-center">
-                                        <Link 
-                                            to={`/blog/${blog._id}`} 
+                                        <Link
+                                            to={`/blog/${blog._id}`}
                                             className="text-blue-600 font-black flex items-center text-xs tracking-[0.15em] uppercase group/btn"
                                         >
                                             View Full Story
