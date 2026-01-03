@@ -47,6 +47,7 @@ const ContactPage = () => {
                 <meta name="description" content="Contact Kings Pet Hospital for expert veterinary care, grooming, and diagnostics in Rohtak. Visit us near Sheela Cineplex or call +91 8930333373." />
                 <meta property="og:title" content="Contact Us | Kings Pet Hospital" />
                 <meta property="og:description" content="Reach out to Kings Pet Hospital for appointments, emergencies, or general pet health inquiries." />
+                
             </Helmet>
             <Header showHero={false} />
 

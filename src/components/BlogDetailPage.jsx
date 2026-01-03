@@ -95,6 +95,18 @@ const BlogDetailPage = () => {
                 <title>{blog.metaTitle || blog.title} | Kings Pet Hospital</title>
                 <meta name="description" content={blog.metaDescription || blog.content.substring(0, 160)} />
                 <meta name="keywords" content={blog.metaKeywords || "pets, veterinary, hospital"} />
+                <meta name='og:title' content={blog.metaTitle || blog.title} />
+                <meta name='og:description' content={blog.metaDescription || blog.content.substring(0, 160)} />
+                <meta name='og:image' content={blog.metaImage || '/logo.jpg'} />
+                <meta name='og:url' content={blog.metaUrl || 'https://kingspethospital.com'} />
+                <meta name='og:type' content='article' />
+                <meta name='og:site_name' content='Kings Pet Hospital' />
+                <meta name='twitter:title' content={blog.metaTitle || blog.title} />
+                <meta name='twitter:description' content={blog.metaDescription || blog.content.substring(0, 160)} />
+                <meta name='twitter:image' content={blog.metaImage || '/logo.jpg'} />
+                <meta name='twitter:url' content={blog.metaUrl || 'https://kingspethospital.com'} />
+                <meta name='twitter:card' content='summary_large_image' />
+                
             </Helmet>
 
             <Header showHero={false} />

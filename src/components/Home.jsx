@@ -96,6 +96,7 @@ const Home = () => {
         <div className="min-h-screen bg-gray-50 font-sans antialiased">
             <Helmet>
                 <title>{seo.title}</title>
+                <meta name='title' content={seo.title} />
                 <meta name="description" content={seo.metaDescription || seo.description} />
                 <meta property="og:title" content={seo.title} />
                 <meta property="og:description" content={seo.metaDescription || seo.description} />
