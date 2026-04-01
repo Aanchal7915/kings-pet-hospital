@@ -8,11 +8,32 @@ import About from './About';
 import BlogFeed from './BlogFeed';
 import BookingForm from './BookingForm';
 import { Helmet } from 'react-helmet-async';
+import { useLocation } from 'react-router-dom';
 
 const Home = () => {
+    const location = useLocation();
     const bookingSectionRef = useRef(null);
-    const [activeSection, setActiveSection] = useState('home');
+    const [activeSection, setActiveSection] = useState(() => {
+        // Initialize active section from URL path (sync with unique SEO paths)
+        const path = window.location.pathname.replace('/', '');
+        return path || 'home';
+    });
     const [dynamicSEO, setDynamicSEO] = useState({});
+
+    // Auto-scroll to section on initial load AND on every route change
+    useEffect(() => {
+        const path = location.pathname.replace('/', '');
+        if (path && path !== 'home') {
+            const element = document.getElementById(path);
+            if (element) {
+                setTimeout(() => {
+                    element.scrollIntoView({ behavior: 'smooth' });
+                }, 100); 
+            }
+        } else if (path === '' || path === 'home') {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    }, [location.pathname]);
 
     // Fetch SEO data from Database
     useEffect(() => {

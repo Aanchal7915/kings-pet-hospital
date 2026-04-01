@@ -65,19 +65,20 @@ const Header = ({ showHeroImage = false, showHero = true }) => {
   const getNavLink = (item) => {
     const sectionId = item.toLowerCase();
 
-    // Handle specific cases
-    if (item === 'Contact') return '/contact';
+    // Mapping for real paths to support unique View Source SEO
+    const pathMap = {
+      'Home': '/',
+      'Services': '/services',
+      'Gallery': '/gallery',
+      'About': '/about',
+      'Team': '/team',
+      'Blog': '/blog',
+      'Contact': '/contact',
+      'Booking': '/booking',
+      'Pets care': '/pets-care'
+    };
 
-    // On home page, Blog and other sections should be anchor links
-    if (isHome) {
-      if (item === 'Blog') return '#blog';
-      return `#${sectionId}`;
-    }
-
-    // On other pages, Blog goes to the full blog page
-    if (item === 'Blog') return '/blog';
-
-    return `/#${sectionId}`;
+    return pathMap[item] || `/${sectionId}`;
   };
 
   return (

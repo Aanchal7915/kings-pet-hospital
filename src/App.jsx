@@ -18,6 +18,11 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/services" element={<Home />} />
+        <Route path="/gallery" element={<Home />} />
+        <Route path="/about" element={<Home />} />
+        <Route path="/team" element={<Home />} />
+        <Route path="/booking" element={<Home />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/pets-care" element={<PetsCareLanding />} />
         <Route path="/blog" element={<AllBlogsPage />} />
