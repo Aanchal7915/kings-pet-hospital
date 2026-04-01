@@ -22,7 +22,16 @@ const Home = () => {
 
     // Auto-scroll to section on initial load AND on every route change
     useEffect(() => {
-        const path = location.pathname.replace('/', '');
+        // Detect current section from URL (path without leading slash)
+        const path = location.pathname.split('/').filter(p => p)[0] || 'home';
+        setActiveSection(path);
+        
+        // Sync dynamic title from DB after load
+        const currentSEO = dynamicSEO[path] || dynamicSEO.home;
+        if (currentSEO && currentSEO.title) {
+            document.title = currentSEO.title;
+        }
+
         if (path && path !== 'home') {
             const element = document.getElementById(path);
             if (element) {
