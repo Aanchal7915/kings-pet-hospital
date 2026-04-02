@@ -1,26 +1,21 @@
 {
   "version": 2,
-  "cleanUrls": true,
-  "trailingSlash": false,
   "rewrites": [
     {
       "source": "/api/(.*)",
       "destination": "https://kings-pet-backend-1.onrender.com/api/$1"
     },
     {
-      "source": "/assets/(.*)",
-      "destination": "/assets/$1"
+      "source": "/admin/(.*)",
+      "destination": "https://kings-pet-backend-1.onrender.com/admin/$1"
+    },
+    {
+      "source": "/(assets/.*)",
+      "destination": "/$1"
     },
     {
       "source": "/(.*)",
-      "destination": "/api/server"
+      "destination": "https://kings-pet-backend-1.onrender.com/$1"
     }
-  ],
-  "functions": {
-    "api/server.js": {
-      "memory": 1024,
-      "maxDuration": 10,
-      "includeFiles": "dist/**"
-    }
-  }
+  ]
 }
