@@ -12,6 +12,10 @@
   "dependencies": {
     "@tailwindcss/vite": "^4.1.11",
     "axios": "^1.13.2",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.0",
+    "express": "^5.2.1",
+    "mongoose": "^9.3.3",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-helmet-async": "^2.0.5",
