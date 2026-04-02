@@ -1,20 +1,17 @@
 {
+  "version": 2,
   "rewrites": [
     {
       "source": "/api/:path*",
       "destination": "https://kings-pet-backend-1.onrender.com/api/:path*"
     },
     {
-      "source": "/admin/:path*",
-      "destination": "https://kings-pet-backend-1.onrender.com/admin/:path*"
-    },
-    {
-      "source": "/(services|gallery|about|team|blog|contact|booking|blog/.*|pets-care|privacy|terms|privacy-policy|terms-of-service)",
-      "destination": "https://kings-pet-backend-1.onrender.com/:path*"
+       "source": "/(services|gallery|about|team|blog|contact|booking|blog/.*|pets-care|privacy|terms|privacy-policy|terms-of-service)",
+       "destination": "https://kings-pet-backend-1.onrender.com/:path*"
     },
     {
        "source": "/",
-       "destination": "https://kings-pet-backend-1.onrender.com"
+       "destination": "https://kings-pet-backend-1.onrender.com/"
     }
   ]
 }
