@@ -8,16 +8,12 @@
       "destination": "https://kings-pet-backend-1.onrender.com/api/$1"
     },
     {
-      "source": "/admin/(.*)",
+      "source": "/admin/api/(.*)",
       "destination": "https://kings-pet-backend-1.onrender.com/admin/$1"
     },
     {
-      "source": "/assets/(.*)",
-      "destination": "/assets/$1"
-    },
-    {
       "source": "/(.*)",
-      "destination": "https://kings-pet-backend-1.onrender.com/$1"
+      "destination": "/index.html"
     }
   ]
 }
