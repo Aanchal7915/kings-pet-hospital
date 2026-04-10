@@ -4,16 +4,8 @@
   "trailingSlash": false,
   "rewrites": [
     {
-      "source": "/api/(.*)",
-      "destination": "https://kings-pet-backend-1.onrender.com/api/$1"
-    },
-    {
-      "source": "/admin/api/(.*)",
-      "destination": "https://kings-pet-backend-1.onrender.com/admin/$1"
-    },
-    {
       "source": "/(.*)",
-      "destination": "/index.html"
+      "destination": "/"
     }
   ]
 }
