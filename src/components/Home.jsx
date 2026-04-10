@@ -3,12 +3,20 @@ import axios from 'axios';
 import Header from './Header';
 import Footer from './Footer';
 import Services from './Services';
+import FeaturedProducts from './FeaturedProducts';
+import OurProducts from './OurProducts';
 import Gallery from './Gallery';
 import About from './About';
 import BlogFeed from './BlogFeed';
+import HowItWorks from './HowItWorks';
+import DoctorsTeaser from './DoctorsTeaser';
+import Testimonials from './Testimonials';
 import BookingForm from './BookingForm';
+import ToastContainer from './utils/Toast';
 import { Helmet } from 'react-helmet-async';
 import { useLocation } from 'react-router-dom';
+
+const PUBLIC_TITLE = 'Kings Pet Hospital | Best Veterinary Care';
 
 const Home = () => {
     const location = useLocation();
@@ -26,12 +34,6 @@ const Home = () => {
         const path = location.pathname.split('/').filter(p => p)[0] || 'home';
         setActiveSection(path);
         
-        // Sync dynamic title from DB after load
-        const currentSEO = dynamicSEO[path] || dynamicSEO.home;
-        if (currentSEO && currentSEO.title) {
-            document.title = currentSEO.title;
-        }
-
         if (path && path !== 'home') {
             const element = document.getElementById(path);
             if (element) {
@@ -111,24 +113,17 @@ const Home = () => {
     }, []);
 
     const seo = dynamicSEO[activeSection] || dynamicSEO.home || {
-        title: "Kings Pet Hospital | Best Veterinary Care",
+        title: PUBLIC_TITLE,
         metaDescription: "Professional pet care services in Faridabad and Rohtak."
     };
-
-    // Manual fallback to ensure the browser tab title ALWAYS updates
-    useEffect(() => {
-        if (seo.title) {
-            document.title = seo.title;
-        }
-    }, [seo.title, activeSection]);
 
     return (
         <div className="min-h-screen bg-gray-50 font-sans antialiased">
             <Helmet>
-                <title>{seo.title}</title>
-                <meta name='title' content={seo.title} />
+                <title>{PUBLIC_TITLE}</title>
+                <meta name='title' content={PUBLIC_TITLE} />
                 <meta name="description" content={seo.metaDescription || seo.description} />
-                <meta property="og:title" content={seo.title} />
+                <meta property="og:title" content={PUBLIC_TITLE} />
                 <meta property="og:description" content={seo.metaDescription || seo.description} />
             </Helmet>
 
@@ -138,12 +133,38 @@ const Home = () => {
                 {seo.seoText && <p>{seo.seoText}</p>}
             </div>
 
+            {/* Toast Notification Container */}
+            <ToastContainer />
+
             <Header showHeroImage={false} />
             <main className="relative z-10">
+                {/* Hero Banner - in Header */}
+                
+                {/* Featured Products */}
+                <FeaturedProducts />
+                
+                {/* All Services */}
                 <Services />
+                
+                {/* How It Works */}
+                <HowItWorks />
+                
+                {/* Doctors Teaser */}
+                <DoctorsTeaser />
+                
+                {/* Testimonials */}
+                <Testimonials />
+                
+                {/* Gallery */}
                 <Gallery />
+                
+                {/* About Section */}
                 <About />
+                
+                {/* Blog Feed */}
                 <BlogFeed />
+                
+                {/* Booking Section */}
                 <section id="booking" ref={bookingSectionRef} className="py-16 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 relative overflow-hidden">
                     {/* Animated background elements */}
                     <div className="absolute top-0 left-0 w-72 h-72 bg-blue-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-float"></div>

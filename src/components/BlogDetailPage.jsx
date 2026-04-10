@@ -5,6 +5,8 @@ import { Helmet } from 'react-helmet-async';
 import Header from './Header';
 import Footer from './Footer';
 
+const PUBLIC_TITLE = 'Kings Pet Hospital | Best Veterinary Care';
+
 const BlogDetailPage = () => {
     const { id } = useParams();
     const [blog, setBlog] = useState(null);
@@ -92,10 +94,10 @@ const BlogDetailPage = () => {
     return (
         <div className="min-h-screen bg-white selection:bg-blue-600 selection:text-white">
             <Helmet>
-                <title>{blog.metaTitle || blog.title} | Kings Pet Hospital</title>
+                <title>{PUBLIC_TITLE}</title>
                 <meta name="description" content={blog.metaDescription || blog.content.substring(0, 160)} />
                 <meta name="keywords" content={blog.metaKeywords || "pets, veterinary, hospital"} />
-                <meta name='og:title' content={blog.metaTitle || blog.title} />
+                <meta name='og:title' content={PUBLIC_TITLE} />
                 <meta name='og:description' content={blog.metaDescription || blog.content.substring(0, 160)} />
                 <meta name='og:image' content={blog.metaImage || '/logo.jpg'} />
                 <meta name='og:url' content={blog.metaUrl || 'https://kingspethospital.com'} />

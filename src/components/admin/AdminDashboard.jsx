@@ -2,6 +2,14 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminBlog from './AdminBlog';
 import AdminSEO from './AdminSEO';
+import AdminBookings from './AdminBookings';
+import AdminAnalytics from './AdminAnalytics';
+import AdminProducts from './AdminProducts';
+import AdminCategories from './AdminCategories';
+import AdminSubCategories from './AdminSubCategories';
+import AdminCatalogOverview from './AdminCatalogOverview';
+import AdminServicesCatalog from './AdminServicesCatalog';
+import AdminPagesCMS from './AdminPagesCMS';
 
 const AdminDashboard = () => {
     const navigate = useNavigate();
@@ -44,6 +52,48 @@ const AdminDashboard = () => {
                                 >
                                     Page SEO
                                 </button>
+                                <button
+                                    onClick={() => setActiveTab('bookings')}
+                                    className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${activeTab === 'bookings' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-500 hover:bg-gray-50'}`}
+                                >
+                                    Bookings
+                                </button>
+                                <button
+                                    onClick={() => setActiveTab('analytics')}
+                                    className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${activeTab === 'analytics' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-500 hover:bg-gray-50'}`}
+                                >
+                                    Analytics
+                                </button>
+                                <button
+                                    onClick={() => setActiveTab('products')}
+                                    className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${activeTab === 'products' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-500 hover:bg-gray-50'}`}
+                                >
+                                    Products
+                                </button>
+                                <button
+                                    onClick={() => setActiveTab('categories')}
+                                    className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${activeTab === 'categories' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-500 hover:bg-gray-50'}`}
+                                >
+                                    Categories
+                                </button>
+                                <button
+                                    onClick={() => setActiveTab('subCategories')}
+                                    className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${activeTab === 'subCategories' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-500 hover:bg-gray-50'}`}
+                                >
+                                    Subcategories
+                                </button>
+                                <button
+                                    onClick={() => setActiveTab('servicesCatalog')}
+                                    className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${activeTab === 'servicesCatalog' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-500 hover:bg-gray-50'}`}
+                                >
+                                    Services
+                                </button>
+                                <button
+                                    onClick={() => setActiveTab('pages')}
+                                    className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${activeTab === 'pages' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-500 hover:bg-gray-50'}`}
+                                >
+                                    Pages
+                                </button>
                             </div>
                         </div>
 
@@ -64,6 +114,8 @@ const AdminDashboard = () => {
 
             <main>
                 <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+                    <AdminCatalogOverview />
+
                     {/* Mobile Navigation */}
                     <div className="flex md:hidden items-center gap-2 mb-4 bg-white p-2 rounded-2xl shadow-sm">
                         <button
@@ -78,13 +130,59 @@ const AdminDashboard = () => {
                         >
                             SEO
                         </button>
+                        <button
+                            onClick={() => setActiveTab('bookings')}
+                            className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${activeTab === 'bookings' ? 'bg-blue-600 text-white' : 'text-gray-500'}`}
+                        >
+                            Bookings
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('analytics')}
+                            className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${activeTab === 'analytics' ? 'bg-blue-600 text-white' : 'text-gray-500'}`}
+                        >
+                            Analytics
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('products')}
+                            className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${activeTab === 'products' ? 'bg-blue-600 text-white' : 'text-gray-500'}`}
+                        >
+                            Products
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('categories')}
+                            className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${activeTab === 'categories' ? 'bg-blue-600 text-white' : 'text-gray-500'}`}
+                        >
+                            Categories
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('subCategories')}
+                            className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${activeTab === 'subCategories' ? 'bg-blue-600 text-white' : 'text-gray-500'}`}
+                        >
+                            Subcategories
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('servicesCatalog')}
+                            className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${activeTab === 'servicesCatalog' ? 'bg-blue-600 text-white' : 'text-gray-500'}`}
+                        >
+                            Services
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('pages')}
+                            className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${activeTab === 'pages' ? 'bg-blue-600 text-white' : 'text-gray-500'}`}
+                        >
+                            Pages
+                        </button>
                     </div>
 
-                    {activeTab === 'blogs' ? (
-                        <AdminBlog isEmbedded={true} />
-                    ) : (
-                        <AdminSEO />
-                    )}
+                    {activeTab === 'blogs' && <AdminBlog isEmbedded={true} />}
+                    {activeTab === 'seo' && <AdminSEO />}
+                    {activeTab === 'bookings' && <AdminBookings />}
+                    {activeTab === 'analytics' && <AdminAnalytics />}
+                    {activeTab === 'products' && <AdminProducts />}
+                    {activeTab === 'categories' && <AdminCategories />}
+                    {activeTab === 'subCategories' && <AdminSubCategories />}
+                    {activeTab === 'servicesCatalog' && <AdminServicesCatalog />}
+                    {activeTab === 'pages' && <AdminPagesCMS />}
                 </div>
             </main>
         </div>

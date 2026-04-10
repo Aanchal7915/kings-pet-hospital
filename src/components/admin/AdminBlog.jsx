@@ -149,7 +149,7 @@ const AdminBlog = ({ isEmbedded = false }) => {
                         onClick={() => { resetForm(); setShowModal(true); }}
                         className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg shadow-blue-200 flex items-center gap-2 group"
                     >
-                        <span className="text-xl group-hover:rotate-90 transition-transform duration-300 transition-all">+</span>
+                        <span className="text-xl group-hover:rotate-90 transition-transform duration-300">+</span>
                         Add New Blog Post
                     </button>
                 </div>
@@ -226,7 +226,11 @@ const AdminBlog = ({ isEmbedded = false }) => {
                                             <td className="p-5 text-gray-400 font-medium">{indexOfFirstEntry + index + 1}</td>
                                             <td className="p-5 w-24">
                                                 <div className="relative">
-                                                    <img src={blog.image} alt="thumbnail" className="w-16 h-12 object-cover rounded-lg shadow-sm bg-gray-100" />
+                                                    {blog.image?.trim() ? (
+                                                        <img src={blog.image} alt="thumbnail" className="w-16 h-12 object-cover rounded-lg shadow-sm bg-gray-100" />
+                                                    ) : (
+                                                        <div className="w-16 h-12 rounded-lg shadow-sm bg-gray-100 flex items-center justify-center text-[10px] text-gray-500">No Image</div>
+                                                    )}
                                                     <div className="absolute inset-0 ring-1 ring-inset ring-black/5 rounded-lg"></div>
                                                 </div>
                                             </td>
@@ -307,9 +311,9 @@ const AdminBlog = ({ isEmbedded = false }) => {
 
             {/* Modal for Add/Edit */}
             {showModal && (
-                <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">
+                <div className="fixed inset-0 z-60 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">
                     <div className="bg-white rounded-2xl shadow-2xl w-full max-w-5xl my-auto overflow-hidden">
-                        <div className="bg-gradient-to-r from-blue-700 to-indigo-700 p-6 flex justify-between items-center text-white">
+                        <div className="bg-linear-to-r from-blue-700 to-indigo-700 p-6 flex justify-between items-center text-white">
                             <div>
                                 <h3 className="text-2xl font-bold">{isEditing ? 'Edit Blog Post' : 'Create New Blog Post'}</h3>
                                 <p className="text-blue-100 text-sm opacity-90">Fill in the details below to publish your blog</p>
@@ -358,10 +362,10 @@ const AdminBlog = ({ isEmbedded = false }) => {
                                             className="w-full border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all border shadow-sm"
                                             placeholder="Elegant dog portrait"
                                         />
-                                        {currentBlog.image && (
+                                        {currentBlog.image?.trim() && (
                                             <div className="mt-2 p-1.5 bg-gray-50 border rounded-lg">
                                                 <img
-                                                    src={currentBlog.image}
+                                                    src={currentBlog.image?.trim() || undefined}
                                                     alt={currentBlog.altText || "Preview"}
                                                     className="w-full h-24 object-cover rounded shadow-inner"
                                                     onError={(e) => e.target.style.display = 'none'}

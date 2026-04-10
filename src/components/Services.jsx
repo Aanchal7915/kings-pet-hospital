@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import axios from 'axios';
 
+/*
 const services = [
   {
     name: 'Vaccination',
@@ -114,6 +116,7 @@ const services = [
     features: ['Oscillometric method', 'Hypertension screening', 'Report with vet advice']
   },
 ];
+*/
 
 const whatsappNumber = '918222993333'; // Use country code, e.g., 91 for India
 
@@ -125,9 +128,80 @@ function openWhatsApp(serviceName) {
 }
 
 const Services = () => {
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+  const [services, setServices] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [showAll, setShowAll] = useState(false);
   const VISIBLE_COUNT = 6;
-  const visibleServices = showAll ? services : services.slice(0, VISIBLE_COUNT);
+
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const { data } = await axios.get(`${API_URL}/api/catalog/services`);
+        setServices(Array.isArray(data?.data) ? data.data : []);
+      } catch (_error) {
+        setServices([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchServices();
+  }, [API_URL]);
+
+  const visibleServices = useMemo(
+    () => (showAll ? services : services.slice(0, VISIBLE_COUNT)),
+    [showAll, services]
+  );
+
+  const getImage = (service) => service.image || service.variants?.[0]?.image || '/logo.jpg';
+
+  const getPriceLabel = (service) => {
+    const prices = (service.variants || [])
+      .map((variant) => Number(variant.price || 0))
+      .filter((price) => price > 0);
+
+    if (prices.length === 0) return 'Consultation required';
+    const minPrice = Math.min(...prices);
+    return `Starting from ₹${minPrice.toLocaleString('en-IN')}`;
+  };
+
+  const getFeatures = (service) => {
+    const variantFeatures = (service.variants || [])
+      .map((variant) => variant.variantName)
+      .filter(Boolean)
+      .slice(0, 3);
+
+    if (variantFeatures.length > 0) return variantFeatures;
+    return ['Expert veterinary care', 'Professional support', 'Safe treatment protocols'];
+  };
+
+  if (loading) {
+    return (
+      <section className="py-20 bg-gradient-to-b from-gray-50 to-white" id="services">
+        <div className="max-w-7xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">Our Premium Pet Services</h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">Loading services...</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (!loading && services.length === 0) {
+    return (
+      <section className="py-20 bg-gradient-to-b from-gray-50 to-white" id="services">
+        <div className="max-w-7xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">Our Premium Pet Services</h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">No services available right now. Please add services from Admin panel.</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="py-20 bg-gradient-to-b from-gray-50 to-white" id="services">
       <div className="max-w-7xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8">
@@ -153,13 +227,17 @@ const Services = () => {
               <div className="relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-t from-blue-600/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10"></div>
                 <img
-                  src={service.imageUrl}
+                  src={getImage(service)}
                   alt={service.name}
                   loading="lazy"
                   className="w-full h-32 md:h-44 lg:h-40 object-cover transition-transform duration-700 group-hover:scale-125"
+                  onError={(e) => {
+                    if (e.currentTarget.src.endsWith('/logo.jpg')) return;
+                    e.currentTarget.src = '/logo.jpg';
+                  }}
                 />
                 <div className="absolute top-0 right-0 bg-gradient-to-br from-blue-600 to-purple-600 text-white px-2 py-1 md:px-3 md:py-1.5 rounded-bl-lg text-xs md:text-sm font-semibold shadow-lg transform group-hover:scale-110 transition-transform duration-300">
-                  {service.price}
+                  {getPriceLabel(service)}
                 </div>
               </div>
               <div className="p-3 md:p-4 lg:p-4">
@@ -171,7 +249,7 @@ const Services = () => {
                 </p>
                 <div className="border-t pt-2 md:pt-2 lg:pt-2">
                   <ul className="space-y-0.5 md:space-y-1">
-                    {service.features.map((feature, idx) => (
+                    {getFeatures(service).map((feature, idx) => (
                       <li key={idx} className="flex items-start text-gray-600">
                         <svg className="w-3 h-3 md:w-3.5 md:h-3.5 lg:w-4 lg:h-4 text-blue-500 mr-1 md:mr-2 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />

@@ -5,6 +5,8 @@ import Footer from './Footer';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 
+const PUBLIC_TITLE = 'Kings Pet Hospital | Best Veterinary Care';
+
 const AllBlogsPage = () => {
     const [blogs, setBlogs] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -29,9 +31,9 @@ const AllBlogsPage = () => {
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col">
             <Helmet>
-                <title>Pet Health Journal | Kings Pet Hospital - Rohtak</title>
+                <title>{PUBLIC_TITLE}</title>
                 <meta name="description" content="Read the latest pet care articles, health tips, and hospital updates from Kings Pet Hospital. Expert advice for your dogs and cats." />
-                <meta property="og:title" content="Pet Health Journal | Kings Pet Hospital" />
+                <meta property="og:title" content={PUBLIC_TITLE} />
                 <meta property="og:description" content="Professional pet care insights and stories from our veterinary team." />
             </Helmet>
             <Header showHero={false} />

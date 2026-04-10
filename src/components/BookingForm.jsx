@@ -1,346 +1,224 @@
-import React, { useState } from 'react';
-import { SlCalender } from "react-icons/sl";
-import { MdLock } from "react-icons/md";
-
-const petServices = [
-    'Vaccination',
-    'Surgery',
-    'Grooming',
-    'Dental Care',
-    'Health Checkup',
-    'Emergency Care',
-    'Other'
-];
-
-const whatsappNumber = '+918222993333';
+import React, { useEffect, useMemo, useState } from 'react';
+import axios from 'axios';
+import { FaRegCalendarAlt, FaRegCommentDots, FaLock } from 'react-icons/fa';
 
 const BookingForm = () => {
-    const [formData, setFormData] = useState({
-        petOwnerName: '',
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
+  const [services, setServices] = useState([]);
+  const [loadingServices, setLoadingServices] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+
+  const [form, setForm] = useState({
+    customerName: '',
+    phone: '',
+    email: '',
+    serviceId: '',
+    preferredDate: '',
+    notes: '',
+  });
+
+  const selectedService = useMemo(
+    () => services.find((service) => service._id === form.serviceId) || null,
+    [services, form.serviceId]
+  );
+
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const { data } = await axios.get(`${API_URL}/api/catalog/services`);
+        setServices(data?.data || []);
+      } catch (_error) {
+        setError('Unable to load services right now. Please try again shortly.');
+      } finally {
+        setLoadingServices(false);
+      }
+    };
+
+    fetchServices();
+  }, [API_URL]);
+
+  useEffect(() => {
+    const onBookService = (event) => {
+      const detail = event?.detail || {};
+      if (!detail.serviceId) return;
+      setForm((prev) => ({ ...prev, serviceId: detail.serviceId }));
+    };
+
+    window.addEventListener('book-service', onBookService);
+    return () => window.removeEventListener('book-service', onBookService);
+  }, []);
+
+  const updateField = (field, value) => {
+    setError('');
+    setSuccess('');
+    setForm((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const validate = () => {
+    if (!form.customerName.trim()) return 'Please enter your full name.';
+    if (!/^[0-9]{10}$/.test(form.phone.trim())) return 'Please enter a valid 10-digit mobile number.';
+    if (!form.email.trim()) return 'Please enter your email address.';
+    if (!form.serviceId) return 'Please select a service.';
+    return '';
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const validationError = validate();
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
+    try {
+      setSubmitting(true);
+      setError('');
+      setSuccess('');
+
+      const payload = {
+        customerName: form.customerName.trim(),
+        phone: form.phone.trim(),
+        email: form.email.trim(),
+        serviceId: form.serviceId,
+        preferredDate: form.preferredDate || undefined,
+        notes: form.notes.trim(),
+      };
+
+      const { data } = await axios.post(`${API_URL}/api/bookings`, payload);
+      const bookingId = data?.data?._id;
+      setSuccess(`Appointment request submitted${bookingId ? ` (ID: ${bookingId})` : ''}.`);
+      setForm({
+        customerName: '',
         phone: '',
         email: '',
-        service: [],
-        otherService: '',
+        serviceId: '',
         preferredDate: '',
-        notes: ''
-    });
+        notes: '',
+      });
+    } catch (submitError) {
+      setError(submitError.response?.data?.error || 'Unable to submit appointment request.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
-    const [errors, setErrors] = useState({});
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [isServiceDropdownOpen, setIsServiceDropdownOpen] = useState(false);
+  return (
+    <div className="max-w-2xl mx-auto rounded-2xl overflow-hidden shadow-xl bg-white/95">
+      <div
+        className="bg-linear-to-r from-blue-600 via-violet-600 to-indigo-700 animate-gradient text-white text-center py-3 px-4"
+        style={{ backgroundSize: '220% 220%' }}
+      >
+        <h3 className="text-lg md:text-2xl font-black tracking-tight flex items-center justify-center gap-2">
+          <FaRegCalendarAlt className="text-base md:text-lg" />
+          Book Appointment
+        </h3>
+        <p className="text-white/90 mt-1 text-[11px] md:text-xs font-medium leading-none">Quick & Easy Booking</p>
+      </div>
 
-    const validateField = (name, value) => {
-        let error = '';
+      <form onSubmit={handleSubmit} className="p-3 md:p-4 space-y-2.5">
+        {error && <div className="rounded-lg border border-red-200 bg-red-50 text-red-700 px-4 py-3 text-sm">{error}</div>}
+        {success && <div className="rounded-lg border border-emerald-200 bg-emerald-50 text-emerald-700 px-4 py-3 text-sm">{success}</div>}
 
-        if (name === 'petOwnerName' && value.trim().length < 2) {
-            error = 'Name must be at least 2 characters';
-        }
-
-        if (name === 'phone') {
-            const phoneRegex = /^[0-9]{10}$/;
-            if (!phoneRegex.test(value)) {
-                error = 'Please enter a valid 10-digit phone number';
-            }
-        }
-
-        if (name === 'email') {
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(value)) {
-                error = 'Please enter a valid email address';
-            }
-        }
-
-        if (name === 'service' && value.length === 0) {
-            error = 'Please select at least one service';
-        }
-
-        setErrors(prev => ({ ...prev, [name]: error }));
-        return !error;
-    };
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
-        validateField(name, value);
-    };
-
-    const toggleService = (serviceName) => {
-        setFormData(prev => {
-            const currentServices = prev.service;
-            let newServices;
-            if (currentServices.includes(serviceName)) {
-                newServices = currentServices.filter(s => s !== serviceName);
-            } else {
-                newServices = [...currentServices, serviceName];
-            }
-            validateField('service', newServices);
-            return { ...prev, service: newServices };
-        });
-    };
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-
-        // Validate all fields
-        const isNameValid = validateField('petOwnerName', formData.petOwnerName);
-        const isPhoneValid = validateField('phone', formData.phone);
-        const isEmailValid = validateField('email', formData.email);
-        const isServiceValid = validateField('service', formData.service);
-        let isOtherServiceValid = true;
-
-        if (formData.service.includes('Other') && !formData.otherService.trim()) {
-            setErrors(prev => ({ ...prev, otherService: 'Please specify the service' }));
-            isOtherServiceValid = false;
-        }
-
-        if (!isNameValid || !isPhoneValid || !isEmailValid || !isServiceValid || !isOtherServiceValid) {
-            return;
-        }
-
-        setIsSubmitting(true);
-
-        // Create WhatsApp message
-        const message = `
-🐾 *New Appointment Request*
-
-*Owner Name:* ${formData.petOwnerName}
-*Phone:* ${formData.phone}
-*Email:* ${formData.email}
-    *Services:* ${formData.service.join(', ')}
-${formData.service.includes('Other') && formData.otherService ? `*Other Service Details:* ${formData.otherService}` : ''}
-${formData.preferredDate ? `*Preferred Date:* ${formData.preferredDate}` : ''}
-${formData.notes ? `*Notes:* ${formData.notes}` : ''}
-    `.trim();
-
-        const encodedMessage = encodeURIComponent(message);
-        window.open(`https://wa.me/${whatsappNumber}?text=${encodedMessage}`, '_blank');
-
-        // Reset form
-        setTimeout(() => {
-            setFormData({
-                petOwnerName: '',
-                phone: '',
-                email: '',
-                service: [],
-                otherService: '',
-                preferredDate: '',
-                notes: ''
-            });
-            setErrors({});
-            setIsSubmitting(false);
-            setIsServiceDropdownOpen(false);
-        }, 1000);
-    };
-
-    return (
-        <div className="bg-white rounded-xl shadow-xl p-4 md:p-6 max-w-lg mx-auto transform transition-all duration-500 hover:shadow-2xl hover:scale-[1.02]">
-            <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 -mx-4 -mt-4 md:-mx-6 md:-mt-6 rounded-t-lg p-3 mb-4 relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-shimmer"></div>
-                <h3 className="text-xl md:text-2xl font-bold text-white text-center relative z-10">
-                    <SlCalender className='inline text-xl' /> {'   '}
-                    Book Appointment
-                </h3>
-                <p className="text-blue-100 text-center text-xs mt-0.5 relative z-10">
-                    Quick & Easy Booking
-                </p>
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-3">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {/* Pet Owner Name */}
-                    <div>
-                        <label className="block text-xs font-bold text-gray-700 mb-1">
-                            Your Name *
-                        </label>
-                        <input
-                            type="text"
-                            name="petOwnerName"
-                            value={formData.petOwnerName}
-                            onChange={handleChange}
-                            placeholder="Full Name"
-                            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 text-gray-800 transform focus:scale-[1.02]"
-                        />
-                        {errors.petOwnerName && (
-                            <p className="text-red-500 text-[10px] mt-0.5">{errors.petOwnerName}</p>
-                        )}
-                    </div>
-
-                    {/* Phone */}
-                    <div>
-                        <label className="block text-xs font-bold text-gray-700 mb-1">
-                            Phone Number *
-                        </label>
-                        <input
-                            type="tel"
-                            name="phone"
-                            value={formData.phone}
-                            onChange={handleChange}
-                            placeholder="10-digit Mobile"
-                            maxLength="10"
-                            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 text-gray-800 transform focus:scale-[1.02]"
-                        />
-                        {errors.phone && (
-                            <p className="text-red-500 text-[10px] mt-0.5">{errors.phone}</p>
-                        )}
-                    </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {/* Email ID */}
-                    <div>
-                        <label className="block text-xs font-bold text-gray-700 mb-1">
-                            Email ID *
-                        </label>
-                        <input
-                            type="email"
-                            name="email"
-                            value={formData.email}
-                            onChange={handleChange}
-                            placeholder="Email Address"
-                            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 text-gray-800 transform focus:scale-[1.02]"
-                        />
-                        {errors.email && (
-                            <p className="text-red-500 text-[10px] mt-0.5">{errors.email}</p>
-                        )}
-                    </div>
-
-                    {/* Service Selection - Multi Select */}
-                    <div className="relative">
-                        <label className="block text-xs font-bold text-gray-700 mb-1">
-                            Select Services *
-                        </label>
-                        <button
-                            type="button"
-                            onClick={() => setIsServiceDropdownOpen(!isServiceDropdownOpen)}
-                            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:border-blue-500 focus:outline-none transition-colors text-gray-800 bg-white text-left flex justify-between items-center"
-                        >
-                            <span className="truncate">
-                                {formData.service.length > 0
-                                    ? `${formData.service.length} Selected`
-                                    : 'Choose...'}
-                            </span>
-                            <svg className={`w-4 h-4 transition-transform ${isServiceDropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                            </svg>
-                        </button>
-
-                        {isServiceDropdownOpen && (
-                            <div className="absolute z-50 mt-1 w-full bg-white border border-gray-200 rounded-md shadow-lg max-h-48 overflow-y-auto">
-                                {petServices.map((service) => (
-                                    <label key={service} className="flex items-center px-3 py-2 hover:bg-gray-50 cursor-pointer text-sm">
-                                        <input
-                                            type="checkbox"
-                                            checked={formData.service.includes(service)}
-                                            onChange={() => toggleService(service)}
-                                            className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
-                                        />
-                                        <span className="ml-2 text-gray-700">{service}</span>
-                                    </label>
-                                ))}
-                            </div>
-                        )}
-
-                        {errors.service && (
-                            <p className="text-red-500 text-[10px] mt-0.5">{errors.service}</p>
-                        )}
-                    </div>
-                </div>
-
-                {/* Selected Services Tags */}
-                {formData.service.length > 0 && (
-                    <div className="flex flex-wrap gap-1">
-                        {formData.service.map(s => (
-                            <span key={s} className="bg-blue-100 text-blue-800 text-[10px] font-medium px-2 py-0.5 rounded-full flex items-center">
-                                {s}
-                                <button
-                                    type="button"
-                                    onClick={() => toggleService(s)}
-                                    className="ml-1 text-blue-600 hover:text-blue-800 focus:outline-none"
-                                >
-                                    ×
-                                </button>
-                            </span>
-                        ))}
-                    </div>
-                )}
-
-                {/* Other Service Specification */}
-                {formData.service.includes('Other') && (
-                    <div className="animate-fadeIn">
-                        <label className="block text-xs font-bold text-gray-700 mb-1">
-                            Please Specify Service *
-                        </label>
-                        <input
-                            type="text"
-                            name="otherService"
-                            value={formData.otherService}
-                            onChange={handleChange}
-                            placeholder="Please specify..."
-                            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 text-gray-800 transform focus:scale-[1.02]"
-                        />
-                        {errors.otherService && (
-                            <p className="text-red-500 text-[10px] mt-0.5">{errors.otherService}</p>
-                        )}
-                    </div>
-                )}
-
-                {/* Preferred Date */}
-                <div>
-                    <label className="block text-xs font-bold text-gray-700 mb-1">
-                        Preferred Date (Optional)
-                    </label>
-                    <input
-                        type="date"
-                        name="preferredDate"
-                        value={formData.preferredDate}
-                        onChange={handleChange}
-                        min={new Date().toISOString().split('T')[0]}
-                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:border-blue-500 focus:outline-none transition-colors text-gray-800"
-                    />
-                </div>
-
-                {/* Notes */}
-                <div>
-                    <label className="block text-xs font-bold text-gray-700 mb-1">
-                        Notes (Optional)
-                    </label>
-                    <textarea
-                        name="notes"
-                        value={formData.notes}
-                        onChange={handleChange}
-                        placeholder="Special requirements..."
-                        rows="2"
-                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:border-blue-500 focus:outline-none transition-colors text-gray-800 resize-none"
-                    />
-                </div>
-
-                {/* Submit Button */}
-                <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="w-full bg-gradient-to-r from-blue-600 via-purple-600 to-blue-700 text-white py-2.5 px-4 rounded-md font-bold text-base transition-all duration-300 hover:from-blue-700 hover:via-purple-700 hover:to-blue-800 hover:shadow-lg hover:shadow-blue-500/50 hover:-translate-y-1 hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-blue-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-2 transform active:scale-95"
-                >
-                    {isSubmitting ? (
-                        <>
-                            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                            Sending...
-                        </>
-                    ) : (
-                        <>
-                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                            </svg>
-                            Book Now
-                        </>
-                    )}
-                </button>
-            </form>
-
-            <p className="text-center text-[10px] text-gray-500 mt-3">
-                <MdLock className="inline text-[15px]" /> Information secured & sent via WhatsApp
-            </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+          <div>
+            <label className="block text-[11px] md:text-xs font-bold text-gray-700 mb-1">Your Name *</label>
+            <input
+              type="text"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Full Name"
+              value={form.customerName}
+              onChange={(e) => updateField('customerName', e.target.value)}
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-[11px] md:text-xs font-bold text-gray-700 mb-1">Phone Number *</label>
+            <input
+              type="tel"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="10-digit Mobile"
+              value={form.phone}
+              onChange={(e) => updateField('phone', e.target.value.replace(/[^0-9]/g, '').slice(0, 10))}
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-[11px] md:text-xs font-bold text-gray-700 mb-1">Email ID *</label>
+            <input
+              type="email"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Email Address"
+              value={form.email}
+              onChange={(e) => updateField('email', e.target.value)}
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-[11px] md:text-xs font-bold text-gray-700 mb-1">Select Services *</label>
+            <select
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+              value={form.serviceId}
+              onChange={(e) => updateField('serviceId', e.target.value)}
+              disabled={loadingServices}
+              required
+            >
+              <option value="">{loadingServices ? 'Loading services...' : 'Choose...'}</option>
+              {services.map((service) => (
+                <option key={service._id} value={service._id}>
+                  {service.name}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
-    );
+
+        <div>
+          <label className="block text-[11px] md:text-xs font-bold text-gray-700 mb-1">Preferred Date (Optional)</label>
+          <input
+            type="date"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500"
+            value={form.preferredDate}
+            onChange={(e) => updateField('preferredDate', e.target.value)}
+          />
+        </div>
+
+        <div>
+          <label className="block text-[11px] md:text-xs font-bold text-gray-700 mb-1">Notes (Optional)</label>
+          <textarea
+            rows={3}
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+            placeholder="Special requirements..."
+            value={form.notes}
+            onChange={(e) => updateField('notes', e.target.value)}
+          />
+        </div>
+
+        {selectedService && (
+          <p className="text-sm text-gray-500">
+            Selected service: <span className="font-semibold text-gray-700">{selectedService.name}</span>
+          </p>
+        )}
+
+        <button
+          type="submit"
+          disabled={submitting || loadingServices}
+          className="w-full bg-linear-to-r from-blue-600 via-violet-600 to-indigo-700 hover:from-blue-700 hover:via-violet-700 hover:to-indigo-800 text-white rounded-lg py-2.5 text-base md:text-lg font-black tracking-wide disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 animate-gradient"
+          style={{ backgroundSize: '220% 220%' }}
+        >
+          <FaRegCommentDots className="text-sm md:text-base" />
+          {submitting ? 'Booking...' : 'Book Now'}
+        </button>
+
+        <div className="flex items-center justify-center gap-2 text-gray-500 text-sm">
+          <FaLock />
+          <span>Information secured & sent via WhatsApp</span>
+        </div>
+      </form>
+    </div>
+  );
 };
 
 export default BookingForm;

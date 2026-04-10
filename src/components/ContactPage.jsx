@@ -3,6 +3,8 @@ import Header from './Header';
 import Footer from './Footer';
 import { Helmet } from 'react-helmet-async';
 
+const PUBLIC_TITLE = 'Kings Pet Hospital | Best Veterinary Care';
+
 const contactInfo = [
     {
         title: 'Visit Us',
@@ -43,9 +45,9 @@ const ContactPage = () => {
     return (
         <div className="min-h-screen bg-gray-50 font-sans antialiased">
             <Helmet>
-                <title>Contact Us | Kings Pet Hospital - Rohtak, Haryana</title>
+                <title>{PUBLIC_TITLE}</title>
                 <meta name="description" content="Contact Kings Pet Hospital for expert veterinary care, grooming, and diagnostics in Rohtak. Visit us near Sheela Cineplex or call +91 8930333373." />
-                <meta property="og:title" content="Contact Us | Kings Pet Hospital" />
+                <meta property="og:title" content={PUBLIC_TITLE} />
                 <meta property="og:description" content="Reach out to Kings Pet Hospital for appointments, emergencies, or general pet health inquiries." />
                 
             </Helmet>

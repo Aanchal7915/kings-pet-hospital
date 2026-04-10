@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, Link } from 'react-router-dom';
+import { useLocation, Link, useNavigate } from 'react-router-dom';
 import BookingForm from './BookingForm';
 
 const whatsappNumber = '+918222993333';
@@ -47,6 +47,7 @@ const Header = ({ showHeroImage = false, showHero = true }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const isHome = location.pathname === '/';
 
   // FIX: This variable determines if the navbar should look "Active" (White bg, Blue/Gray text)
@@ -62,23 +63,45 @@ const Header = ({ showHeroImage = false, showHero = true }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const getNavLink = (item) => {
-    const sectionId = item.toLowerCase();
+  const scrollToSection = (sectionId) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
 
-    // Mapping for real paths to support unique View Source SEO
-    const pathMap = {
-      'Home': '/',
-      'Services': '/services',
-      'Gallery': '/gallery',
-      'About': '/about',
-      'Team': '/team',
-      'Blog': '/blog',
-      'Contact': '/contact',
-      'Booking': '/booking',
-      'Pets care': '/pets-care'
+  const handleNavClick = (item) => {
+    setIsMenuOpen(false);
+
+    if (item === 'Home') {
+      if (location.pathname !== '/') {
+        navigate('/');
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+      return;
+    }
+
+    const sectionMap = {
+      Services: 'services',
+      Products: 'featured-products',
+      Gallery: 'gallery',
+      About: 'about',
+      Team: 'team',
+      Blog: 'blog',
+      Contact: 'contact',
     };
 
-    return pathMap[item] || `/${sectionId}`;
+    const sectionId = sectionMap[item];
+    if (!sectionId) return;
+
+    if (location.pathname !== '/') {
+      navigate('/');
+      setTimeout(() => scrollToSection(sectionId), 80);
+      return;
+    }
+
+    scrollToSection(sectionId);
   };
 
   return (
@@ -103,31 +126,19 @@ const Header = ({ showHeroImage = false, showHero = true }) => {
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-8">
-              {['Services', 'Gallery', 'About', 'Team', 'Blog', 'Contact'].map((item) => {
-                if (getNavLink(item)[0] == '#') {
-                  return <a
-                    key={item}
-                    href={getNavLink(item)}
-                    className={`transition-colors duration-300 font-medium ${isNavbarActive
-                      ? 'text-gray-600 hover:text-blue-600'
-                      : 'text-white hover:text-blue-200'
-                      }`}
-                  >
-                    {item}
-                  </a>
-                }
-                return <Link
+              {['Services', 'Products', 'Gallery', 'About', 'Team', 'Blog', 'Contact'].map((item) => (
+                <button
                   key={item}
-                  to={getNavLink(item)}
+                  type="button"
+                  onClick={() => handleNavClick(item)}
                   className={`transition-colors duration-300 font-medium ${isNavbarActive
                     ? 'text-gray-600 hover:text-blue-600'
                     : 'text-white hover:text-blue-200'
                     }`}
                 >
                   {item}
-                </Link>
-              }
-              )}
+                </button>
+              ))}
               <button
                 className={`px-6 py-2 rounded-full font-semibold transform transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 ${isNavbarActive
                   ? 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500'
@@ -164,26 +175,16 @@ const Header = ({ showHeroImage = false, showHero = true }) => {
           {isMenuOpen && (
             <div className="md:hidden">
               <div className="px-2 pt-2 pb-3 space-y-1 bg-white rounded-lg mt-2 shadow-lg">
-                {['Services', 'Gallery', 'About', 'Team', 'Blog', 'Contact'].map((item) => {
-                  if (getNavLink(item)[0] == '#') {
-                    return <a
-                      key={item}
-                      href={getNavLink(item)}
-                      className="block px-3 py-2 text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-300"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      {item}
-                    </a>
-                  }
-                  return <Link
+                {['Home', 'Services', 'Products', 'Gallery', 'About', 'Team', 'Blog', 'Contact'].map((item) => (
+                  <button
                     key={item}
-                    to={getNavLink(item)}
-                    className="block px-3 py-2 text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-300"
-                    onClick={() => setIsMenuOpen(false)}
+                    type="button"
+                    onClick={() => handleNavClick(item)}
+                    className="block w-full px-3 py-2 text-left text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-300"
                   >
                     {item}
-                  </Link>
-                })}
+                  </button>
+                ))}
                 <button
                   className="w-full mt-2 px-6 py-3 bg-blue-600 text-white rounded-full font-semibold transition-all duration-300 hover:bg-blue-700"
                   onClick={() => openWhatsApp()}
