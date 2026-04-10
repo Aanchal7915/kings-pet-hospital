@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && node -e \"const fs=require('fs');try{fs.rmSync('dist/index.html',{force:true});}catch(_){}\"",
+    "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
