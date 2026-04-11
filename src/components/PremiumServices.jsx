@@ -28,6 +28,7 @@ const PremiumServices = () => {
   }, [API_URL]);
 
   const visibleServices = useMemo(() => services.slice(0, 6), [services]);
+  const mobileServices = useMemo(() => visibleServices.slice(0, 4), [visibleServices]);
 
   const getStartingPrice = (service) => {
     const prices = (service.variants || []).map((variant) => Number(variant.price || 0)).filter((price) => price > 0);
@@ -152,36 +153,36 @@ const PremiumServices = () => {
           })}
         </div>
 
-        <div className="md:hidden flex gap-4 overflow-x-auto pb-2 snap-x snap-mandatory">
-          {visibleServices.map((service) => {
+        <div className="md:hidden grid grid-cols-2 gap-3">
+          {mobileServices.map((service) => {
             const startingPrice = getStartingPrice(service);
 
             return (
               <article
                 key={service._id}
-                className="min-w-[280px] snap-start bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden"
+                className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden"
               >
                 <div className="relative overflow-hidden">
                   <img
                     src={service.variants?.[0]?.image || '/logo.jpg'}
                     alt={service.name}
-                    className="w-full h-40 object-cover"
+                    className="w-full h-28 object-cover"
                     loading="lazy"
                     onError={(e) => {
                       if (e.currentTarget.src.endsWith('/logo.jpg')) return;
                       e.currentTarget.src = '/logo.jpg';
                     }}
                   />
-                  <div className="absolute top-0 right-0 bg-gradient-to-r from-blue-600 to-violet-600 text-white px-2.5 py-1 rounded-bl-lg text-xs font-bold">
-                    Starting from ₹{startingPrice.toLocaleString('en-IN')}
+                  <div className="absolute top-0 right-0 bg-gradient-to-r from-blue-600 to-violet-600 text-white px-2 py-0.5 rounded-bl-lg text-[10px] font-bold">
+                    ₹{startingPrice.toLocaleString('en-IN')}
                   </div>
                 </div>
 
-                <div className="p-4">
-                  <h3 className="text-lg font-black text-gray-800 line-clamp-2">{service.name}</h3>
-                  <p className="text-gray-600 text-xs mt-2 line-clamp-2">{service.description || 'Trusted care service'}</p>
+                <div className="p-3">
+                  <h3 className="text-sm font-black text-gray-800 line-clamp-2 min-h-10">{service.name}</h3>
+                  <p className="text-gray-600 text-[11px] mt-1 line-clamp-2">{service.description || 'Trusted care service'}</p>
 
-                  <div className="mt-3 border-t border-gray-200 pt-2 mb-3">
+                  <div className="mt-2 border-t border-gray-200 pt-2 mb-2">
                     <ul className="space-y-1">
                       {quickFeatures(service).slice(0, 2).map((item) => (
                         <li key={`${service._id}-m-${item}`} className="flex items-start gap-2 text-xs text-gray-700">
@@ -194,7 +195,7 @@ const PremiumServices = () => {
 
                   <button
                     onClick={() => handleBookNow(service)}
-                    className="w-full rounded-full bg-gradient-to-r from-blue-600 to-violet-600 text-white text-sm font-bold py-2"
+                    className="w-full rounded-full bg-gradient-to-r from-blue-600 to-violet-600 text-white text-xs font-bold py-1.5"
                   >
                     Book Now
                   </button>
