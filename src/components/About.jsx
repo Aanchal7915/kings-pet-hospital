@@ -18,6 +18,20 @@ const About = () => {
   const statsRef = useRef(null);
 
   useEffect(() => {
+    const revealElements = document.querySelectorAll('.reveal');
+    const revealObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('active');
+          }
+        });
+      },
+      { threshold: 0.15 }
+    );
+
+    revealElements.forEach((element) => revealObserver.observe(element));
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -60,9 +74,12 @@ const About = () => {
     }
 
     return () => {
+      revealElements.forEach((element) => revealObserver.unobserve(element));
+      revealObserver.disconnect();
       if (statsRef.current) {
         observer.unobserve(statsRef.current);
       }
+      observer.disconnect();
     };
   }, [counters.years]);
 

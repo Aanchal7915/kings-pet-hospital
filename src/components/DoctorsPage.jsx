@@ -8,6 +8,27 @@ const defaultHero = {
   subtitle: 'Meet the veterinary professionals behind compassionate and evidence-based care.',
 };
 
+const fallbackDoctors = [
+  {
+    _id: 'fallback-doctor-1',
+    name: 'Dr. Mohit Bazzad',
+    photo: '',
+    designation: 'B.VSC.& AH,PGCCVH',
+    specializations: ['Surgery', 'Veterinary Medicine'],
+    experience: '8 years',
+    bio: 'Experienced veterinary clinician focused on advanced diagnosis, surgery, and evidence-based pet care.',
+  },
+  {
+    _id: 'fallback-doctor-2',
+    name: 'Dr. Manju',
+    photo: '',
+    designation: 'General Physician',
+    specializations: ['General Physician'],
+    experience: '6 years',
+    bio: 'Provides comprehensive primary veterinary care and routine consultations for pets.',
+  },
+];
+
 const DoctorsPage = () => {
   const [doctors, setDoctors] = useState([]);
   const [activeFilter, setActiveFilter] = useState('All');
@@ -22,7 +43,8 @@ const DoctorsPage = () => {
           axios.get(`${API_URL}/api/pages/doctors`),
         ]);
 
-        setDoctors(doctorsRes.data.data || []);
+        const incomingDoctors = Array.isArray(doctorsRes.data?.data) ? doctorsRes.data.data : [];
+        setDoctors(incomingDoctors.length > 0 ? incomingDoctors : fallbackDoctors);
 
         const doctorsPageMap = (pageRes.data.data || []).reduce((acc, item) => {
           acc[item.section] = item.content;
@@ -32,7 +54,8 @@ const DoctorsPage = () => {
           setHero(doctorsPageMap.hero);
         }
       } catch (_error) {
-        // Keep default heading and empty doctors list if API is unavailable.
+        // Keep page usable even if doctors API is unavailable.
+        setDoctors(fallbackDoctors);
       }
     };
 
@@ -84,30 +107,24 @@ const DoctorsPage = () => {
             {filteredDoctors.map((doctor) => (
               <article key={doctor._id} className="rounded-2xl border border-slate-200 overflow-hidden bg-white shadow-sm hover:shadow-lg transition-all duration-300">
                 <div className="h-56 bg-slate-100">
-                  <img src={doctor.photo} alt={doctor.name} className="w-full h-full object-cover" loading="lazy" />
+                  {doctor.photo ? (
+                    <img src={doctor.photo} alt={doctor.name} className="w-full h-full object-cover" loading="lazy" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-slate-300">
+                      <svg className="w-24 h-24" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                      </svg>
+                    </div>
+                  )}
                 </div>
-                <div className="p-5">
-                  <h2 className="text-xl font-black text-slate-900">{doctor.name}</h2>
-                  <p className="text-blue-700 font-semibold mt-1">{doctor.designation}</p>
-                  <p className="text-sm text-slate-500 mt-1">Experience: {doctor.experience}</p>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {(doctor.specializations || []).map((item) => (
-                      <span key={`${doctor._id}-${item}`} className="px-3 py-1 rounded-full text-xs font-bold bg-blue-50 border border-blue-100 text-blue-700">
-                        {item}
-                      </span>
-                    ))}
-                  </div>
-                  <p className="mt-4 text-sm text-slate-600 leading-relaxed">{doctor.bio}</p>
+                <div className="p-7 text-center">
+                  <h2 className="text-[2.2rem] font-black text-slate-800 leading-tight">{doctor.name}</h2>
+                  <p className="text-blue-700 font-bold text-[1.9rem] mt-3">{doctor.designation}</p>
                 </div>
               </article>
             ))}
           </div>
 
-          {!filteredDoctors.length && (
-            <div className="mt-6 rounded-xl border border-slate-200 bg-slate-50 p-6 text-center text-slate-600">
-              No doctors found for the selected specialization.
-            </div>
-          )}
         </section>
       </main>
       <Footer />

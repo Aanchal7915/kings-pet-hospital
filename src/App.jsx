@@ -2,7 +2,8 @@ import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Home from './components/Home';
 import ContactPage from './components/ContactPage';
-import ProductsPage from './components/ProductsPage';
+import ServicesPage from './components/ServicesPage';
+import ServiceDetailPage from './components/ServiceDetailPage';
 import AdminLogin from './components/admin/AdminLogin';
 import AdminSignup from './components/admin/AdminSignup';
 import AdminForgotPassword from './components/admin/AdminForgotPassword';
@@ -13,9 +14,6 @@ import BlogDetailPage from './components/BlogDetailPage';
 import PolicyNotice from './components/PolicyNotice';
 import TermsOfService from './components/TermsOfService';
 import PetsCareLanding from './components/PetsCareLanding';
-import AboutPage from './components/AboutPage';
-import DoctorsPage from './components/DoctorsPage';
-import ProductDetailPage from './components/ProductDetailPage';
 
 const PUBLIC_TITLE = 'Kings Pet Hospital | Best Veterinary Care';
 const ADMIN_DASHBOARD_TITLE = 'Admin Dashboard | Kings Pet Hospital';
@@ -48,14 +46,12 @@ function App() {
       <ScrollToTop />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/services" element={<Home />} />
+        <Route path="/services" element={<ServicesPage />} />
+        <Route path="/services/:slug" element={<ServiceDetailPage />} />
         <Route path="/gallery" element={<Home />} />
-        <Route path="/products" element={<ProductsPage />} />
-        <Route path="/products/:id" element={<ProductDetailPage />} />
-        <Route path="/product/:id" element={<ProductDetailPage />} />
-        <Route path="/about" element={<AboutPage />} />
-        <Route path="/doctors" element={<DoctorsPage />} />
-        <Route path="/team" element={<DoctorsPage />} />
+        <Route path="/about" element={<Home />} />
+        <Route path="/doctors" element={<Home />} />
+        <Route path="/team" element={<Home />} />
         <Route path="/booking" element={<Home />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/pets-care" element={<PetsCareLanding />} />

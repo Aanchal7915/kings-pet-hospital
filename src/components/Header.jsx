@@ -1,165 +1,151 @@
-import React, { useState, useEffect } from 'react';
-import { useLocation, Link, useNavigate } from 'react-router-dom';
-import BookingForm from './BookingForm';
+import React, { useEffect, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { FaWhatsapp, FaRegCalendarAlt } from 'react-icons/fa';
 
-const whatsappNumber = '+918222993333';
+const whatsappNumber = import.meta.env.VITE_WHATSAPP_NUMBER;
+
 function openWhatsApp(serviceName = '') {
   const message = encodeURIComponent(
-    `Hello Kings Pet Hospital, I would like to book an appointment${serviceName ? ' for: ' + serviceName : ''}`
+    `Hello Kings Pet Hospital, I would like to book an appointment${serviceName ? ` for: ${serviceName}` : ''}`
   );
   window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
 }
 
-const Typewriter = ({ text, speed = 50, className = '', delay = 0, onComplete }) => {
+const TypewriterLine = ({ text, delay = 0, speed = 55, className = '' }) => {
   const [displayText, setDisplayText] = useState('');
-  const [showCursor, setShowCursor] = useState(true);
+  const [done, setDone] = useState(false);
 
   useEffect(() => {
-    let timer;
-    const startTimer = setTimeout(() => {
-      let i = 0;
-      timer = setInterval(() => {
-        setDisplayText(text.substring(0, i + 1));
-        i++;
-        if (i >= text.length) {
-          clearInterval(timer);
-          setShowCursor(false);
-          if (onComplete) onComplete();
+    let interval;
+    const starter = setTimeout(() => {
+      let index = 0;
+      interval = setInterval(() => {
+        index += 1;
+        setDisplayText(text.slice(0, index));
+        if (index >= text.length) {
+          clearInterval(interval);
+          setDone(true);
         }
       }, speed);
     }, delay);
 
     return () => {
-      clearTimeout(startTimer);
-      if (timer) clearInterval(timer);
+      clearTimeout(starter);
+      if (interval) clearInterval(interval);
     };
-  }, [text, speed, delay, onComplete]);
+  }, [text, delay, speed]);
 
   return (
     <span className={className}>
       {displayText}
-      {showCursor && <span className="inline-block w-0.5 h-[1em] bg-current ml-1 animate-pulse">|</span>}
+      {!done && <span className="ml-1 inline-block w-[2px] h-[0.9em] bg-current animate-pulse">|</span>}
     </span>
   );
 };
 
-const Header = ({ showHeroImage = false, showHero = true }) => {
+const Header = ({ showHero = true }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [waForm, setWaForm] = useState({ name: '', phone: '', petName: '', petType: 'Dog', message: '' });
+  const [waErrors, setWaErrors] = useState({});
   const location = useLocation();
   const navigate = useNavigate();
-  const isHome = location.pathname === '/';
-
-  // FIX: This variable determines if the navbar should look "Active" (White bg, Blue/Gray text)
-  // It triggers if the user scrolls OR if the Hero section is hidden (Blog page)
-  const isNavbarActive = isScrolled || !showHero;
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
-
+    const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const scrollToSection = (sectionId) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  };
+  const isNavbarActive = isScrolled || !showHero;
 
-  const handleNavClick = (item) => {
+  const goTo = (path) => {
     setIsMenuOpen(false);
-
-    if (item === 'Home') {
-      if (location.pathname !== '/') {
-        navigate('/');
-      } else {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
+    if (path === '/' && location.pathname === '/') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
+    navigate(path);
+  };
 
-    const sectionMap = {
-      Services: 'services',
-      Products: 'featured-products',
-      Gallery: 'gallery',
-      About: 'about',
-      Team: 'team',
-      Blog: 'blog',
-      Contact: 'contact',
-    };
-
-    const sectionId = sectionMap[item];
-    if (!sectionId) return;
-
+  const goToSection = (sectionId) => {
+    setIsMenuOpen(false);
     if (location.pathname !== '/') {
       navigate('/');
-      setTimeout(() => scrollToSection(sectionId), 80);
+      setTimeout(() => {
+        const section = document.getElementById(sectionId);
+        if (section) section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 120);
       return;
     }
 
-    scrollToSection(sectionId);
+    const section = document.getElementById(sectionId);
+    if (section) section.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
+  const navButtonClass = isNavbarActive ? 'text-gray-600 hover:text-blue-600' : 'text-white hover:text-blue-200';
+
+  const updateWaField = (field, value) => {
+    setWaErrors((prev) => ({ ...prev, [field]: '' }));
+    setWaForm((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const submitWhatsAppBooking = (event) => {
+    event.preventDefault();
+    const nextErrors = {};
+
+    if (!waForm.name.trim()) nextErrors.name = 'Name is required';
+    if (!/^\d{10}$/.test(waForm.phone.trim())) nextErrors.phone = 'Phone must be 10 digits';
+    if (!waForm.petName.trim()) nextErrors.petName = 'Pet name is required';
+
+    if (Object.keys(nextErrors).length > 0) {
+      setWaErrors(nextErrors);
+      return;
+    }
+
+    const msg = `Hi! I'd like an appointment.\n\nName: ${waForm.name}\nPhone: ${waForm.phone}\nPet Name: ${waForm.petName}\nPet Type: ${waForm.petType}\nMessage: ${waForm.message}`;
+    window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(msg)}`, '_blank');
+  };
+
+  const heroHighlights = [
+    { label: '24/7 Emergency Care', tone: 'from-emerald-500/35 to-emerald-400/20 text-emerald-300 border-emerald-300/35' },
+    { label: 'Experienced Veterinarians', tone: 'from-blue-500/35 to-blue-400/20 text-blue-300 border-blue-300/35' },
+    { label: 'Advanced Medical Equipment', tone: 'from-violet-500/35 to-violet-400/20 text-violet-300 border-violet-300/35' },
+  ];
+
   return (
-    <header className="relative">
-      {/* Navigation Bar */}
-      <nav className={`fixed w-full z-50 transition-all duration-300 ${isNavbarActive ? 'bg-white shadow-md py-4' : 'bg-transparent py-6'
-        }`}>
+    <header className="relative overflow-x-hidden">
+      <nav className={`fixed w-full z-50 transition-all duration-300 ${isNavbarActive ? 'bg-white shadow-md py-4' : 'bg-transparent py-6'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center">
-            {/* Logo */}
             <Link to="/" className="flex items-center space-x-3">
-              <img
-                src="/logo.jpg"
-                alt="Kings Pet Hospital logo"
-                className="h-10 w-auto rounded-sm bg-white/90 p-1 shadow-sm"
-              />
-              <h1 className={`text-xl md:text-2xl font-bold transition-colors duration-300 ${isNavbarActive ? 'text-blue-600' : 'text-white'
-                }`}>
+              <img src="/logo.jpg" alt="Kings Pet Hospital logo" className="h-10 w-auto rounded-sm bg-white/90 p-1 shadow-sm" />
+              <h1 className={`text-xl md:text-2xl font-bold transition-colors duration-300 ${isNavbarActive ? 'text-blue-600' : 'text-white'}`}>
                 Kings Pet Hospital
               </h1>
             </Link>
 
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center space-x-8">
-              {['Services', 'Products', 'Gallery', 'About', 'Team', 'Blog', 'Contact'].map((item) => (
-                <button
-                  key={item}
-                  type="button"
-                  onClick={() => handleNavClick(item)}
-                  className={`transition-colors duration-300 font-medium ${isNavbarActive
-                    ? 'text-gray-600 hover:text-blue-600'
-                    : 'text-white hover:text-blue-200'
-                    }`}
-                >
-                  {item}
-                </button>
-              ))}
+            <div className="hidden md:flex items-center space-x-7">
+              <button type="button" onClick={() => goTo('/')} className={`transition-colors duration-300 font-medium ${navButtonClass}`}>Home</button>
+              <button type="button" onClick={() => goTo('/services')} className={`transition-colors duration-300 font-medium ${navButtonClass}`}>Services</button>
+              <button type="button" onClick={() => goTo('/gallery')} className={`transition-colors duration-300 font-medium ${navButtonClass}`}>Gallery</button>
+              <button type="button" onClick={() => goToSection('about')} className={`transition-colors duration-300 font-medium ${navButtonClass}`}>About</button>
+              <button type="button" onClick={() => goToSection('team')} className={`transition-colors duration-300 font-medium ${navButtonClass}`}>Doctors</button>
+              <button type="button" onClick={() => goTo('/blog')} className={`transition-colors duration-300 font-medium ${navButtonClass}`}>Blog</button>
+              <button type="button" onClick={() => goTo('/contact')} className={`transition-colors duration-300 font-medium ${navButtonClass}`}>Contact</button>
               <button
-                className={`px-6 py-2 rounded-full font-semibold transform transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 ${isNavbarActive
-                  ? 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500'
-                  : 'bg-white text-blue-600 hover:bg-blue-50 focus:ring-white'
-                  }`}
+                className={`px-6 py-2 rounded-full font-semibold transition-all duration-300 ${isNavbarActive ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-white text-blue-600 hover:bg-blue-50'}`}
                 onClick={() => openWhatsApp()}
               >
-                Book Appointment
+                WhatsApp Booking
               </button>
             </div>
 
-            {/* Mobile Menu Button */}
             <div className="md:hidden">
               <button
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className={`p-2 rounded-md transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-inset ${isNavbarActive
-                  ? 'text-gray-600 hover:text-gray-800 focus:ring-blue-500'
-                  : 'text-white hover:text-gray-200 focus:ring-white'
-                  }`}
+                onClick={() => setIsMenuOpen((prev) => !prev)}
+                className={`p-2 rounded-md transition-colors duration-300 ${isNavbarActive ? 'text-gray-600 hover:text-gray-800' : 'text-white hover:text-gray-200'}`}
               >
-                <span className="sr-only">Open main menu</span>
                 <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   {isMenuOpen ? (
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -171,25 +157,18 @@ const Header = ({ showHeroImage = false, showHero = true }) => {
             </div>
           </div>
 
-          {/* Mobile Menu */}
           {isMenuOpen && (
             <div className="md:hidden">
               <div className="px-2 pt-2 pb-3 space-y-1 bg-white rounded-lg mt-2 shadow-lg">
-                {['Home', 'Services', 'Products', 'Gallery', 'About', 'Team', 'Blog', 'Contact'].map((item) => (
-                  <button
-                    key={item}
-                    type="button"
-                    onClick={() => handleNavClick(item)}
-                    className="block w-full px-3 py-2 text-left text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-300"
-                  >
-                    {item}
-                  </button>
-                ))}
-                <button
-                  className="w-full mt-2 px-6 py-3 bg-blue-600 text-white rounded-full font-semibold transition-all duration-300 hover:bg-blue-700"
-                  onClick={() => openWhatsApp()}
-                >
-                  Book Appointment
+                <button type="button" onClick={() => goTo('/')} className="block w-full px-3 py-2 text-left text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md">Home</button>
+                <button type="button" onClick={() => goTo('/services')} className="block w-full px-3 py-2 text-left text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md">Services</button>
+                <button type="button" onClick={() => goTo('/gallery')} className="block w-full px-3 py-2 text-left text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md">Gallery</button>
+                <button type="button" onClick={() => goToSection('about')} className="block w-full px-3 py-2 text-left text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md">About</button>
+                <button type="button" onClick={() => goToSection('team')} className="block w-full px-3 py-2 text-left text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md">Doctors</button>
+                <button type="button" onClick={() => goTo('/blog')} className="block w-full px-3 py-2 text-left text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md">Blog</button>
+                <button type="button" onClick={() => goTo('/contact')} className="block w-full px-3 py-2 text-left text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md">Contact</button>
+                <button className="w-full mt-2 px-6 py-3 bg-blue-600 text-white rounded-full font-semibold hover:bg-blue-700" onClick={() => openWhatsApp()}>
+                  WhatsApp Booking
                 </button>
               </div>
             </div>
@@ -197,648 +176,151 @@ const Header = ({ showHeroImage = false, showHero = true }) => {
         </div>
       </nav>
 
-      {/* Hero Section */}
       {showHero && (
         <div className="pt-5 relative min-h-screen flex items-center overflow-hidden bg-blue-900">
-          {/* --- BACKGROUND IMAGE SECTION --- */}
           <div className="absolute inset-0 z-0">
-            <img
-              src='hero-3.webp'
-              alt="Dog Hero Background"
-              // CHANGE 1: 'object-cover' fills the screen. 'object-center' tries to keep the middle visible.
-              // If you strictly want the WHOLE image without cropping, change 'object-cover' to 'object-contain', 
-              // but that will leave empty spaces on the sides. 'object-cover' is best for Hero sections.
-              className="hidden md:block w-full h-full object-cover object-center opacity-60"
-            />
-            <img
-              src='hero-2.jpg'
-              alt="Dog Hero Background"
-              // CHANGE 1: 'object-cover' fills the screen. 'object-center' tries to keep the middle visible.
-              // If you strictly want the WHOLE image without cropping, change 'object-cover' to 'object-contain', 
-              // but that will leave empty spaces on the sides. 'object-cover' is best for Hero sections.
-              className="block md:hidden w-full h-full object-center opacity-60"
-            />
-
-            {/* CHANGE 2: Professional Gradient Overlay 
-          This makes the text on the left readable (darker) 
-          and fades out to the right to show the image clearer. */}
+            <img src="hero-3.webp" alt="Dog Hero Background" className="hidden md:block w-full h-full object-cover object-center opacity-60" />
+            <img src="hero-2.jpg" alt="Dog Hero Background" className="block md:hidden w-full h-full object-cover object-center opacity-60" />
             <div className="absolute inset-0 bg-gradient-to-r from-blue-950/75 via-blue-900/40 to-blue-900/90"></div>
           </div>
 
-          {/* --- CONTENT SECTION (No Content Changes) --- */}
-          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-32 w-full text-white">
-            <div className="flex flex-col md:flex-row items-center justify-between">
-              <div className="md:w-1/2 mb-8 md:mb-0 md:pr-8 animate-[fadeIn_0.5s_ease-out_forwards]">
-                <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold mb-4 md:mb-6 min-h-[80px] md:min-h-[140px] drop-shadow-lg">
-                  <Typewriter
-                    text="Your Pet "
-                    speed={80}
-                    className="text-white"
-                    onComplete={() => { }}
+          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-28 w-full text-white overflow-x-hidden">
+            <div className="grid grid-cols-1 xl:grid-cols-[1.15fr_0.85fr] gap-8 xl:gap-12 items-center">
+              <div className="max-w-2xl min-w-0 animate-fade-in-up">
+                <h1 className="font-black mb-6 leading-[0.95] tracking-tight text-white">
+                  <TypewriterLine
+                    text="Your Pet"
+                    delay={120}
+                    speed={55}
+                    className="block text-[clamp(1.75rem,4.8vw,3.75rem)]"
                   />
-                  <Typewriter
-                    text="Deserves The Best Care"
-                    speed={80}
-                    delay={800}
-                    className="bg-gradient-to-r from-pink-300 via-pink-400 to-pink-300 bg-clip-text text-transparent animate-gradient"
+                  <TypewriterLine
+                    text="Deserves The"
+                    delay={850}
+                    speed={55}
+                    className="block text-[clamp(1.75rem,4.8vw,3.75rem)] bg-gradient-to-r from-pink-300 via-pink-400 to-fuchsia-400 bg-clip-text text-transparent"
+                  />
+                  <TypewriterLine
+                    text="Best Care"
+                    delay={1600}
+                    speed={55}
+                    className="block text-[clamp(1.75rem,4.8vw,3.75rem)] bg-gradient-to-r from-pink-300 via-pink-400 to-fuchsia-400 bg-clip-text text-transparent"
                   />
                 </h1>
-                <p className="text-base md:text-xl text-blue-100 mb-8 max-w-lg drop-shadow-md">
-                  Professional pet care services to keep your furry friend healthy and happy.
-                  Expert veterinarians, modern facilities, and loving attention.
+                <p className="text-sm md:text-[1.05rem] text-blue-100/95 mb-8 animate-slide-in-left max-w-xl leading-relaxed" style={{ animationDelay: '0.45s' }}>
+                  Professional pet care services with expert veterinarians, advanced facilities, and compassionate treatment.
                 </p>
 
-                {!showHeroImage && (
-                  <div className="space-y-4 mb-8">
-                    {[
-                      { text: '24/7 Emergency Care', bgColor: 'bg-green-500/20', borderColor: 'border-green-400/30', iconColor: 'text-green-300' },
-                      { text: 'Experienced Veterinarians', bgColor: 'bg-blue-500/20', borderColor: 'border-blue-400/30', iconColor: 'text-blue-300' },
-                      { text: 'Advanced Medical Equipment', bgColor: 'bg-purple-500/20', borderColor: 'border-purple-400/30', iconColor: 'text-purple-300' }
-                    ].map((feature, idx) => (
-                      <div key={idx} className="flex items-center gap-3">
-                        <div className={`w-10 h-10 ${feature.bgColor} rounded-full flex items-center justify-center backdrop-blur-sm border ${feature.borderColor} shadow-lg`}>
-                          <svg className={`w-5 h-5 ${feature.iconColor}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                          </svg>
-                        </div>
-                        <span className="text-blue-50 text-lg font-medium drop-shadow-sm">{feature.text}</span>
+                <div className="space-y-3 mb-7 animate-fade-in-up" style={{ animationDelay: '0.58s' }}>
+                  {heroHighlights.map((item) => (
+                    <div key={item.label} className="flex items-center gap-3">
+                      <div className={`w-12 h-12 rounded-full border bg-gradient-to-br flex items-center justify-center shadow-lg ${item.tone}`}>
+                        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.8}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
                       </div>
-                    ))}
-                  </div>
-                )}
+                      <span className="text-[1.15rem] md:text-[1.25rem] font-semibold text-slate-100 leading-tight break-words">{item.label}</span>
+                    </div>
+                  ))}
+                </div>
 
-                {!showHeroImage && (
-                  <div className="flex items-center gap-4 p-4 bg-green-500/80 backdrop-blur-md rounded-xl border border-green-400/30 inline-flex shadow-xl hover:bg-green-500/90 transition-colors cursor-pointer">
-                    <svg className="w-8 h-8 text-white flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <p className="text-white text-sm font-medium">
-                      Fill the form to book your appointment instantly via WhatsApp
-                    </p>
-                  </div>
-                )}
-
-                {showHeroImage && (
-                  <div className="flex flex-col sm:flex-row gap-4">
-                    <button
-                      className="px-8 py-3 bg-white text-blue-600 rounded-full font-semibold transition-all hover:bg-blue-50 shadow-lg hover:shadow-xl hover:-translate-y-1"
-                      onClick={() => openWhatsApp()}
-                    >
-                      Book Now
-                    </button>
-                  </div>
-                )}
+                <div className="flex flex-col sm:flex-row gap-3 md:gap-4 w-full max-w-[560px] animate-slide-in-right" style={{ animationDelay: '0.55s' }}>
+                  <button className="px-8 py-3 bg-white text-blue-700 rounded-full font-bold hover:bg-blue-50 transition-all hover:-translate-y-0.5" onClick={() => goTo('/services')}>
+                    View Services
+                  </button>
+                  <button className="px-8 py-3 bg-emerald-600 text-white rounded-full font-bold hover:bg-emerald-700 transition-all hover:-translate-y-0.5" onClick={() => openWhatsApp()}>
+                    Contact on WhatsApp
+                  </button>
+                </div>
               </div>
 
-              <div className="md:w-1/2 lg:w-5/12 w-full animate-[fadeIn_0.5s_ease-out_0.3s_forwards]">
-                {showHeroImage ? (
-                  <img
-                    src="50.jpg"
-                    alt="Happy dog"
-                    className="rounded-3xl shadow-2xl transform transition-transform duration-500 hover:scale-105 border-4 border-white/20"
-                    onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = '/logo.jpg'; }}
-                  />
-                ) : (
-                  <div
-                    className='p-0 m-0'
-                  //  className="bg-white/95 backdrop-blur-sm rounded-[2rem] shadow-2xl border border-white/20"
-                  >
-
-                    <BookingForm />
+              <div className="animate-fade-in-up min-w-0" style={{ animationDelay: '0.35s' }}>
+                <form onSubmit={submitWhatsAppBooking} className="rounded-3xl overflow-hidden shadow-[0_22px_60px_rgba(7,16,52,0.38)] border border-white/25 bg-white/95 backdrop-blur-md w-full max-w-xl xl:max-w-[490px] ml-auto">
+                  <div className="px-6 py-5 bg-gradient-to-r from-indigo-600 via-violet-600 to-fuchsia-600 text-white">
+                    <h3 className="text-3xl font-black flex items-center gap-3">
+                      <FaRegCalendarAlt className="text-2xl" />
+                      WhatsApp Booking
+                    </h3>
+                    <p className="text-white/90 text-sm mt-1 ml-9">Quick & Easy WhatsApp Booking</p>
                   </div>
 
-                )}
+                  <div className="p-5 md:p-6 space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-xs font-bold text-slate-700 block mb-1">Your Name *</label>
+                        <input
+                          className="w-full rounded-xl border border-slate-300 px-3 py-2.5 bg-white text-slate-900 placeholder:text-slate-400"
+                          placeholder="Full Name"
+                          value={waForm.name}
+                          onChange={(e) => updateWaField('name', e.target.value)}
+                        />
+                        {waErrors.name && <p className="text-xs text-rose-600 mt-1">{waErrors.name}</p>}
+                      </div>
+
+                      <div>
+                        <label className="text-xs font-bold text-slate-700 block mb-1">Phone Number *</label>
+                        <input
+                          className="w-full rounded-xl border border-slate-300 px-3 py-2.5 bg-white text-slate-900 placeholder:text-slate-400"
+                          placeholder="10-digit Mobile"
+                          value={waForm.phone}
+                          onChange={(e) => updateWaField('phone', e.target.value.replace(/[^0-9]/g, '').slice(0, 10))}
+                        />
+                        {waErrors.phone && <p className="text-xs text-rose-600 mt-1">{waErrors.phone}</p>}
+                      </div>
+
+                      <div>
+                        <label className="text-xs font-bold text-slate-700 block mb-1">Pet Name *</label>
+                        <input
+                          className="w-full rounded-xl border border-slate-300 px-3 py-2.5 bg-white text-slate-900 placeholder:text-slate-400"
+                          placeholder="Pet Name"
+                          value={waForm.petName}
+                          onChange={(e) => updateWaField('petName', e.target.value)}
+                        />
+                        {waErrors.petName && <p className="text-xs text-rose-600 mt-1">{waErrors.petName}</p>}
+                      </div>
+
+                      <div>
+                        <label className="text-xs font-bold text-slate-700 block mb-1">Pet Type</label>
+                        <select
+                          className="w-full rounded-xl border border-slate-300 px-3 py-2.5 bg-white text-slate-900"
+                          value={waForm.petType}
+                          onChange={(e) => updateWaField('petType', e.target.value)}
+                        >
+                          <option value="Dog">Dog</option>
+                          <option value="Cat">Cat</option>
+                          <option value="Bird">Bird</option>
+                          <option value="Rabbit">Rabbit</option>
+                          <option value="Other">Other</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="text-xs font-bold text-slate-700 block mb-1">Message / Query (optional)</label>
+                      <textarea
+                        rows={3}
+                        className="w-full rounded-xl border border-slate-300 px-3 py-2.5 bg-white text-slate-900 placeholder:text-slate-400"
+                        placeholder="Tell us what your pet needs"
+                        value={waForm.message}
+                        onChange={(e) => updateWaField('message', e.target.value)}
+                      />
+                    </div>
+
+                    <button type="submit" className="w-full rounded-xl bg-emerald-600 text-white py-3.5 font-black hover:bg-emerald-700 transition-all hover:-translate-y-0.5 flex items-center justify-center gap-2">
+                      <FaWhatsapp className="text-lg" />
+                      Contact on WhatsApp
+                    </button>
+
+                    <p className="text-[11px] text-slate-500 text-center">We will contact you quickly on WhatsApp after submission.</p>
+                  </div>
+                </form>
               </div>
             </div>
           </div>
         </div>
       )}
-
     </header>
   );
 };
 
 export default Header;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// import React, { useState, useEffect } from 'react';
-// import { useLocation, Link } from 'react-router-dom';
-// import BookingForm from './BookingForm';
-
-// const whatsappNumber = '+918222993333';
-// function openWhatsApp(serviceName = '') {
-//   const message = encodeURIComponent(
-//     `Hello Kings Pet Hospital, I would like to book an appointment${serviceName ? ' for: ' + serviceName : ''}`
-//   );
-//   window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
-// }
-
-// // Typewriter Component for the letter-by-letter animation
-// const Typewriter = ({ text }) => {
-//   const [displayText, setDisplayText] = useState('');
-//   useEffect(() => {
-//     let i = 0;
-//     const timer = setInterval(() => {
-//       setDisplayText(text.substring(0, i + 1));
-//       i++;
-//       if (i >= text.length) clearInterval(timer);
-//     }, 50); // Speed of typing
-//     return () => clearInterval(timer);
-//   }, [text]);
-
-//   return <span>{displayText}</span>;
-// };
-
-// const Header = ({ showHeroImage = false, showHero = true }) => {
-//   const [isMenuOpen, setIsMenuOpen] = useState(false);
-//   const [isScrolled, setIsScrolled] = useState(false);
-//   const location = useLocation();
-//   const isHome = location.pathname === '/';
-
-//   useEffect(() => {
-//     const handleScroll = () => {
-//       setIsScrolled(window.scrollY > 20);
-//     };
-
-//     window.addEventListener('scroll', handleScroll);
-//     return () => window.removeEventListener('scroll', handleScroll);
-//   }, []);
-
-//   const getNavLink = (item) => {
-//     const sectionId = item.toLowerCase();
-
-//     if (item === 'Contact') return '/contact';
-//     if (item === 'Blog') return '/blog';
-
-//     if (isHome) return `#${sectionId}`;
-//     return `/#${sectionId}`;
-//   };
-
-//   return (
-//     <header className="relative">
-//       {/* Navigation Bar */}
-//       <nav className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-white shadow-md py-4' : 'bg-transparent py-6'
-//         }`}>
-//         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-//           <div className="flex justify-between items-center">
-//             {/* Logo */}
-//             <Link to="/" className="flex items-center space-x-3">
-//               <img
-//                 src="/logo.jpg"
-//                 alt="Kings Pet Hospital logo"
-//                 className="h-10 w-auto rounded-sm bg-white/90 p-1 shadow-sm"
-//               />
-//               <h1 className={`text-2xl font-bold transition-colors duration-300 ${isScrolled ? 'text-blue-600' : 'text-white'
-//                 }`}>
-//                 Kings Pet Hospital
-//               </h1>
-//             </Link>
-
-//             {/* Desktop Navigation */}
-//             <div className="hidden md:flex items-center space-x-8">
-//               {['Services', 'Gallery', 'About', 'Team', 'Blog', 'Contact'].map((item) => (
-//                 <a
-//                   key={item}
-//                   href={getNavLink(item)}
-//                   className={`transition-colors duration-300 font-medium ${isScrolled
-//                     ? 'text-gray-600 hover:text-blue-600'
-//                     : 'text-white hover:text-blue-200'
-//                     }`}
-//                 >
-//                   {item}
-//                 </a>
-//               ))}
-//               <button
-//                 className={`px-6 py-2 rounded-full font-semibold transform transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 ${isScrolled
-//                   ? 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500'
-//                   : 'bg-white text-blue-600 hover:bg-blue-50 focus:ring-white'
-//                   }`}
-//                 onClick={() => openWhatsApp()}
-//               >
-//                 Book Appointment
-//               </button>
-//             </div>
-
-//             {/* Mobile Menu Button */}
-//             <div className="md:hidden">
-//               <button
-//                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-//                 className={`p-2 rounded-md transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-inset ${isScrolled
-//                   ? 'text-gray-600 hover:text-gray-800 focus:ring-blue-500'
-//                   : 'text-white hover:text-gray-200 focus:ring-white'
-//                   }`}
-//               >
-//                 <span className="sr-only">Open main menu</span>
-//                 <svg
-//                   className="h-6 w-6"
-//                   fill="none"
-//                   viewBox="0 0 24 24"
-//                   stroke="currentColor"
-//                 >
-//                   {isMenuOpen ? (
-//                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-//                   ) : (
-//                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-//                   )}
-//                 </svg>
-//               </button>
-//             </div>
-//           </div>
-
-//           {/* Mobile Menu */}
-//           {isMenuOpen && (
-//             <div className="md:hidden">
-//               <div className="px-2 pt-2 pb-3 space-y-1 bg-white rounded-lg mt-2 shadow-lg">
-//                 {['Services', 'Gallery', 'About', 'Team', 'Blog', 'Contact'].map((item) => (
-//                   <a
-//                     key={item}
-//                     href={getNavLink(item)}
-//                     className="block px-3 py-2 text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-300"
-//                     onClick={() => setIsMenuOpen(false)}
-//                   >
-//                     {item}
-//                   </a>
-//                 ))}
-//                 <button
-//                   className="w-full mt-2 px-6 py-3 bg-blue-600 text-white rounded-full font-semibold transition-all duration-300 hover:bg-blue-700"
-//                   onClick={() => openWhatsApp()}
-//                 >
-//                   Book Appointment
-//                 </button>
-//               </div>
-//             </div>
-//           )}
-//         </div>
-//       </nav>
-
-//       {/* Hero Section */}
-//       {showHero && (
-//         <div className="relative min-h-screen flex items-center overflow-hidden">
-//           {/* Background Image Container */}
-//           <div className="absolute inset-0 z-0">
-//             <img 
-//               src="https://images.unsplash.com/photo-1599443015574-be5fe8a05783?q=80&w=2070&auto=format&fit=crop" 
-//               alt="Pet Care Background" 
-//               className="w-full h-full object-cover"
-//             />
-//             {/* Dark Gradient Overlay for readability */}
-//             <div className="absolute inset-0 bg-gradient-to-r from-blue-900/90 via-blue-800/60 to-black/40"></div>
-//           </div>
-
-//           <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 w-full text-white">
-//             <div className="flex flex-col md:flex-row items-center justify-between">
-//               {/* Left Side: Content */}
-//               <div className="md:w-1/2 mb-12 md:mb-0 md:pr-8 animate-[fadeIn_0.5s_ease-out_forwards]">
-//                 <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold mb-6 min-h-[140px]">
-//                   <Typewriter text="Your Pet Deserves The Best Care" />
-//                 </h1>
-//                 <p className="text-xl text-blue-100 mb-8 max-w-lg">
-//                   Professional pet care services to keep your furry friend healthy and happy.
-//                   Expert veterinarians, modern facilities, and loving attention.
-//                 </p>
-
-//                 {!showHeroImage && (
-//                   <div className="space-y-4 mb-8">
-//                     {[
-//                       '24/7 Emergency Care',
-//                       'Experienced Veterinarians',
-//                       'Advanced Medical Equipment'
-//                     ].map((feature, idx) => (
-//                       <div key={idx} className="flex items-center gap-3">
-//                         <div className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-sm border border-white/20">
-//                           <svg className="w-5 h-5 text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-//                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-//                           </svg>
-//                         </div>
-//                         <span className="text-blue-50 text-lg font-medium">{feature}</span>
-//                       </div>
-//                     ))}
-//                   </div>
-//                 )}
-
-//                 {!showHeroImage && (
-//                   <div className="flex items-center gap-4 p-4 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 inline-flex">
-//                     <svg className="w-8 h-8 text-blue-300 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-//                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-//                     </svg>
-//                     <p className="text-blue-50 text-sm font-medium">
-//                       Fill the form to book your appointment instantly via WhatsApp →
-//                     </p>
-//                   </div>
-//                 )}
-
-//                 {showHeroImage && (
-//                   <div className="flex flex-col sm:flex-row gap-4">
-//                     <button
-//                       className="px-8 py-3 bg-white text-blue-600 rounded-full font-semibold transition-all hover:bg-blue-50"
-//                       onClick={() => openWhatsApp()}
-//                     >
-//                       Book Now
-//                     </button>
-//                   </div>
-//                 )}
-//               </div>
-
-//               {/* Right Side: Form */}
-//               <div className="md:w-1/2 lg:w-5/12 w-full animate-[fadeIn_0.5s_ease-out_0.3s_forwards]">
-//                 {showHeroImage ? (
-//                   <img
-//                     src="50.jpg"
-//                     alt="Happy dog with veterinarian"
-//                     className="rounded-3xl shadow-2xl transform transition-transform duration-500 hover:scale-105 border-4 border-white/10"
-//                     onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = '/logo.jpg'; }}
-//                   />
-//                 ) : (
-//                   <div className="bg-white p-2 rounded-[2rem] shadow-2xl">
-//                     <BookingForm />
-//                   </div>
-//                 )}
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-//       )}
-//     </header>
-//   );
-// };
-
-// export default Header;
-
-
-
-
-
-
-
-
-
-
-
-
-
-// // import React, { useState, useEffect } from 'react';
-// // import { useLocation, Link } from 'react-router-dom';
-// // import BookingForm from './BookingForm';
-
-// // const whatsappNumber = '+918222993333';
-// // function openWhatsApp(serviceName = '') {
-// //   const message = encodeURIComponent(
-// //     `Hello Kings Pet Hospital, I would like to book an appointment${serviceName ? ' for: ' + serviceName : ''}`
-// //   );
-// //   window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
-// // }
-
-// // const Header = ({ showHeroImage = false, showHero = true }) => {
-// //   const [isMenuOpen, setIsMenuOpen] = useState(false);
-// //   const [isScrolled, setIsScrolled] = useState(false);
-// //   const location = useLocation();
-// //   const isHome = location.pathname === '/';
-
-// //   useEffect(() => {
-// //     const handleScroll = () => {
-// //       setIsScrolled(window.scrollY > 20);
-// //     };
-
-// //     window.addEventListener('scroll', handleScroll);
-// //     return () => window.removeEventListener('scroll', handleScroll);
-// //   }, []);
-
-// //   const getNavLink = (item) => {
-// //     const sectionId = item.toLowerCase();
-
-// //     if (item === 'Contact') return '/contact';
-// //     if (item === 'Blog') return '/blog';
-
-// //     // For other sections (Services, Gallery, About, Team)
-// //     if (isHome) return `#${sectionId}`;
-// //     return `/#${sectionId}`;
-// //   };
-
-// //   return (
-// //     <header className="relative">
-// //       {/* Navigation Bar */}
-// //       <nav className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-white shadow-md py-4' : 'bg-transparent py-6'
-// //         }`}>
-// //         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-// //           <div className="flex justify-between items-center">
-// //             {/* Logo */}
-// //             <Link to="/" className="flex items-center space-x-3">
-// //               <img
-// //                 src="/logo.jpg"
-// //                 alt="Kings Pet Hospital logo"
-// //                 className="h-10 w-auto rounded-sm bg-white/90 p-1 shadow-sm"
-// //               />
-// //               <h1 className={`text-2xl font-bold transition-colors duration-300 ${isScrolled ? 'text-blue-600' : 'text-white'
-// //                 }`}>
-// //                 Kings Pet Hospital
-// //               </h1>
-// //             </Link>
-
-// //             {/* Desktop Navigation */}
-// //             <div className="hidden md:flex items-center space-x-8">
-// //               {['Services', 'Gallery', 'About', 'Team', 'Blog', 'Contact'].map((item) => (
-// //                 <a
-// //                   key={item}
-// //                   href={getNavLink(item)}
-// //                   className={`transition-colors duration-300 ${isScrolled
-// //                     ? 'text-gray-600 hover:text-blue-600'
-// //                     : 'text-white hover:text-blue-200'
-// //                     }`}
-// //                 >
-// //                   {item}
-// //                 </a>
-// //               ))}
-// //               <button
-// //                 className={`px-6 py-2 rounded-full font-semibold transform transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 ${isScrolled
-// //                   ? 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500'
-// //                   : 'bg-white text-blue-600 hover:bg-blue-50 focus:ring-white'
-// //                   }`}
-// //                 onClick={() => openWhatsApp()}
-// //               >
-// //                 Book Appointment
-// //               </button>
-// //             </div>
-
-// //             {/* Mobile Menu Button */}
-// //             <div className="md:hidden">
-// //               <button
-// //                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-// //                 className={`p-2 rounded-md transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-inset ${isScrolled
-// //                   ? 'text-gray-600 hover:text-gray-800 focus:ring-blue-500'
-// //                   : 'text-white hover:text-gray-200 focus:ring-white'
-// //                   }`}
-// //               >
-// //                 <span className="sr-only">Open main menu</span>
-// //                 <svg
-// //                   className="h-6 w-6"
-// //                   fill="none"
-// //                   viewBox="0 0 24 24"
-// //                   stroke="currentColor"
-// //                 >
-// //                   {isMenuOpen ? (
-// //                     <path
-// //                       strokeLinecap="round"
-// //                       strokeLinejoin="round"
-// //                       strokeWidth={2}
-// //                       d="M6 18L18 6M6 6l12 12"
-// //                     />
-// //                   ) : (
-// //                     <path
-// //                       strokeLinecap="round"
-// //                       strokeLinejoin="round"
-// //                       strokeWidth={2}
-// //                       d="M4 6h16M4 12h16M4 18h16"
-// //                     />
-// //                   )}
-// //                 </svg>
-// //               </button>
-// //             </div>
-// //           </div>
-
-// //           {/* Mobile Menu */}
-// //           {isMenuOpen && (
-// //             <div className="md:hidden">
-// //               <div className="px-2 pt-2 pb-3 space-y-1 bg-white rounded-lg mt-2 shadow-lg transform transition-all duration-300 opacity-0 animate-[fadeIn_0.3s_ease-out_forwards]">
-// //                 {['Services', 'Gallery', 'About', 'Team', 'Blog', 'Contact'].map((item) => (
-// //                   <a
-// //                     key={item}
-// //                     href={getNavLink(item)}
-// //                     className="block px-3 py-2 text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-300"
-// //                     onClick={() => setIsMenuOpen(false)}
-// //                   >
-// //                     {item}
-// //                   </a>
-// //                 ))}
-// //                 <button
-// //                   className="w-full mt-2 px-6 py-3 bg-blue-600 text-white rounded-full font-semibold transition-all duration-300 hover:bg-blue-700 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-// //                   onClick={() => openWhatsApp()}
-// //                 >
-// //                   Book Appointment
-// //                 </button>
-// //               </div>
-// //             </div>
-// //           )}
-// //         </div>
-// //       </nav>
-
-// //       {/* Hero Section */}
-// //       {showHero && (
-// //         <div className="relative bg-gradient-to-r from-blue-600 to-blue-800 text-white min-h-[90vh] flex items-center">
-// //           <div className="absolute inset-0 bg-black opacity-50"></div>
-// //           <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32">
-// //             <div className="flex flex-col md:flex-row items-center justify-between">
-// //               <div className="md:w-1/2 mb-8 md:mb-0 md:pr-8 transform transition-all duration-500 opacity-0 translate-y-4 animate-[fadeIn_0.5s_ease-out_forwards]">
-// //                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-// //                   Your Pet Deserves <br />
-// //                   <span className="text-blue-200">The Best Care</span>
-// //                 </h1>
-// //                 <p className="text-xl text-blue-100 mb-6">
-// //                   Professional pet care services to keep your furry friend healthy and happy.
-// //                   Expert veterinarians, modern facilities, and loving attention.
-// //                 </p>
-
-// //                 {!showHeroImage && (
-// //                   <div className="space-y-3 mb-8">
-// //                     <div className="flex items-center gap-3">
-// //                       <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-sm">
-// //                         <svg className="w-6 h-6 text-blue-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-// //                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-// //                         </svg>
-// //                       </div>
-// //                       <span className="text-blue-50 text-lg">24/7 Emergency Care</span>
-// //                     </div>
-
-// //                     <div className="flex items-center gap-3">
-// //                       <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-sm">
-// //                         <svg className="w-6 h-6 text-blue-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-// //                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-// //                         </svg>
-// //                       </div>
-// //                       <span className="text-blue-50 text-lg">Experienced Veterinarians</span>
-// //                     </div>
-
-// //                     <div className="flex items-center gap-3">
-// //                       <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-sm">
-// //                         <svg className="w-6 h-6 text-blue-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-// //                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-// //                         </svg>
-// //                       </div>
-// //                       <span className="text-blue-50 text-lg">Advanced Medical Equipment</span>
-// //                     </div>
-// //                   </div>
-// //                 )}
-
-// //                 {showHeroImage && (
-// //                   <div className="flex flex-col sm:flex-row gap-4">
-// //                     <button
-// //                       className="px-8 py-3 bg-white text-blue-600 rounded-full font-semibold transition-all duration-300 hover:bg-blue-50 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-blue-600"
-// //                       onClick={() => openWhatsApp()}
-// //                     >
-// //                       Book Now
-// //                     </button>
-// //                   </div>
-// //                 )}
-
-// //                 {!showHeroImage && (
-// //                   <div className="flex items-center gap-4 p-4 bg-white/10 backdrop-blur-sm rounded-lg border border-white/20">
-// //                     <svg className="w-8 h-8 text-blue-200 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-// //                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-// //                     </svg>
-// //                     <p className="text-blue-50 text-sm">
-// //                       Fill the form to book your appointment instantly via WhatsApp →
-// //                     </p>
-// //                   </div>
-// //                 )}
-// //               </div>
-// //               <div className="md:w-1/2 transform transition-all duration-500 opacity-0 translate-y-4 animate-[fadeIn_0.5s_ease-out_0.3s_forwards]">
-// //                 {showHeroImage ? (
-// //                   <img
-// //                     src="50.jpg"
-// //                     alt="Happy dog with veterinarian"
-// //                     className="rounded-lg shadow-2xl transform transition-transform duration-500 hover:scale-105"
-// //                     onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = '/logo.jpg'; }}
-// //                   />
-// //                 ) : (
-// //                   <BookingForm />
-// //                 )}
-// //               </div>
-// //             </div>
-// //           </div>
-// //         </div>
-// //       )}
-// //     </header>
-// //   );
-// // };
-
-// // export default Header;
-
-
-
-
-
-
-
-
-
-
-
-

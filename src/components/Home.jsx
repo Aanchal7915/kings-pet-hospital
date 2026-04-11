@@ -1,191 +1,67 @@
-import React, { useEffect, useRef, useState } from 'react';
-import axios from 'axios';
-import Header from './Header';
-import Footer from './Footer';
-import Services from './Services';
-import FeaturedProducts from './FeaturedProducts';
-import OurProducts from './OurProducts';
-import Gallery from './Gallery';
-import About from './About';
-import BlogFeed from './BlogFeed';
-import HowItWorks from './HowItWorks';
-import DoctorsTeaser from './DoctorsTeaser';
-import Testimonials from './Testimonials';
-import BookingForm from './BookingForm';
-import ToastContainer from './utils/Toast';
+import React from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import Header from './Header';
+import PremiumServices from './PremiumServices';
+import FeaturedServices from './FeaturedServices';
+import About from './About';
+import WhyChooseUs from './WhyChooseUs';
+import HowItWorks from './HowItWorks';
+import BlogFeed from './BlogFeed';
+import WhatsAppContactSection from './WhatsAppContactSection';
+import Footer from './Footer';
+import ToastContainer from './utils/Toast';
 
 const PUBLIC_TITLE = 'Kings Pet Hospital | Best Veterinary Care';
 
 const Home = () => {
-    const location = useLocation();
-    const bookingSectionRef = useRef(null);
-    const [activeSection, setActiveSection] = useState(() => {
-        // Initialize active section from URL path (sync with unique SEO paths)
-        const path = window.location.pathname.replace('/', '');
-        return path || 'home';
-    });
-    const [dynamicSEO, setDynamicSEO] = useState({});
+  const location = useLocation();
 
-    // Auto-scroll to section on initial load AND on every route change
-    useEffect(() => {
-        // Detect current section from URL (path without leading slash)
-        const path = location.pathname.split('/').filter(p => p)[0] || 'home';
-        setActiveSection(path);
-        
-        if (path && path !== 'home') {
-            const element = document.getElementById(path);
-            if (element) {
-                setTimeout(() => {
-                    element.scrollIntoView({ behavior: 'smooth' });
-                }, 100); 
-            }
-        } else if (path === '' || path === 'home') {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-    }, [location.pathname]);
-
-    // Fetch SEO data from Database
-    useEffect(() => {
-        const fetchSEO = async () => {
-            try {
-                const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-                const { data } = await axios.get(`${API_URL}/api/seo`);
-                const seoMap = {};
-                data.data.forEach(item => {
-                    seoMap[item.section] = item;
-                });
-                setDynamicSEO(seoMap);
-            } catch (error) {
-                console.error('Error fetching dynamic SEO:', error);
-            }
-        };
-        fetchSEO();
-    }, []);
-
-    useEffect(() => {
-        const observerOptions = {
-            root: null,
-            rootMargin: '-20% 0px -20% 0px',
-            threshold: 0
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach((entry) => {
-                if (entry.isIntersecting) {
-                    const id = entry.target.id?.toLowerCase();
-                    if (id && dynamicSEO[id]) {
-                        setActiveSection(id);
-                        console.log(`%c SEO Updated: ${id.toUpperCase()} `, 'background: #2563eb; color: #fff; font-weight: bold;', dynamicSEO[id]);
-                    }
-
-                    if (entry.target.classList.contains('reveal')) {
-                        entry.target.classList.add('active');
-                    }
-                }
-            });
-        }, [dynamicSEO]);
-
-        // Track sections for SEO
-        const sections = document.querySelectorAll('section[id], #services, #gallery, #about, #team, #blog, #booking');
-        sections.forEach((section) => observer.observe(section));
-
-        // Track reveal elements for animation
-        const revealElements = document.querySelectorAll('.reveal');
-        revealElements.forEach((el) => observer.observe(el));
-
-        return () => {
-            sections.forEach((section) => observer.unobserve(section));
-            revealElements.forEach((el) => observer.unobserve(el));
-        };
-    }, [dynamicSEO]);
-
-    // Handle initial hero section
-    useEffect(() => {
-        const handleScroll = () => {
-            if (window.scrollY < 300) {
-                setActiveSection('home');
-            }
-        };
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
-
-    const seo = dynamicSEO[activeSection] || dynamicSEO.home || {
-        title: PUBLIC_TITLE,
-        metaDescription: "Professional pet care services in Faridabad and Rohtak."
+  useEffect(() => {
+    const sectionByPath = {
+      '/about': 'about',
+      '/doctors': 'team',
+      '/team': 'team',
     };
 
-    return (
-        <div className="min-h-screen bg-gray-50 font-sans antialiased">
-            <Helmet>
-                <title>{PUBLIC_TITLE}</title>
-                <meta name='title' content={PUBLIC_TITLE} />
-                <meta name="description" content={seo.metaDescription || seo.description} />
-                <meta property="og:title" content={PUBLIC_TITLE} />
-                <meta property="og:description" content={seo.metaDescription || seo.description} />
-            </Helmet>
+    const targetSectionId = sectionByPath[location.pathname];
+    if (!targetSectionId) return;
 
-            {/* Hidden SEO Text for Search Engines (Visible to crawlers, hidden from users) */}
-            <div className="sr-only" aria-hidden="true">
-                {seo.h1OrH2 && <h2>{seo.h1OrH2}</h2>}
-                {seo.seoText && <p>{seo.seoText}</p>}
-            </div>
+    const timer = setTimeout(() => {
+      const section = document.getElementById(targetSectionId);
+      if (section) {
+        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 120);
 
-            {/* Toast Notification Container */}
-            <ToastContainer />
+    return () => clearTimeout(timer);
+  }, [location.pathname]);
 
-            <Header showHeroImage={false} />
-            <main className="relative z-10">
-                {/* Hero Banner - in Header */}
-                
-                {/* Featured Products */}
-                <FeaturedProducts />
-                
-                {/* All Services */}
-                <Services />
-                
-                {/* How It Works */}
-                <HowItWorks />
-                
-                {/* Doctors Teaser */}
-                <DoctorsTeaser />
-                
-                {/* Testimonials */}
-                <Testimonials />
-                
-                {/* Gallery */}
-                <Gallery />
-                
-                {/* About Section */}
-                <About />
-                
-                {/* Blog Feed */}
-                <BlogFeed />
-                
-                {/* Booking Section */}
-                <section id="booking" ref={bookingSectionRef} className="py-16 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 relative overflow-hidden">
-                    {/* Animated background elements */}
-                    <div className="absolute top-0 left-0 w-72 h-72 bg-blue-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-float"></div>
-                    <div className="absolute bottom-0 right-0 w-72 h-72 bg-purple-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-float" style={{ animationDelay: '1s' }}></div>
+  return (
+    <div className="min-h-screen bg-gray-50 font-sans antialiased">
+      <Helmet>
+        <title>{PUBLIC_TITLE}</title>
+        <meta name="title" content={PUBLIC_TITLE} />
+        <meta name="description" content="Professional pet care services in Rohtak with expert vets and modern facilities." />
+      </Helmet>
 
-                    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                        <div className="text-center mb-10 reveal">
-                            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4 animate-fade-in-up text-gradient-animate underline-animate">Ready to Visit?</h2>
-                            <p className="text-lg text-gray-600 animate-fade-in-up text-hover-glow" style={{ animationDelay: '0.2s' }}>
-                                Book an appointment today and give your pet the care they deserve.
-                            </p>
-                        </div>
-                        <div className="reveal" style={{ animationDelay: '0.3s' }}>
-                            <BookingForm />
-                        </div>
-                    </div>
-                </section>
-            </main>
-            <Footer />
-        </div>
-    );
+      <ToastContainer />
+      <Header showHero={true} />
+
+      <main className="relative z-10">
+        <PremiumServices />
+        <FeaturedServices />
+        <About />
+        <WhyChooseUs />
+        <HowItWorks />
+        <BlogFeed />
+        <WhatsAppContactSection />
+      </main>
+
+      <Footer />
+    </div>
+  );
 };
 
 export default Home;

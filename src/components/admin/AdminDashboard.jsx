@@ -4,7 +4,6 @@ import AdminBlog from './AdminBlog';
 import AdminSEO from './AdminSEO';
 import AdminBookings from './AdminBookings';
 import AdminAnalytics from './AdminAnalytics';
-import AdminProducts from './AdminProducts';
 import AdminCategories from './AdminCategories';
 import AdminSubCategories from './AdminSubCategories';
 import AdminCatalogOverview from './AdminCatalogOverview';
@@ -63,12 +62,6 @@ const AdminDashboard = () => {
                                     className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${activeTab === 'analytics' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-500 hover:bg-gray-50'}`}
                                 >
                                     Analytics
-                                </button>
-                                <button
-                                    onClick={() => setActiveTab('products')}
-                                    className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${activeTab === 'products' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-500 hover:bg-gray-50'}`}
-                                >
-                                    Products
                                 </button>
                                 <button
                                     onClick={() => setActiveTab('categories')}
@@ -143,12 +136,6 @@ const AdminDashboard = () => {
                             Analytics
                         </button>
                         <button
-                            onClick={() => setActiveTab('products')}
-                            className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${activeTab === 'products' ? 'bg-blue-600 text-white' : 'text-gray-500'}`}
-                        >
-                            Products
-                        </button>
-                        <button
                             onClick={() => setActiveTab('categories')}
                             className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${activeTab === 'categories' ? 'bg-blue-600 text-white' : 'text-gray-500'}`}
                         >
@@ -178,7 +165,6 @@ const AdminDashboard = () => {
                     {activeTab === 'seo' && <AdminSEO />}
                     {activeTab === 'bookings' && <AdminBookings />}
                     {activeTab === 'analytics' && <AdminAnalytics />}
-                    {activeTab === 'products' && <AdminProducts />}
                     {activeTab === 'categories' && <AdminCategories />}
                     {activeTab === 'subCategories' && <AdminSubCategories />}
                     {activeTab === 'servicesCatalog' && <AdminServicesCatalog />}

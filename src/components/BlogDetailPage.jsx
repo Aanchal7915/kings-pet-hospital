@@ -242,7 +242,7 @@ const BlogDetailPage = () => {
                                     <button
                                         onClick={() => {
                                             const message = encodeURIComponent(`Hello Kings Pet Hospital, I would like to book an appointment for my pet.`);
-                                            window.open(`https://wa.me/+918222993333?text=${message}`, '_blank');
+                                            window.open(`https://wa.me/${import.meta.env.VITE_WHATSAPP_NUMBER}?text=${message}`, '_blank');
                                         }}
                                         className="w-full py-5 bg-white text-blue-700 rounded-2xl font-black uppercase text-sm tracking-widest hover:shadow-xl hover:-translate-y-1 transition-all"
                                     >

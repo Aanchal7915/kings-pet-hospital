@@ -5,7 +5,7 @@ import { FaCheck } from 'react-icons/fa';
 import { SkeletonGrid } from './utils/LoadingSkeleton';
 import { EmptyState } from './utils/EmptyState';
 
-const FeaturedServices = () => {
+const PremiumServices = () => {
   const navigate = useNavigate();
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -13,9 +13,9 @@ const FeaturedServices = () => {
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
   useEffect(() => {
-    const fetchFeaturedServices = async () => {
+    const fetchServices = async () => {
       try {
-        const { data } = await axios.get(`${API_URL}/api/catalog/services?featured=true`);
+        const { data } = await axios.get(`${API_URL}/api/catalog/services`);
         setServices(Array.isArray(data?.data) ? data.data : []);
       } catch (_error) {
         setServices([]);
@@ -24,7 +24,7 @@ const FeaturedServices = () => {
       }
     };
 
-    fetchFeaturedServices();
+    fetchServices();
   }, [API_URL]);
 
   const visibleServices = useMemo(() => services.slice(0, 6), [services]);
@@ -35,22 +35,26 @@ const FeaturedServices = () => {
     return Math.min(...prices);
   };
 
-  const handleBookNow = (service) => navigate(`/services/${service.slug}`);
-
   const quickFeatures = (service) => {
     const picks = (service.variants || []).map((variant) => variant.variantName).filter(Boolean).slice(0, 2);
     if (picks.length > 0) return picks;
     return ['Expert vet-supervised care', 'Personalized treatment plan'];
   };
 
+  const handleBookNow = (service) => navigate(`/services/${service.slug}`);
+
   if (loading) {
     return (
-      <section className="py-14 bg-gray-50" id="featured-services">
+      <section className="py-14 bg-gray-50" id="premium-services">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
-            <p className="text-xs uppercase tracking-widest font-bold text-blue-600">Featured Services</p>
-            <h2 className="text-3xl md:text-4xl font-black text-gray-900 mt-2">Featured Services</h2>
-            <p className="text-gray-600 mt-2 max-w-2xl mx-auto">Only admin-selected featured services are shown here</p>
+            <p className="text-xs uppercase tracking-widest font-bold text-blue-600">Our Services</p>
+            <h2 className="text-4xl md:text-6xl font-black text-transparent bg-gradient-to-r from-violet-500 to-fuchsia-500 bg-clip-text mt-2">
+              Our Premium Pet Services
+            </h2>
+            <p className="text-gray-600 mt-4 text-lg max-w-3xl mx-auto">
+              Providing top-quality care for your beloved furry friends with our comprehensive range of services
+            </p>
           </div>
           <SkeletonGrid count={3} />
         </div>
@@ -60,17 +64,21 @@ const FeaturedServices = () => {
 
   if (visibleServices.length === 0) {
     return (
-      <section className="py-14 bg-gray-50" id="featured-services">
+      <section className="py-14 bg-gray-50" id="premium-services">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
-            <p className="text-xs uppercase tracking-widest font-bold text-blue-600">Featured Services</p>
-            <h2 className="text-3xl md:text-4xl font-black text-gray-900 mt-2">Featured Services</h2>
-            <p className="text-gray-600 mt-2 max-w-2xl mx-auto">Only admin-selected featured services are shown here</p>
+            <p className="text-xs uppercase tracking-widest font-bold text-blue-600">Our Services</p>
+            <h2 className="text-4xl md:text-6xl font-black text-transparent bg-gradient-to-r from-violet-500 to-fuchsia-500 bg-clip-text mt-2">
+              Our Premium Pet Services
+            </h2>
+            <p className="text-gray-600 mt-4 text-lg max-w-3xl mx-auto">
+              Providing top-quality care for your beloved furry friends with our comprehensive range of services
+            </p>
           </div>
           <EmptyState
             type="search"
-            title="No featured services yet"
-            message="Please mark services as featured from the Admin panel"
+            title="No services available"
+            message="Please add services from Admin panel"
           />
         </div>
       </section>
@@ -78,12 +86,16 @@ const FeaturedServices = () => {
   }
 
   return (
-    <section className="py-14 bg-gray-50" id="featured-services">
+    <section className="py-14 bg-gray-50" id="premium-services">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-10">
-          <p className="text-xs uppercase tracking-widest font-bold text-blue-600">Featured Services</p>
-          <h2 className="text-3xl md:text-4xl font-black text-gray-900 mt-2">Featured Services</h2>
-          <p className="text-gray-600 mt-2 max-w-2xl mx-auto">Only admin-selected featured services are shown here</p>
+          <p className="text-xs uppercase tracking-widest font-bold text-blue-600">Our Services</p>
+          <h2 className="text-4xl md:text-6xl font-black text-transparent bg-gradient-to-r from-violet-500 to-fuchsia-500 bg-clip-text mt-2">
+            Our Premium Pet Services
+          </h2>
+          <p className="text-gray-600 mt-4 text-lg max-w-3xl mx-auto">
+            Providing top-quality care for your beloved furry friends with our comprehensive range of services
+          </p>
         </div>
 
         <div className="hidden md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -205,4 +217,4 @@ const FeaturedServices = () => {
   );
 };
 
-export default FeaturedServices;
+export default PremiumServices;

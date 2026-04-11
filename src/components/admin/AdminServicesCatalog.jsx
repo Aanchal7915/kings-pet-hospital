@@ -27,6 +27,8 @@ const emptyForm = {
   subCategory: '',
   isActive: true,
   isFeatured: false,
+  useCustomAdvance: false,
+  customAdvanceAmount: '',
   variants: [{ ...emptyVariant }],
 };
 
@@ -94,6 +96,8 @@ const AdminServicesCatalog = () => {
     e.preventDefault();
     const payload = {
       ...form,
+      useCustomAdvance: Boolean(form.useCustomAdvance),
+      customAdvanceAmount: Number(form.customAdvanceAmount || 0),
       variants: form.variants.map((v, i) => ({
         ...v,
         price: Number(v.price || 0),
@@ -127,6 +131,8 @@ const AdminServicesCatalog = () => {
       subCategory: item.subCategory?._id || '',
       isActive: item.isActive !== false,
       isFeatured: Boolean(item.isFeatured),
+      useCustomAdvance: Boolean(item.useCustomAdvance),
+      customAdvanceAmount: item.customAdvanceAmount ?? '',
       variants: (item.variants || []).map((v) => ({
         variantName: v.variantName || '',
         price: v.price || 0,
@@ -174,7 +180,11 @@ const AdminServicesCatalog = () => {
             <div className="flex items-center gap-6">
               <label className="inline-flex items-center gap-2 font-semibold text-gray-700"><input type="checkbox" checked={form.isFeatured} onChange={(e) => setForm((p) => ({ ...p, isFeatured: e.target.checked }))} /> Featured</label>
               <label className="inline-flex items-center gap-2 font-semibold text-gray-700"><input type="checkbox" checked={form.isActive} onChange={(e) => setForm((p) => ({ ...p, isActive: e.target.checked }))} /> Active</label>
+              <label className="inline-flex items-center gap-2 font-semibold text-gray-700"><input type="checkbox" checked={form.useCustomAdvance} onChange={(e) => setForm((p) => ({ ...p, useCustomAdvance: e.target.checked }))} /> Custom Advance</label>
             </div>
+            {form.useCustomAdvance && (
+              <input type="number" min="0" className="border rounded-lg px-3 py-2 md:col-span-2" placeholder="Custom Advance Amount" value={form.customAdvanceAmount} onChange={(e) => setForm((p) => ({ ...p, customAdvanceAmount: e.target.value }))} />
+            )}
             <textarea className="border rounded-lg px-3 py-2 md:col-span-2" rows={3} placeholder="Service description" value={form.description} onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))} />
             {form.image && (
               <img
@@ -258,6 +268,35 @@ const AdminServicesCatalog = () => {
               <p className="text-xs text-gray-500 mt-1">{item.category?.name} / {item.subCategory?.name}</p>
               <p className="text-xs text-gray-600 mt-1">Variants: {(item.variants || []).length}</p>
               <div className="mt-2 flex gap-2">
+                <button
+                  type="button"
+                  onClick={async () => {
+                    try {
+                      await axios.put(
+                        `${API_URL}/api/catalog/services/${item._id}`,
+                        {
+                          category: item.category?._id,
+                          subCategory: item.subCategory?._id,
+                          name: item.name,
+                          image: item.image || '',
+                          description: item.description || '',
+                          isFeatured: !item.isFeatured,
+                          isActive: item.isActive !== false,
+                          useCustomAdvance: Boolean(item.useCustomAdvance),
+                          customAdvanceAmount: Number(item.customAdvanceAmount || 0),
+                          variants: item.variants || [],
+                        },
+                        authConfig
+                      );
+                      fetchAll();
+                    } catch (error) {
+                      alert(error.response?.data?.error || 'Failed to toggle featured');
+                    }
+                  }}
+                  className={`px-3 py-1 rounded text-white text-xs font-bold ${item.isFeatured ? 'bg-emerald-600' : 'bg-slate-500'}`}
+                >
+                  Featured
+                </button>
                 <button onClick={() => edit(item)} className="px-3 py-1 rounded bg-amber-500 text-white text-xs font-bold">Edit</button>
                 <button onClick={() => remove(item._id)} className="px-3 py-1 rounded bg-red-600 text-white text-xs font-bold">Delete</button>
               </div>

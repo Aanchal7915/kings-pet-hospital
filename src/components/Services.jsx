@@ -118,7 +118,7 @@ const services = [
 ];
 */
 
-const whatsappNumber = '918222993333'; // Use country code, e.g., 91 for India
+const whatsappNumber = import.meta.env.VITE_WHATSAPP_NUMBER;
 
 function openWhatsApp(serviceName) {
   const message = encodeURIComponent(

@@ -1,601 +1,377 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
+import { triggerToast } from '../utils/Toast';
 
-const formatDateLabel = (dateValue) => new Date(dateValue).toLocaleDateString();
-const formatDateTime = (dateValue, timeValue) => `${new Date(dateValue).toLocaleDateString()} ${timeValue}`;
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const statusTabs = ['all', 'confirmed', 'completed', 'rejected', 'cancelled', 'cancelled_refunded'];
+const statusLabels = {
+  all: 'All',
+  confirmed: 'Confirmed',
+  completed: 'Completed',
+  rejected: 'Rejected',
+  cancelled: 'Cancelled',
+  cancelled_refunded: 'Cancelled & Refunded',
+  rejected_refunded: 'Rejected & Refunded',
+};
 
-const toDateOnly = (dateValue) => new Date(dateValue).toISOString().slice(0, 10);
+const bookingBadge = {
+  confirmed: 'bg-blue-100 text-blue-700',
+  completed: 'bg-emerald-100 text-emerald-700',
+  rejected: 'bg-rose-100 text-rose-700',
+  cancelled: 'bg-orange-100 text-orange-700',
+  cancelled_refunded: 'bg-gray-100 text-gray-700',
+  rejected_refunded: 'bg-gray-100 text-gray-700',
+};
+
+const paymentBadge = {
+  advance_paid: 'bg-amber-100 text-amber-700',
+  fully_paid: 'bg-emerald-100 text-emerald-700',
+  refunded: 'bg-gray-100 text-gray-700',
+};
+
+const toDateKey = (value) => {
+  const date = new Date(value);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
 
 const AdminBookings = () => {
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
   const token = useMemo(() => localStorage.getItem('adminToken'), []);
   const authConfig = useMemo(() => ({ headers: { Authorization: `Bearer ${token}` } }), [token]);
 
-  const [activeSubTab, setActiveSubTab] = useState('slot-management');
-
+  const [tab, setTab] = useState('bookings');
+  const [status, setStatus] = useState('all');
+  const [from, setFrom] = useState('');
+  const [to, setTo] = useState('');
+  const [search, setSearch] = useState('');
+  const [bookings, setBookings] = useState([]);
   const [services, setServices] = useState([]);
   const [slots, setSlots] = useState([]);
-  const [bookings, setBookings] = useState([]);
-  const [selectedSlotIds, setSelectedSlotIds] = useState([]);
-
-  const [slotGenerateForm, setSlotGenerateForm] = useState({
-    fromDate: '',
-    toDate: '',
-    startTime: '09:00',
-    endTime: '18:00',
-    intervalMinutes: 30,
-    capacity: 1,
-    serviceId: '',
-  });
-
-  const [manualSlotForm, setManualSlotForm] = useState({
-    date: '',
-    startTime: '09:00',
-    endTime: '09:30',
-    capacity: 1,
-    serviceId: '',
-  });
-
-  const [slotFilter, setSlotFilter] = useState({
-    fromDate: '',
-    toDate: '',
-    serviceId: '',
-  });
-
-  const [rescheduleModal, setRescheduleModal] = useState({
-    open: false,
-    booking: null,
-    slots: [],
-    selectedSlotId: '',
-    note: '',
-  });
-
-  const [loadingSlots, setLoadingSlots] = useState(false);
-  const [loadingBookings, setLoadingBookings] = useState(false);
+  const [advanceAmount, setAdvanceAmount] = useState('');
+  const [slotForm, setSlotForm] = useState({ fromDate: '', toDate: '', startTime: '09:00', endTime: '18:00', intervalMinutes: 30, capacity: 1 });
+  const [selectedBooking, setSelectedBooking] = useState(null);
+  const [statusModal, setStatusModal] = useState({ open: false, booking: null, nextStatus: '', note: '' });
+  const [rescheduleModal, setRescheduleModal] = useState({ open: false, booking: null, slotId: '', note: '' });
 
   const fetchServices = async () => {
-    try {
-      const { data } = await axios.get(`${API_URL}/api/catalog/services?includeInactive=true`);
-      setServices(data.data || []);
-    } catch (error) {
-      console.error(error);
-    }
+    const { data } = await axios.get(`${API_URL}/api/catalog/services?includeInactive=true`, authConfig);
+    setServices(data.data || []);
   };
 
-  const fetchSlots = async () => {
-    try {
-      setLoadingSlots(true);
-      const params = new URLSearchParams();
-      if (slotFilter.fromDate) params.append('fromDate', slotFilter.fromDate);
-      if (slotFilter.toDate) params.append('toDate', slotFilter.toDate);
-      if (slotFilter.serviceId) params.append('serviceId', slotFilter.serviceId);
-      params.append('includeBlocked', 'true');
-
-      const { data } = await axios.get(`${API_URL}/api/slots?${params.toString()}`, authConfig);
-      setSlots(data.data || []);
-      setSelectedSlotIds([]);
-    } catch (error) {
-      alert(error.response?.data?.error || 'Failed to load slots');
-    } finally {
-      setLoadingSlots(false);
-    }
+  const fetchAdvance = async () => {
+    const { data } = await axios.get(`${API_URL}/api/settings/advance-amount`);
+    setAdvanceAmount(String(data?.data?.value ?? ''));
   };
 
   const fetchBookings = async () => {
-    try {
-      setLoadingBookings(true);
-      const { data } = await axios.get(`${API_URL}/api/admin/bookings`, authConfig);
-      setBookings(data.data || []);
-    } catch (error) {
-      alert(error.response?.data?.error || 'Failed to load bookings');
-    } finally {
-      setLoadingBookings(false);
-    }
+    const params = new URLSearchParams();
+    if (status !== 'all') params.append('status', status);
+    if (from) params.append('from', from);
+    if (to) params.append('to', to);
+    if (search) params.append('search', search);
+    const { data } = await axios.get(`${API_URL}/api/bookings/admin?${params.toString()}`, authConfig);
+    setBookings(data.data || []);
+  };
+
+  const fetchSlots = async () => {
+    const { data } = await axios.get(`${API_URL}/api/slots?includeBlocked=true`, authConfig);
+    setSlots(data.data || []);
   };
 
   useEffect(() => {
-    const today = new Date();
-    const inSeven = new Date();
-    inSeven.setDate(today.getDate() + 7);
-
-    const defaultFromDate = toDateOnly(today);
-    const defaultToDate = toDateOnly(inSeven);
-
-    setSlotFilter({ fromDate: defaultFromDate, toDate: defaultToDate, serviceId: '' });
-    setSlotGenerateForm((prev) => ({ ...prev, fromDate: defaultFromDate, toDate: defaultToDate }));
-    setManualSlotForm((prev) => ({ ...prev, date: defaultFromDate }));
-
-    fetchServices();
-    fetchBookings();
-  }, []);
+    fetchBookings().catch((error) => triggerToast(error.response?.data?.error || 'Failed to load bookings', 'error'));
+    fetchServices().catch(() => {});
+    fetchAdvance().catch(() => {});
+    fetchSlots().catch(() => {});
+  }, [status, from, to, search]);
 
   useEffect(() => {
-    if (slotFilter.fromDate || slotFilter.toDate || slotFilter.serviceId) {
-      fetchSlots();
+    if (tab === 'slots') {
+      fetchSlots().catch((error) => triggerToast(error.response?.data?.error || 'Failed to load slots', 'error'));
     }
-  }, [slotFilter.fromDate, slotFilter.toDate, slotFilter.serviceId]);
+  }, [tab]);
 
-  const generateSlots = async (e) => {
-    e.preventDefault();
+  const saveAdvance = async () => {
     try {
-      const payload = {
-        ...slotGenerateForm,
-        intervalMinutes: Number(slotGenerateForm.intervalMinutes),
-        capacity: Number(slotGenerateForm.capacity),
-        serviceId: slotGenerateForm.serviceId || undefined,
-      };
-      await axios.post(`${API_URL}/api/slots/generate`, payload, authConfig);
-      alert('Slots generated successfully');
-      fetchSlots();
+      await axios.put(`${API_URL}/api/settings/advance-amount`, { value: Number(advanceAmount) }, authConfig);
+      triggerToast('Advance amount updated', 'success');
     } catch (error) {
-      alert(error.response?.data?.error || 'Failed to generate slots');
+      triggerToast(error.response?.data?.error || 'Failed to update advance amount', 'error');
     }
   };
 
-  const createManualSlot = async (e) => {
-    e.preventDefault();
+  const generateSlots = async (event) => {
+    event.preventDefault();
     try {
-      const payload = {
-        ...manualSlotForm,
-        capacity: Number(manualSlotForm.capacity),
-        serviceId: manualSlotForm.serviceId || undefined,
-      };
-      await axios.post(`${API_URL}/api/slots`, payload, authConfig);
-      alert('Slot created successfully');
+      const { data } = await axios.post(`${API_URL}/api/slots/generate`, slotForm, authConfig);
+      triggerToast(`Generated ${data.created || 0} slots`, 'success');
       fetchSlots();
     } catch (error) {
-      alert(error.response?.data?.error || 'Failed to create manual slot');
+      triggerToast(error.response?.data?.error || 'Failed to generate slots', 'error');
     }
   };
 
-  const toggleSlotBlock = async (slot) => {
+  const toggleSlot = async (slot) => {
     try {
       await axios.put(`${API_URL}/api/slots/${slot._id}/block`, { isBlocked: !slot.isBlocked }, authConfig);
       fetchSlots();
     } catch (error) {
-      alert(error.response?.data?.error || 'Failed to toggle slot block');
+      triggerToast(error.response?.data?.error || 'Failed to update slot', 'error');
     }
   };
 
   const deleteSlot = async (slotId) => {
-    if (!window.confirm('Delete this slot?')) return;
     try {
       await axios.delete(`${API_URL}/api/slots/${slotId}`, authConfig);
       fetchSlots();
     } catch (error) {
-      alert(error.response?.data?.error || 'Failed to delete slot');
+      triggerToast(error.response?.data?.error || 'Failed to delete slot', 'error');
     }
   };
 
-  const deleteSelectedSlots = async () => {
-    if (selectedSlotIds.length === 0) return;
-    if (!window.confirm(`Delete ${selectedSlotIds.length} selected slot(s)?`)) return;
-
+  const openStatusModal = (booking, nextStatus) => setStatusModal({ open: true, booking, nextStatus, note: '' });
+  const submitStatus = async () => {
     try {
-      await Promise.all(
-        selectedSlotIds.map((slotId) => axios.delete(`${API_URL}/api/slots/${slotId}`, authConfig))
-      );
-      fetchSlots();
-    } catch (error) {
-      alert(error.response?.data?.error || 'Failed to delete selected slots');
-    }
-  };
-
-  const toggleSelectAllSlots = (checked) => {
-    if (checked) {
-      setSelectedSlotIds(slots.map((slot) => slot._id));
-    } else {
-      setSelectedSlotIds([]);
-    }
-  };
-
-  const toggleSelectedSlot = (slotId, checked) => {
-    setSelectedSlotIds((prev) => {
-      if (checked) {
-        return prev.includes(slotId) ? prev : [...prev, slotId];
-      }
-      return prev.filter((id) => id !== slotId);
-    });
-  };
-
-  const updateBookingStatus = async (booking, nextStatus, note = '') => {
-    try {
-      await axios.patch(
-        `${API_URL}/api/admin/bookings/${booking._id}/status`,
-        { status: nextStatus, note },
-        authConfig
-      );
+      await axios.patch(`${API_URL}/api/bookings/admin/${statusModal.booking._id}/status`, { status: statusModal.nextStatus, note: statusModal.note }, authConfig);
+      triggerToast('Status updated', 'success');
+      setStatusModal({ open: false, booking: null, nextStatus: '', note: '' });
       fetchBookings();
     } catch (error) {
-      alert(error.response?.data?.error || 'Failed to update booking status');
+      triggerToast(error.response?.data?.error || 'Failed to update status', 'error');
+    }
+  };
+
+  const markRemaining = async (booking) => {
+    try {
+      await axios.patch(`${API_URL}/api/bookings/admin/${booking._id}/mark-remaining-received`, {}, authConfig);
+      triggerToast('Marked remaining amount received', 'success');
+      fetchBookings();
+    } catch (error) {
+      triggerToast(error.response?.data?.error || 'Failed to update payment', 'error');
     }
   };
 
   const openRescheduleModal = async (booking) => {
-    try {
-      const today = toDateOnly(new Date());
-      const inFourteen = new Date();
-      inFourteen.setDate(new Date().getDate() + 14);
-
-      const params = new URLSearchParams({
-        fromDate: today,
-        toDate: toDateOnly(inFourteen),
-        serviceId: booking.service?._id || booking.service,
-      });
-
-      const { data } = await axios.get(`${API_URL}/api/slots?${params.toString()}`, authConfig);
-      const now = new Date();
-      const futureAvailable = (data.data || []).filter((slot) => {
-        if (slot.isBlocked || Number(slot.bookedCount) >= Number(slot.capacity)) return false;
-        const startAt = new Date(`${toDateOnly(slot.date)}T${slot.startTime}:00`);
-        return startAt >= now;
-      });
-
-      setRescheduleModal({
-        open: true,
-        booking,
-        slots: futureAvailable,
-        selectedSlotId: futureAvailable[0]?._id || '',
-        note: '',
-      });
-    } catch (error) {
-      alert(error.response?.data?.error || 'Failed to load future slots');
-    }
+    setRescheduleModal({ open: true, booking, slotId: '', note: '' });
   };
 
   const submitReschedule = async () => {
-    if (!rescheduleModal.selectedSlotId || !rescheduleModal.booking) return;
     try {
-      await axios.patch(
-        `${API_URL}/api/admin/bookings/${rescheduleModal.booking._id}/reschedule`,
-        {
-          newSlotId: rescheduleModal.selectedSlotId,
-          note: rescheduleModal.note,
-        },
-        authConfig
-      );
-
-      setRescheduleModal({ open: false, booking: null, slots: [], selectedSlotId: '', note: '' });
+      await axios.patch(`${API_URL}/api/bookings/admin/${rescheduleModal.booking._id}/reschedule`, { newSlotId: rescheduleModal.slotId, note: rescheduleModal.note }, authConfig);
+      triggerToast('Booking rescheduled', 'success');
+      setRescheduleModal({ open: false, booking: null, slotId: '', note: '' });
       fetchBookings();
       fetchSlots();
     } catch (error) {
-      alert(error.response?.data?.error || 'Failed to reschedule booking');
+      triggerToast(error.response?.data?.error || 'Failed to reschedule', 'error');
     }
   };
 
-  const statusBadge = (status) => {
-    const colorMap = {
-      pending: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-      confirmed: 'bg-blue-100 text-blue-800 border-blue-200',
-      completed: 'bg-green-100 text-green-800 border-green-200',
-      cancelled: 'bg-red-100 text-red-800 border-red-200',
-      refunded: 'bg-purple-100 text-purple-800 border-purple-200',
-    };
-    return colorMap[status] || 'bg-gray-100 text-gray-800 border-gray-200';
-  };
+  const futureSlots = slots.filter((slot) => {
+    const slotDate = new Date(`${toDateKey(slot.date)}T${slot.startTime}:00`);
+    return slotDate >= new Date() && !slot.isBlocked && Number(slot.bookedCount) < Number(slot.capacity);
+  });
 
   return (
     <div className="space-y-6">
-      <div className="bg-white rounded-2xl border border-gray-100 p-2 flex gap-2 shadow-sm">
-        <button
-          onClick={() => setActiveSubTab('slot-management')}
-          className={`px-4 py-2 rounded-xl text-sm font-bold ${activeSubTab === 'slot-management' ? 'bg-blue-600 text-white' : 'text-gray-600'}`}
-        >
-          Slot Management
-        </button>
-        <button
-          onClick={() => setActiveSubTab('booking-records')}
-          className={`px-4 py-2 rounded-xl text-sm font-bold ${activeSubTab === 'booking-records' ? 'bg-blue-600 text-white' : 'text-gray-600'}`}
-        >
-          Booking Records
-        </button>
+      <div className="flex flex-wrap gap-2 bg-white rounded-2xl border border-gray-100 p-2 shadow-sm">
+        <button onClick={() => setTab('bookings')} className={`px-4 py-2 rounded-xl text-sm font-bold ${tab === 'bookings' ? 'bg-blue-600 text-white' : 'text-gray-600'}`}>Bookings</button>
+        <button onClick={() => setTab('slots')} className={`px-4 py-2 rounded-xl text-sm font-bold ${tab === 'slots' ? 'bg-blue-600 text-white' : 'text-gray-600'}`}>Manage Slots</button>
+        <button onClick={() => setTab('settings')} className={`px-4 py-2 rounded-xl text-sm font-bold ${tab === 'settings' ? 'bg-blue-600 text-white' : 'text-gray-600'}`}>Settings</button>
       </div>
 
-      {activeSubTab === 'slot-management' && (
-        <>
-          <section className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
-            <h3 className="text-xl font-black text-gray-900">Auto-generate slots</h3>
-            <p className="text-sm text-gray-500">Generate slots by date range, time range, interval, and capacity.</p>
-
-            <form onSubmit={generateSlots} className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-3">
-              <input type="date" className="border rounded-lg px-3 py-2" value={slotGenerateForm.fromDate} onChange={(e) => setSlotGenerateForm((p) => ({ ...p, fromDate: e.target.value }))} required />
-              <input type="date" className="border rounded-lg px-3 py-2" value={slotGenerateForm.toDate} onChange={(e) => setSlotGenerateForm((p) => ({ ...p, toDate: e.target.value }))} required />
-              <select className="border rounded-lg px-3 py-2" value={slotGenerateForm.intervalMinutes} onChange={(e) => setSlotGenerateForm((p) => ({ ...p, intervalMinutes: Number(e.target.value) }))}>
-                <option value={15}>15 mins</option>
-                <option value={30}>30 mins</option>
-                <option value={45}>45 mins</option>
-                <option value={60}>60 mins</option>
-              </select>
-
-              <input type="time" className="border rounded-lg px-3 py-2" value={slotGenerateForm.startTime} onChange={(e) => setSlotGenerateForm((p) => ({ ...p, startTime: e.target.value }))} required />
-              <input type="time" className="border rounded-lg px-3 py-2" value={slotGenerateForm.endTime} onChange={(e) => setSlotGenerateForm((p) => ({ ...p, endTime: e.target.value }))} required />
-              <input type="number" min={1} className="border rounded-lg px-3 py-2" value={slotGenerateForm.capacity} onChange={(e) => setSlotGenerateForm((p) => ({ ...p, capacity: Number(e.target.value) }))} required />
-
-              <select className="md:col-span-3 border rounded-lg px-3 py-2" value={slotGenerateForm.serviceId} onChange={(e) => setSlotGenerateForm((p) => ({ ...p, serviceId: e.target.value }))}>
-                <option value="">Global slots (all services)</option>
-                {services.map((service) => (
-                  <option key={service._id} value={service._id}>{service.name}</option>
-                ))}
-              </select>
-
-              <button type="submit" className="md:col-span-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg px-4 py-2">
-                Generate Slots
-              </button>
-            </form>
-          </section>
-
-          <section className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
-            <h3 className="text-xl font-black text-gray-900">Manual single slot creation</h3>
-            <form onSubmit={createManualSlot} className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-3">
-              <input type="date" className="border rounded-lg px-3 py-2" value={manualSlotForm.date} onChange={(e) => setManualSlotForm((p) => ({ ...p, date: e.target.value }))} required />
-              <input type="time" className="border rounded-lg px-3 py-2" value={manualSlotForm.startTime} onChange={(e) => setManualSlotForm((p) => ({ ...p, startTime: e.target.value }))} required />
-              <input type="time" className="border rounded-lg px-3 py-2" value={manualSlotForm.endTime} onChange={(e) => setManualSlotForm((p) => ({ ...p, endTime: e.target.value }))} required />
-              <input type="number" min={1} className="border rounded-lg px-3 py-2" value={manualSlotForm.capacity} onChange={(e) => setManualSlotForm((p) => ({ ...p, capacity: Number(e.target.value) }))} required />
-              <select className="md:col-span-2 border rounded-lg px-3 py-2" value={manualSlotForm.serviceId} onChange={(e) => setManualSlotForm((p) => ({ ...p, serviceId: e.target.value }))}>
-                <option value="">Global slot</option>
-                {services.map((service) => (
-                  <option key={service._id} value={service._id}>{service.name}</option>
-                ))}
-              </select>
-              <button type="submit" className="md:col-span-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg px-4 py-2">
-                Create Slot
-              </button>
-            </form>
-          </section>
-
-          <section className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
-            <div className="flex flex-wrap items-end gap-3">
-              <div>
-                <label className="text-xs text-gray-500">From</label>
-                <input type="date" className="block border rounded-lg px-3 py-2" value={slotFilter.fromDate} onChange={(e) => setSlotFilter((p) => ({ ...p, fromDate: e.target.value }))} />
-              </div>
-              <div>
-                <label className="text-xs text-gray-500">To</label>
-                <input type="date" className="block border rounded-lg px-3 py-2" value={slotFilter.toDate} onChange={(e) => setSlotFilter((p) => ({ ...p, toDate: e.target.value }))} />
-              </div>
-              <div>
-                <label className="text-xs text-gray-500">Service</label>
-                <select className="block border rounded-lg px-3 py-2" value={slotFilter.serviceId} onChange={(e) => setSlotFilter((p) => ({ ...p, serviceId: e.target.value }))}>
-                  <option value="">All</option>
-                  {services.map((service) => (
-                    <option key={service._id} value={service._id}>{service.name}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            <div className="mt-4 flex flex-wrap items-center gap-3">
-              <label className="inline-flex items-center gap-2 text-sm font-semibold text-gray-700">
-                <input
-                  type="checkbox"
-                  checked={slots.length > 0 && selectedSlotIds.length === slots.length}
-                  onChange={(e) => toggleSelectAllSlots(e.target.checked)}
-                />
-                Select all slots
-              </label>
-              <button
-                type="button"
-                onClick={() => setSelectedSlotIds([])}
-                disabled={selectedSlotIds.length === 0}
-                className="px-3 py-2 rounded border border-gray-300 text-gray-700 text-sm font-bold disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                Deselect All
-              </button>
-              <button
-                type="button"
-                onClick={deleteSelectedSlots}
-                disabled={selectedSlotIds.length === 0}
-                className="px-3 py-2 rounded bg-red-600 text-white text-sm font-bold disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                Delete Selected ({selectedSlotIds.length})
-              </button>
-            </div>
-
-            <div className="mt-4 overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead className="bg-gray-50 text-xs uppercase text-gray-600">
-                  <tr>
-                    <th className="px-3 py-2 text-left">
-                      Select
-                    </th>
-                    <th className="px-3 py-2 text-left">Date</th>
-                    <th className="px-3 py-2 text-left">Time</th>
-                    <th className="px-3 py-2 text-left">Service</th>
-                    <th className="px-3 py-2 text-left">Capacity</th>
-                    <th className="px-3 py-2 text-left">Booked</th>
-                    <th className="px-3 py-2 text-left">Status</th>
-                    <th className="px-3 py-2 text-left">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {loadingSlots ? (
-                    <tr><td colSpan={8} className="px-3 py-3 text-gray-500">Loading slots...</td></tr>
-                  ) : slots.length === 0 ? (
-                    <tr><td colSpan={8} className="px-3 py-3 text-gray-500">No slots found.</td></tr>
-                  ) : (
-                    slots.map((slot) => (
-                      <tr key={slot._id} className="border-t border-gray-100">
-                        <td className="px-3 py-2">
-                          <input
-                            type="checkbox"
-                            checked={selectedSlotIds.includes(slot._id)}
-                            onChange={(e) => toggleSelectedSlot(slot._id, e.target.checked)}
-                          />
-                        </td>
-                        <td className="px-3 py-2">{formatDateLabel(slot.date)}</td>
-                        <td className="px-3 py-2">{slot.startTime} - {slot.endTime}</td>
-                        <td className="px-3 py-2">{slot.service?.name || 'Global'}</td>
-                        <td className="px-3 py-2">{slot.capacity}</td>
-                        <td className="px-3 py-2">{slot.bookedCount}</td>
-                        <td className="px-3 py-2">
-                          <span className={`px-2 py-1 rounded-full text-xs font-bold ${slot.isBlocked ? 'bg-red-100 text-red-700' : 'bg-emerald-100 text-emerald-700'}`}>
-                            {slot.isBlocked ? 'Blocked' : 'Open'}
-                          </span>
-                        </td>
-                        <td className="px-3 py-2 flex gap-2">
-                          <button onClick={() => toggleSlotBlock(slot)} className="px-2 py-1 rounded bg-amber-500 text-white text-xs font-bold">
-                            {slot.isBlocked ? 'Unblock' : 'Block'}
-                          </button>
-                          <button onClick={() => deleteSlot(slot._id)} className="px-2 py-1 rounded bg-red-600 text-white text-xs font-bold">
-                            Delete
-                          </button>
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </section>
-        </>
+      {tab === 'settings' && (
+        <section className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm max-w-xl">
+          <h3 className="text-xl font-black text-gray-900">Global Advance Payment</h3>
+          <p className="text-sm text-gray-500 mt-1">Applies to all services unless a service has a custom override.</p>
+          <div className="mt-4 flex gap-3">
+            <input type="number" min="0" value={advanceAmount} onChange={(e) => setAdvanceAmount(e.target.value)} className="flex-1 border rounded-lg px-3 py-2" />
+            <button onClick={saveAdvance} className="px-4 py-2 rounded-lg bg-blue-600 text-white font-bold">Save</button>
+          </div>
+        </section>
       )}
 
-      {activeSubTab === 'booking-records' && (
+      {tab === 'slots' && (
+        <section className="space-y-5">
+          <form onSubmit={generateSlots} className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm grid grid-cols-1 md:grid-cols-3 gap-3">
+            <input type="date" value={slotForm.fromDate} onChange={(e) => setSlotForm((p) => ({ ...p, fromDate: e.target.value }))} className="border rounded-lg px-3 py-2" required />
+            <input type="date" value={slotForm.toDate} onChange={(e) => setSlotForm((p) => ({ ...p, toDate: e.target.value }))} className="border rounded-lg px-3 py-2" required />
+            <input type="time" value={slotForm.startTime} onChange={(e) => setSlotForm((p) => ({ ...p, startTime: e.target.value }))} className="border rounded-lg px-3 py-2" required />
+            <input type="time" value={slotForm.endTime} onChange={(e) => setSlotForm((p) => ({ ...p, endTime: e.target.value }))} className="border rounded-lg px-3 py-2" required />
+            <select value={slotForm.intervalMinutes} onChange={(e) => setSlotForm((p) => ({ ...p, intervalMinutes: Number(e.target.value) }))} className="border rounded-lg px-3 py-2 bg-white">
+              {[15, 30, 45, 60].map((min) => <option key={min} value={min}>{min} min</option>)}
+            </select>
+            <input type="number" min="1" value={slotForm.capacity} onChange={(e) => setSlotForm((p) => ({ ...p, capacity: Number(e.target.value) }))} className="border rounded-lg px-3 py-2" required />
+            <button className="md:col-span-3 px-4 py-2 rounded-lg bg-emerald-600 text-white font-bold">Generate Slots</button>
+          </form>
+
+          <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm space-y-4">
+            {slots.length === 0 ? (
+              <p className="text-gray-500">No slots loaded.</p>
+            ) : (
+              slots.map((slot) => (
+                <div key={slot._id} className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-100 pb-3">
+                  <div>
+                    <p className="font-bold text-gray-900">{new Date(slot.date).toLocaleDateString()} {slot.startTime} - {slot.endTime}</p>
+                    <p className="text-sm text-gray-500">{slot.bookedCount}/{slot.capacity} booked</p>
+                  </div>
+                  <div className="flex gap-2">
+                    <button onClick={() => toggleSlot(slot)} className="px-3 py-1 rounded-lg bg-amber-500 text-white text-sm font-bold">{slot.isBlocked ? 'Unblock' : 'Block'}</button>
+                    {Number(slot.bookedCount) === 0 && <button onClick={() => deleteSlot(slot._id)} className="px-3 py-1 rounded-lg bg-rose-600 text-white text-sm font-bold">Delete</button>}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </section>
+      )}
+
+      {tab === 'bookings' && (
         <section className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-          <div className="p-5 border-b border-gray-100 flex items-center justify-between">
-            <div>
-              <h3 className="text-xl font-black text-gray-900">Booking Records</h3>
-              <p className="text-sm text-gray-500">Manage status, payment, and reschedule bookings.</p>
+          <div className="p-5 border-b border-gray-100 space-y-4">
+            <div className="flex flex-wrap gap-2">
+              {statusTabs.map((tabStatus) => (
+                <button key={tabStatus} onClick={() => setStatus(tabStatus)} className={`px-3 py-2 rounded-full text-sm font-semibold border ${status === tabStatus ? 'bg-blue-600 border-blue-600 text-white' : 'bg-white border-gray-200 text-gray-700'}`}>
+                  {statusLabels[tabStatus]}
+                </button>
+              ))}
             </div>
-            <button onClick={fetchBookings} className="px-3 py-2 rounded bg-blue-600 text-white text-sm font-bold">Refresh</button>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+              <input type="date" value={from} onChange={(e) => setFrom(e.target.value)} className="border rounded-lg px-3 py-2" />
+              <input type="date" value={to} onChange={(e) => setTo(e.target.value)} className="border rounded-lg px-3 py-2" />
+              <input value={search} onChange={(e) => setSearch(e.target.value)} className="border rounded-lg px-3 py-2 md:col-span-2" placeholder="Search by name, phone, or booking ID" />
+            </div>
           </div>
 
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead className="bg-gray-50 text-gray-600 uppercase text-xs">
                 <tr>
+                  <th className="px-4 py-3 text-left">Booking</th>
                   <th className="px-4 py-3 text-left">Customer</th>
-                  <th className="px-4 py-3 text-left">Pet</th>
                   <th className="px-4 py-3 text-left">Service</th>
                   <th className="px-4 py-3 text-left">Slot</th>
-                  <th className="px-4 py-3 text-left">Status</th>
                   <th className="px-4 py-3 text-left">Payment</th>
+                  <th className="px-4 py-3 text-left">Status</th>
                   <th className="px-4 py-3 text-left">Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {loadingBookings ? (
-                  <tr><td colSpan={7} className="px-4 py-3 text-gray-500">Loading bookings...</td></tr>
-                ) : bookings.length === 0 ? (
-                  <tr><td colSpan={7} className="px-4 py-3 text-gray-500">No bookings yet.</td></tr>
-                ) : (
-                  bookings.map((booking) => (
-                    <tr key={booking._id} className="border-t border-gray-100 align-top">
+                {bookings.length === 0 ? (
+                  <tr><td className="px-4 py-4 text-gray-500" colSpan={7}>No bookings found.</td></tr>
+                ) : bookings.map((booking) => (
+                  <React.Fragment key={booking._id}>
+                    <tr className="border-t border-gray-100 align-top">
+                      <td className="px-4 py-3 font-bold text-gray-900">{booking.bookingId}</td>
                       <td className="px-4 py-3">
-                        <p className="font-semibold text-gray-900">{booking.customer?.name || '-'}</p>
-                        <p className="text-gray-500">{booking.customer?.phone || '-'}</p>
-                        <p className="text-gray-500">{booking.customer?.email || '-'}</p>
+                        <p className="font-semibold">{booking.customer?.name}</p>
+                        <p className="text-gray-500">{booking.customer?.phone}</p>
+                        <p className="text-gray-500">{booking.customer?.petName} / {booking.customer?.petType}</p>
                       </td>
                       <td className="px-4 py-3">
-                        <p className="font-semibold text-gray-900">{booking.pet?.name || '-'}</p>
-                        <p className="text-gray-500">{booking.pet?.type || '-'}</p>
-                        <p className="text-gray-500">{booking.pet?.breed || '-'}</p>
+                        <p className="font-semibold">{booking.service?.name || booking.service?.ref?.name}</p>
+                        <p className="text-gray-500">{booking.variant?.name}</p>
+                        <p className="text-gray-500">Advance ₹{Number(booking.advancePaid || 0).toLocaleString('en-IN')} | Remaining ₹{Number(booking.remainingAmount || 0).toLocaleString('en-IN')}</p>
                       </td>
                       <td className="px-4 py-3">
-                        <p className="font-semibold text-gray-900">{booking.service?.name || '-'}</p>
-                        <p className="text-gray-500">Variant: {booking.variant?.name || '-'}</p>
-                        <p className="text-gray-500">Price: INR {Number(booking.variant?.price || 0).toLocaleString('en-IN')}</p>
-                        <p className="text-gray-500">Booking: INR {Number(booking.variant?.bookingAmount || 0).toLocaleString('en-IN')}</p>
+                        <p>{booking.slot?.date ? new Date(booking.slot.date).toLocaleDateString() : '-'}</p>
+                        <p className="text-gray-500">{booking.slot?.startTime} - {booking.slot?.endTime}</p>
                       </td>
-                      <td className="px-4 py-3">
-                        {booking.slot ? (
-                          <>
-                            <p className="text-gray-900">{formatDateLabel(booking.slot.date)}</p>
-                            <p className="text-gray-500">{booking.slot.startTime} - {booking.slot.endTime}</p>
-                          </>
-                        ) : (
-                          '-'
-                        )}
-                      </td>
-                      <td className="px-4 py-3">
-                        <span className={`px-2 py-1 rounded-full text-xs font-bold border ${statusBadge(booking.status)}`}>
-                          {booking.status}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3">
-                        <span className={`px-2 py-1 rounded-full text-xs font-bold border ${statusBadge(booking.paymentStatus)}`}>
-                          {booking.paymentStatus}
-                        </span>
-                      </td>
+                      <td className="px-4 py-3"><span className={`px-2 py-1 rounded-full text-xs font-bold ${paymentBadge[booking.paymentStatus] || 'bg-gray-100'}`}>{booking.paymentStatus}</span></td>
+                      <td className="px-4 py-3"><span className={`px-2 py-1 rounded-full text-xs font-bold ${bookingBadge[booking.bookingStatus] || 'bg-gray-100'}`}>{booking.bookingStatus}</span></td>
                       <td className="px-4 py-3">
                         <div className="flex flex-wrap gap-2">
-                          <button
-                            onClick={() => updateBookingStatus(booking, 'confirmed', 'Confirmed by admin')}
-                            className="px-2 py-1 rounded bg-blue-600 text-white text-xs font-bold"
-                          >
-                            Confirm
-                          </button>
-                          <button
-                            onClick={() => updateBookingStatus(booking, 'completed', 'Marked completed by admin')}
-                            className="px-2 py-1 rounded bg-emerald-600 text-white text-xs font-bold"
-                          >
-                            Completed
-                          </button>
-                          <button
-                            onClick={() => updateBookingStatus(booking, 'cancelled', 'Cancelled by admin')}
-                            className="px-2 py-1 rounded bg-red-600 text-white text-xs font-bold"
-                          >
-                            Cancel
-                          </button>
-                          <button
-                            onClick={() => updateBookingStatus(booking, 'refunded', 'Refunded by admin')}
-                            className="px-2 py-1 rounded bg-purple-600 text-white text-xs font-bold"
-                          >
-                            Refund
-                          </button>
-                          <button
-                            onClick={() => openRescheduleModal(booking)}
-                            className="px-2 py-1 rounded bg-amber-500 text-white text-xs font-bold"
-                          >
-                            Reschedule
-                          </button>
+                          {booking.bookingStatus === 'confirmed' && <button onClick={() => openStatusModal(booking, 'completed')} className="px-2 py-1 rounded bg-emerald-600 text-white text-xs font-bold">Mark Completed</button>}
+                          {booking.bookingStatus === 'confirmed' && <button onClick={() => openStatusModal(booking, 'rejected')} className="px-2 py-1 rounded bg-rose-600 text-white text-xs font-bold">Reject</button>}
+                          {booking.bookingStatus === 'confirmed' && <button onClick={() => openStatusModal(booking, 'rejected_refunded')} className="px-2 py-1 rounded bg-gray-700 text-white text-xs font-bold">Reject &amp; Refund</button>}
+                          {booking.bookingStatus === 'confirmed' && <button onClick={() => openStatusModal(booking, 'cancelled')} className="px-2 py-1 rounded bg-orange-600 text-white text-xs font-bold">Cancel</button>}
+                          {booking.bookingStatus === 'confirmed' && <button onClick={() => openStatusModal(booking, 'cancelled_refunded')} className="px-2 py-1 rounded bg-gray-700 text-white text-xs font-bold">Cancel &amp; Refund</button>}
+                          {booking.bookingStatus !== 'completed' && booking.bookingStatus !== 'cancelled_refunded' && booking.bookingStatus !== 'rejected_refunded' && <button onClick={() => markRemaining(booking)} className="px-2 py-1 rounded bg-blue-600 text-white text-xs font-bold">Mark Remaining Received</button>}
+                          {booking.bookingStatus !== 'completed' && booking.bookingStatus !== 'cancelled_refunded' && (
+                            <button onClick={() => openRescheduleModal(booking)} className="px-2 py-1 rounded bg-amber-500 text-white text-xs font-bold">Reschedule</button>
+                          )}
+                          <button onClick={() => setSelectedBooking(selectedBooking?._id === booking._id ? null : booking)} className="px-2 py-1 rounded border border-gray-300 text-xs font-bold">{selectedBooking?._id === booking._id ? 'Collapse' : 'Expand'}</button>
                         </div>
                       </td>
                     </tr>
-                  ))
-                )}
+                    {selectedBooking?._id === booking._id && (
+                      <tr className="bg-gray-50 border-t border-gray-100">
+                        <td colSpan={7} className="px-4 py-4 text-sm">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                              <h4 className="font-bold mb-2">Status History</h4>
+                              <ul className="space-y-2">
+                                {(booking.statusHistory || []).map((item, idx) => <li key={idx} className="text-gray-700">{item.status} - {new Date(item.changedAt || item.at || booking.createdAt).toLocaleString()} {item.note ? `(${item.note})` : ''}</li>)}
+                              </ul>
+                            </div>
+                            <div>
+                              <h4 className="font-bold mb-2">Booking Details</h4>
+                              <p>Razorpay Order: {booking.razorpayOrderId}</p>
+                              <p>Razorpay Payment: {booking.razorpayPaymentId}</p>
+                              <p className="mt-2 text-gray-700">Note: {booking.adminNote || '-'}</p>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </React.Fragment>
+                ))}
               </tbody>
             </table>
           </div>
         </section>
       )}
 
+      {statusModal.open && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl w-full max-w-lg p-5 space-y-4">
+            <h3 className="text-xl font-black text-gray-900">Change status to {statusModal.nextStatus}?</h3>
+            <textarea value={statusModal.note} onChange={(e) => setStatusModal((p) => ({ ...p, note: e.target.value }))} className="w-full border rounded-lg px-3 py-2" rows={4} placeholder="Optional note" />
+            <div className="flex justify-end gap-2">
+              <button onClick={() => setStatusModal({ open: false, booking: null, nextStatus: '', note: '' })} className="px-4 py-2 rounded-lg border border-gray-300">Cancel</button>
+              <button onClick={submitStatus} className="px-4 py-2 rounded-lg bg-blue-600 text-white font-bold">Confirm</button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {rescheduleModal.open && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl w-full max-w-2xl shadow-2xl border border-gray-200">
-            <div className="p-4 border-b border-gray-100 flex items-center justify-between">
-              <h4 className="text-lg font-black text-gray-900">Reschedule Booking</h4>
-              <button onClick={() => setRescheduleModal({ open: false, booking: null, slots: [], selectedSlotId: '', note: '' })} className="text-gray-500">Close</button>
+          <div className="bg-white rounded-2xl w-full max-w-2xl p-5 space-y-4 max-h-[90vh] overflow-y-auto">
+            <h3 className="text-xl font-black text-gray-900">Reschedule booking</h3>
+            <div className="border rounded-xl p-4 bg-gray-50">
+              <p className="text-sm font-semibold text-gray-700 mb-3">Select future slot</p>
+              {futureSlots.length === 0 ? (
+                <p className="text-sm text-gray-500">No future slots available right now.</p>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-64 overflow-y-auto pr-1">
+                  {futureSlots.map((slot) => {
+                    const isSelected = rescheduleModal.slotId === slot._id;
+                    return (
+                      <button
+                        key={slot._id}
+                        type="button"
+                        onClick={() => setRescheduleModal((p) => ({ ...p, slotId: slot._id }))}
+                        className={`text-left rounded-xl border px-4 py-3 transition-all ${isSelected ? 'border-blue-600 bg-blue-50 ring-2 ring-blue-100' : 'border-gray-200 bg-white hover:border-blue-300'}`}
+                      >
+                        <p className="font-bold text-gray-900">{new Date(slot.date).toLocaleDateString()}</p>
+                        <p className="text-sm text-gray-600">{slot.startTime} - {slot.endTime}</p>
+                        <p className="text-xs text-gray-500 mt-1">{Math.max(Number(slot.capacity || 0) - Number(slot.bookedCount || 0), 0)} slots left</p>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+              {rescheduleModal.slotId && (
+                <p className="text-sm text-blue-700 font-semibold mt-3">Selected slot: {new Date(futureSlots.find((slot) => slot._id === rescheduleModal.slotId)?.date || Date.now()).toLocaleDateString()}</p>
+              )}
             </div>
-
-            <div className="p-4 space-y-3">
-              <p className="text-sm text-gray-600">Select a future slot for {rescheduleModal.booking?.customer?.name || 'customer'}.</p>
-
-              <select
-                className="w-full border rounded-lg px-3 py-2"
-                value={rescheduleModal.selectedSlotId}
-                onChange={(e) => setRescheduleModal((prev) => ({ ...prev, selectedSlotId: e.target.value }))}
-              >
-                <option value="">Select future slot</option>
-                {rescheduleModal.slots.map((slot) => (
-                  <option key={slot._id} value={slot._id}>
-                    {formatDateTime(slot.date, slot.startTime)} - {slot.endTime} ({slot.bookedCount}/{slot.capacity})
-                  </option>
-                ))}
-              </select>
-
-              <textarea
-                rows={3}
-                className="w-full border rounded-lg px-3 py-2"
-                placeholder="Reason for reschedule"
-                value={rescheduleModal.note}
-                onChange={(e) => setRescheduleModal((prev) => ({ ...prev, note: e.target.value }))}
-              />
-
-              <div className="flex justify-end gap-2">
-                <button onClick={() => setRescheduleModal({ open: false, booking: null, slots: [], selectedSlotId: '', note: '' })} className="px-4 py-2 rounded-lg border border-gray-300">Cancel</button>
-                <button onClick={submitReschedule} className="px-4 py-2 rounded-lg bg-blue-600 text-white font-bold">Save</button>
-              </div>
+            <textarea value={rescheduleModal.note} onChange={(e) => setRescheduleModal((p) => ({ ...p, note: e.target.value }))} className="w-full border rounded-lg px-3 py-2" rows={4} placeholder="Optional note" />
+            <div className="flex justify-end gap-2">
+              <button onClick={() => setRescheduleModal({ open: false, booking: null, slotId: '', note: '' })} className="px-4 py-2 rounded-lg border border-gray-300">Cancel</button>
+              <button onClick={submitReschedule} className="px-4 py-2 rounded-lg bg-amber-500 text-white font-bold">Save</button>
             </div>
           </div>
         </div>

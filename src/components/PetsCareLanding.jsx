@@ -117,7 +117,7 @@ const services = [
     },
 ];
 
-const whatsappNumber = '918222993333';
+const whatsappNumber = import.meta.env.VITE_WHATSAPP_NUMBER;
 
 function openWhatsApp(serviceName) {
     const message = encodeURIComponent(
