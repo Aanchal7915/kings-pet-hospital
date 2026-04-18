@@ -4,9 +4,9 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
-const PageSEO = require('./models/PageSEO');
-const Blog = require('./models/Blog');
-const Slot = require('./models/Slot');
+const PageSEO = require('../models/PageSEO');
+const Blog = require('../models/Blog');
+const Slot = require('../models/Slot');
 
 // Load env vars
 dotenv.config();
@@ -39,23 +39,23 @@ const connectDB = async () => {
 connectDB();
 
 // Routes
-app.use('/api/auth', require('./routes/authRoutes'));
-app.use('/api/blogs', require('./routes/blogRoutes'));
-app.use('/api/seo', require('./routes/seoRoutes'));
-app.use('/api/catalog', require('./routes/catalogRoutes'));
-app.use('/api/category', require('./routes/categoryRoutes'));
-app.use('/api/subcategory', require('./routes/subcategoryRoutes'));
-app.use('/api/service', require('./routes/serviceRoutes'));
-app.use('/api/bookings', require('./routes/bookingRoutes'));
-app.use('/api/doctors', require('./routes/doctorRoutes'));
-app.use('/api/slots', require('./routes/slotRoutes'));
-app.use('/api/settings', require('./routes/settingsRoutes'));
-app.use('/api/analytics', require('./routes/analyticsRoutes'));
+app.use('/api/auth', require('../routes/authRoutes'));
+app.use('/api/blogs', require('../routes/blogRoutes'));
+app.use('/api/seo', require('../routes/seoRoutes'));
+app.use('/api/catalog', require('../routes/catalogRoutes'));
+app.use('/api/category', require('../routes/categoryRoutes'));
+app.use('/api/subcategory', require('../routes/subcategoryRoutes'));
+app.use('/api/service', require('../routes/serviceRoutes'));
+app.use('/api/bookings', require('../routes/bookingRoutes'));
+app.use('/api/doctors', require('../routes/doctorRoutes'));
+app.use('/api/slots', require('../routes/slotRoutes'));
+app.use('/api/settings', require('../routes/settingsRoutes'));
+app.use('/api/analytics', require('../routes/analyticsRoutes'));
 
 const PORT = process.env.PORT || 5000;
 
 // Serve Static Files from Frontend Build (Disabled index to allow SEO injection priority)
-const frontendPath = path.join(__dirname, 'dist');
+const frontendPath = path.join(__dirname, '../dist');
 app.use(express.static(frontendPath, { index: false }));
 
 // Dynamic SEO Injector Catch-all (Express 5 Regex Syntax)
@@ -87,7 +87,7 @@ app.get(/.*/, async (req, res) => {
                     keywords = blogData.metaKeywords || blogData.keywords || keywords;
                 }
             } else if (firstPart === 'services' && serviceSlug) {
-                const Service = require('./models/Service');
+                const Service = require('../models/Service');
                 const serviceData = await Service.findOne({ slug: serviceSlug });
                 if (serviceData) {
                     title = `${serviceData.name} | Kings Pet Hospital`;

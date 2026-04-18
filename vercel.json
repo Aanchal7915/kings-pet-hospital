@@ -3,7 +3,7 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "server.js"
+      "destination": "api/server.js"
     },
     {
       "source": "/assets/(.*)",
@@ -11,11 +11,11 @@
     },
     {
       "source": "/(.*)",
-      "destination": "server.js"
+      "destination": "api/server.js"
     }
   ],
   "functions": {
-    "server.js": {
+    "api/server.js": {
       "memory": 1024,
       "maxDuration": 25,
       "includeFiles": "dist/**"
