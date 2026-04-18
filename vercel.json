@@ -1,19 +1,17 @@
 {
   "version": 2,
-  "cleanUrls": true,
-  "trailingSlash": false,
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "api/server.js"
+      "destination": "/api/server"
     },
     {
       "source": "/assets/(.*)",
       "destination": "/dist/assets/$1"
     },
     {
-      "source": "/((?!assets|dist|logo.jpg|favicon.ico|vite.svg).*)",
-      "destination": "api/server.js"
+      "source": "/(.*)",
+      "destination": "/api/server"
     }
   ],
   "functions": {
