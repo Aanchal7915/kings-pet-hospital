@@ -9,6 +9,7 @@ const AdminSEO = () => {
         section: '',
         title: '',
         metaDescription: '',
+        metaKeywords: '',
         h1OrH2: '',
         seoText: ''
     });
@@ -121,13 +122,23 @@ const AdminSEO = () => {
                                 </div>
 
                                 <div>
-                                    <label className="block text-xs font-bold text-gray-400 uppercase mb-1">Hidden SEO Content (Keywords/Text)</label>
+                                    <label className="block text-xs font-bold text-gray-400 uppercase mb-1">Meta Keywords</label>
+                                    <input
+                                        className="w-full px-4 py-2 rounded-xl border border-gray-200"
+                                        value={editForm.metaKeywords}
+                                        onChange={(e) => setEditForm({ ...editForm, metaKeywords: e.target.value })}
+                                        placeholder="pet hospital, veterinary, dog care (comma separated)"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-xs font-bold text-gray-400 uppercase mb-1">Hidden SEO Content (SEO Text)</label>
                                     <textarea
                                         className="w-full px-4 py-2 rounded-xl border border-gray-200 font-mono text-sm"
                                         rows="3"
                                         value={editForm.seoText}
                                         onChange={(e) => setEditForm({ ...editForm, seoText: e.target.value })}
-                                        placeholder="Add keywords or hidden paragraphs for search engines..."
+                                        placeholder="Add hidden paragraphs for search engines..."
                                     />
                                 </div>
 

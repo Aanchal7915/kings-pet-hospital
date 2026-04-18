@@ -4,13 +4,16 @@ import tailwindcss from '@tailwindcss/vite'
 import axios from 'axios'
 
 // https://vite.dev/config/
-export default defineConfig({
+export default defineConfig(({ command }) => ({
   plugins: [
     react(),
     tailwindcss(),
     {
       name: 'seo-transform',
       async transformIndexHtml(html, ctx) {
+        // Skip transformation during build so placeholders remain for the backend to inject
+        if (command === 'build') return html;
+
         const url = ctx.originalUrl || '/';
         const pathParts = url.split('/').filter(p => p);
         let section = 'home';
@@ -55,9 +58,9 @@ export default defineConfig({
           }
           
           return html
-            .replace('{{SEO_TITLE}}', title)
-            .replace('{{SEO_DESCRIPTION}}', description)
-            .replace('{{SEO_KEYWORDS}}', keywords);
+            .replace(/{{SEO_TITLE}}/g, title)
+            .replace(/{{SEO_DESCRIPTION}}/g, description)
+            .replace(/{{SEO_KEYWORDS}}/g, keywords);
 
         } catch (err) {
           console.log('Vite SEO Dev Plugin: Backend not reachable, using defaults.');
@@ -65,11 +68,11 @@ export default defineConfig({
         
         // Fallbacks if backend is down or section not found
         return html
-          .replace('{{SEO_TITLE}}', 'Kings Pet Hospital | Trusted Pet Care')
-          .replace('{{SEO_DESCRIPTION}}', 'Professional pet care services and expert veterinarians.')
-          .replace('{{SEO_KEYWORDS}}', 'Kings Pet Hospital, Veterinary');
+          .replace(/{{SEO_TITLE}}/g, 'Kings Pet Hospital | Trusted Pet Care')
+          .replace(/{{SEO_DESCRIPTION}}/g, 'Professional pet care services and expert veterinarians.')
+          .replace(/{{SEO_KEYWORDS}}/g, 'Kings Pet Hospital, Veterinary');
       }
     }
   ]
-})
+}))
 
