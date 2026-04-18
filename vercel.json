@@ -2,22 +2,22 @@
   "version": 2,
   "cleanUrls": true,
   "trailingSlash": false,
-  "rewrites": [
+  "routes": [
     {
-      "source": "/api/(.*)",
-      "destination": "api/server.js"
+      "src": "^/assets/(.*)",
+      "dest": "/dist/assets/$1"
     },
     {
-      "source": "/assets/(.*)",
-      "destination": "dist/assets/$1"
+       "src": "^/(logo.jpg|favicon.ico|vite.svg)",
+       "dest": "/$1"
     },
     {
-      "source": "/",
-      "destination": "api/server.js"
+      "src": "^/api/(.*)",
+      "dest": "api/server.js"
     },
     {
-      "source": "/((?!assets|dist|logo.jpg|favicon.ico|vite.svg).*)",
-      "destination": "api/server.js"
+      "src": "^/(.*)",
+      "dest": "api/server.js"
     }
   ],
   "functions": {
