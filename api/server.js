@@ -77,11 +77,11 @@ app.get(/.*/, async (req, res) => {
 
         // 2. Fetch Data from DB
         try {
-            if (firstPart === 'blog' && blogId) {
+            if ((firstPart === 'blog' || firstPart === 'blogs') && blogId) {
                 const blogData = await Blog.findById(blogId);
                 if (blogData) {
                     title = blogData.metaTitle || blogData.title || title;
-                    description = blogData.metaDescription || blogData.description || description;
+                    description = blogData.metaDescription || blogData.description?.substring(0, 160) || description;
                     keywords = blogData.metaKeywords || blogData.keywords || keywords;
                 }
             } else if (firstPart === 'services' && serviceSlug) {
@@ -89,24 +89,24 @@ app.get(/.*/, async (req, res) => {
                 const serviceData = await Service.findOne({ slug: serviceSlug });
                 if (serviceData) {
                     title = `${serviceData.name} | Kings Pet Hospital`;
-                    description = serviceData.description ? serviceData.description.substring(0, 160) : description;
+                    description = serviceData.metaDescription || serviceData.description?.substring(0, 160) || description;
                 }
             } 
 
-            // Always try to find a matching PageSEO section even if we found a blog/service 
-            // This allows specific sections to override defaults
-            // Fuzzy match: handles 'pets-care' vs 'Pets Care'
+            // Flexible sectional matching for Home, About, Gallery, etc.
+            const queryName = section.replace(/-/g, ' ');
             const seoData = await PageSEO.findOne({ 
                 $or: [
                     { section: { $regex: new RegExp('^' + section + '$', 'i') } },
-                    { section: { $regex: new RegExp('^' + section.replace(/-/g, ' ') + '$', 'i') } }
+                    { section: { $regex: new RegExp('^' + queryName + '$', 'i') } },
+                    { section: { $regex: new RegExp(queryName, 'i') } }
                 ]
             });
             
             if (seoData) {
-                title = seoData.title || title;
+                title = seoData.metaTitle || seoData.title || title;
                 description = seoData.metaDescription || seoData.description || description;
-                keywords = seoData.metaKeywords || seoData.seoText || keywords;
+                keywords = seoData.metaKeywords || seoData.keywords || keywords;
             }
         } catch (dbError) {
             console.error('[SEO UNIVERSAL] DB Error:', dbError.message);
@@ -126,9 +126,10 @@ app.get(/.*/, async (req, res) => {
         const fullUrl = `${protocol}://${host}${url}`;
 
         // Global replacements for all placeholders found in your frontend index.html
-        html = html.replace(/{{SEO_TITLE}}/g, title);
-        html = html.replace(/{{SEO_DESCRIPTION}}/g, description || '');
-        html = html.replace(/{{SEO_KEYWORDS}}/g, keywords || '');
+        // Final Global Replacement (Always clear placeholders)
+        html = html.replace(/{{SEO_TITLE}}/g, title || 'Kings Pet Hospital | Best Veterinary Care');
+        html = html.replace(/{{SEO_DESCRIPTION}}/g, description || 'Professional pet care services, expert veterinarians, and modern medical facilities.');
+        html = html.replace(/{{SEO_KEYWORDS}}/g, keywords || 'Kings Pet Hospital, Veterinary, Pet Care');
         html = html.replace(/{{SEO_CANONICAL}}/g, fullUrl);
 
         // Add a hidden comment to verify the server is running
