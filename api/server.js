@@ -131,6 +131,9 @@ app.get(/.*/, async (req, res) => {
         html = html.replace(/{{SEO_KEYWORDS}}/g, keywords || '');
         html = html.replace(/{{SEO_CANONICAL}}/g, fullUrl);
 
+        // Add a hidden comment to verify the server is running
+        html = html.replace('</head>', '  <!-- SEO_INJECTED_BY_BACKEND -->\n</head>');
+
         res.send(html);
     } catch (err) {
         console.error('[DEBUG] Critical SEO Injection Error:', err);

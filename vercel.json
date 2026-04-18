@@ -4,23 +4,15 @@
   "trailingSlash": false,
   "rewrites": [
     {
-      "source": "/api/(.*)",
-      "destination": "/api/server"
-    },
-    {
       "source": "/assets/(.*)",
       "destination": "/dist/assets/$1"
     },
     {
-      "source": "/",
+      "source": "/api/(.*)",
       "destination": "/api/server"
     },
     {
-      "source": "/about",
-      "destination": "/api/server"
-    },
-    {
-      "source": "/((?!assets|dist|logo.jpg|favicon.ico|vite.svg).*)",
+      "source": "/(.*)",
       "destination": "/api/server"
     }
   ],
