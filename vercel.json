@@ -1,11 +1,24 @@
 {
   "version": 2,
-  "cleanUrls": true,
-  "trailingSlash": false,
   "rewrites": [
     {
+      "source": "/api/(.*)",
+      "destination": "server.js"
+    },
+    {
+      "source": "/assets/(.*)",
+      "destination": "dist/assets/$1"
+    },
+    {
       "source": "/(.*)",
-      "destination": "/"
+      "destination": "server.js"
     }
-  ]
+  ],
+  "functions": {
+    "server.js": {
+      "memory": 1024,
+      "maxDuration": 25,
+      "includeFiles": "dist/**"
+    }
+  }
 }
