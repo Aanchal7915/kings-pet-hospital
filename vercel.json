@@ -12,19 +12,7 @@
       "destination": "/dist/assets/$1"
     },
     {
-      "source": "/",
-      "destination": "/api/server"
-    },
-    {
-      "source": "/about",
-      "destination": "/api/server"
-    },
-    {
-      "source": "/services",
-      "destination": "/api/server"
-    },
-    {
-      "source": "/((?!assets|dist|logo.jpg|favicon.ico|vite.svg).*)",
+      "source": "/(.*)",
       "destination": "/api/server"
     }
   ],
