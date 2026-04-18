@@ -1,5 +1,7 @@
 {
   "version": 2,
+  "cleanUrls": true,
+  "trailingSlash": false,
   "rewrites": [
     {
       "source": "/api/(.*)",
@@ -7,10 +9,10 @@
     },
     {
       "source": "/assets/(.*)",
-      "destination": "dist/assets/$1"
+      "destination": "/dist/assets/$1"
     },
     {
-      "source": "/(.*)",
+      "source": "/((?!assets|dist|logo.jpg|favicon.ico|vite.svg).*)",
       "destination": "api/server.js"
     }
   ],

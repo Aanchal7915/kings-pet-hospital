@@ -19,24 +19,22 @@ app.use(cors());
 
 // Database Connection
 const connectDB = async () => {
+    if (!process.env.MONGO_URI) {
+        console.error('MONGO_URI is missing from environment variables!');
+        return;
+    }
     try {
-        const conn = await mongoose.connect(process.env.MONGO_URI);
-        console.log(`MongoDB Connected: ${conn.connection.host}`);
-
-        try {
-            await Slot.collection.dropIndex('startAt_1');
-            console.log('Dropped stale Slot index: startAt_1');
-        } catch (indexError) {
-            if (!String(indexError?.message || '').includes('index not found')) {
-                console.warn('Slot index cleanup warning:', indexError.message);
-            }
-        }
+        await mongoose.connect(process.env.MONGO_URI);
+        console.log('MongoDB Connected');
     } catch (error) {
-        console.error(`Error: ${error.message}`);
-        process.exit(1);
+        console.error(`Database Connection Error: ${error.message}`);
     }
 };
-connectDB();
+
+// Only connect if not already connected (Standard for Serverless)
+if (mongoose.connection.readyState === 0) {
+    connectDB();
+}
 
 // Routes
 app.use('/api/auth', require('../routes/authRoutes'));
