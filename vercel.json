@@ -4,15 +4,27 @@
   "trailingSlash": false,
   "rewrites": [
     {
-      "source": "/assets/(.*)",
-      "destination": "/dist/assets/$1"
-    },
-    {
       "source": "/api/(.*)",
       "destination": "/api/server"
     },
     {
-      "source": "/(.*)",
+      "source": "/assets/(.*)",
+      "destination": "/dist/assets/$1"
+    },
+    {
+      "source": "/",
+      "destination": "/api/server"
+    },
+    {
+      "source": "/about",
+      "destination": "/api/server"
+    },
+    {
+      "source": "/services",
+      "destination": "/api/server"
+    },
+    {
+      "source": "/((?!assets|dist|logo.jpg|favicon.ico|vite.svg).*)",
       "destination": "/api/server"
     }
   ],
