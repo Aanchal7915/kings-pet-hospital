@@ -5,6 +5,8 @@ import Footer from './Footer';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
+const isValidImage = (s) => typeof s === 'string' && (s.startsWith('http') || s.startsWith('data:') || s.startsWith('/'));
+
 const PetListingsPage = () => {
   const [listings, setListings] = useState([]);
   const [filter, setFilter] = useState('All');
@@ -114,7 +116,7 @@ const PetListingsPage = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
               {visible.map((pet) => (
                 <article key={pet._id} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-all">
-                  {pet.image ? (
+                  {isValidImage(pet.image) ? (
                     <img
                       src={pet.image}
                       alt={pet.name}
