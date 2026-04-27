@@ -118,26 +118,28 @@ const Header = ({ showHero = true }) => {
       <nav className={`fixed w-full z-50 transition-all duration-300 ${isNavbarActive ? 'bg-white shadow-md py-4' : 'bg-transparent py-6'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center">
-            <Link to="/" className="flex items-center space-x-3">
-              <img src="/logo.jpg" alt="Kings Pet Hospital logo" className="h-10 w-auto rounded-sm bg-white/90 p-1 shadow-sm" />
-              <h1 className={`text-xl md:text-2xl font-bold transition-colors duration-300 ${isNavbarActive ? 'text-blue-600' : 'text-white'}`}>
+            <Link to="/" className="flex items-center space-x-2">
+              <img src="/logo.jpg" alt="Kings Pet Hospital logo" className="h-9 w-auto rounded-sm bg-white/90 p-1 shadow-sm" />
+              <h1 className={`text-base lg:text-lg font-bold whitespace-nowrap transition-colors duration-300 ${isNavbarActive ? 'text-blue-600' : 'text-white'}`}>
                 Kings Pet Hospital
               </h1>
             </Link>
 
-            <div className="hidden md:flex items-center space-x-7">
-              <button type="button" onClick={() => goTo('/')} className={`transition-colors duration-300 font-medium ${navButtonClass}`}>Home</button>
-              <button type="button" onClick={() => goTo('/services')} className={`transition-colors duration-300 font-medium ${navButtonClass}`}>Services</button>
-              <button type="button" onClick={() => goTo('/gallery')} className={`transition-colors duration-300 font-medium ${navButtonClass}`}>Gallery</button>
-              <button type="button" onClick={() => goToSection('about')} className={`transition-colors duration-300 font-medium ${navButtonClass}`}>About</button>
-              <button type="button" onClick={() => goToSection('team')} className={`transition-colors duration-300 font-medium ${navButtonClass}`}>Doctors</button>
-              <button type="button" onClick={() => goTo('/blog')} className={`transition-colors duration-300 font-medium ${navButtonClass}`}>Blog</button>
-              <button type="button" onClick={() => goTo('/contact')} className={`transition-colors duration-300 font-medium ${navButtonClass}`}>Contact</button>
+            <div className="hidden md:flex items-center gap-3 lg:gap-4">
+              <button type="button" onClick={() => goTo('/')} className={`text-sm font-medium whitespace-nowrap transition-colors duration-300 ${navButtonClass}`}>Home</button>
+              <button type="button" onClick={() => goTo('/services')} className={`text-sm font-medium whitespace-nowrap transition-colors duration-300 ${navButtonClass}`}>Services</button>
+              <button type="button" onClick={() => goTo('/pet-foods')} className={`text-sm font-medium whitespace-nowrap transition-colors duration-300 ${navButtonClass}`}>Pet Food</button>
+              <button type="button" onClick={() => goTo('/pets-for-sale')} className={`text-sm font-medium whitespace-nowrap transition-colors duration-300 ${navButtonClass}`}>Pets For Sale</button>
+              <button type="button" onClick={() => goTo('/gallery')} className={`text-sm font-medium whitespace-nowrap transition-colors duration-300 ${navButtonClass}`}>Gallery</button>
+              <button type="button" onClick={() => goToSection('about')} className={`text-sm font-medium whitespace-nowrap transition-colors duration-300 ${navButtonClass}`}>About</button>
+              <button type="button" onClick={() => goToSection('team')} className={`text-sm font-medium whitespace-nowrap transition-colors duration-300 ${navButtonClass}`}>Doctors</button>
+              <button type="button" onClick={() => goTo('/blog')} className={`text-sm font-medium whitespace-nowrap transition-colors duration-300 ${navButtonClass}`}>Blog</button>
+              <button type="button" onClick={() => goTo('/contact')} className={`text-sm font-medium whitespace-nowrap transition-colors duration-300 ${navButtonClass}`}>Contact</button>
               <button
-                className={`px-6 py-2 rounded-full font-semibold transition-all duration-300 ${isNavbarActive ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-white text-blue-600 hover:bg-blue-50'}`}
+                className={`px-4 py-1.5 rounded-full text-sm font-semibold whitespace-nowrap transition-all duration-300 ${isNavbarActive ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-white text-blue-600 hover:bg-blue-50'}`}
                 onClick={() => openWhatsApp()}
               >
-                WhatsApp Booking
+                WhatsApp
               </button>
             </div>
 
@@ -162,6 +164,8 @@ const Header = ({ showHero = true }) => {
               <div className="px-2 pt-2 pb-3 space-y-1 bg-white rounded-lg mt-2 shadow-lg">
                 <button type="button" onClick={() => goTo('/')} className="block w-full px-3 py-2 text-left text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md">Home</button>
                 <button type="button" onClick={() => goTo('/services')} className="block w-full px-3 py-2 text-left text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md">Services</button>
+                <button type="button" onClick={() => goTo('/pet-foods')} className="block w-full px-3 py-2 text-left text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md">Pet Food</button>
+                <button type="button" onClick={() => goTo('/pets-for-sale')} className="block w-full px-3 py-2 text-left text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md">Pets For Sale</button>
                 <button type="button" onClick={() => goTo('/gallery')} className="block w-full px-3 py-2 text-left text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md">Gallery</button>
                 <button type="button" onClick={() => goToSection('about')} className="block w-full px-3 py-2 text-left text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md">About</button>
                 <button type="button" onClick={() => goToSection('team')} className="block w-full px-3 py-2 text-left text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md">Doctors</button>

@@ -14,6 +14,8 @@ import BlogDetailPage from './components/BlogDetailPage';
 import PolicyNotice from './components/PolicyNotice';
 import TermsOfService from './components/TermsOfService';
 import PetsCareLanding from './components/PetsCareLanding';
+import PetFoodsPage from './components/PetFoodsPage';
+import PetListingsPage from './components/PetListingsPage';
 
 const PUBLIC_TITLE = 'Kings Pet Hospital | Best Veterinary Care';
 const ADMIN_DASHBOARD_TITLE = 'Admin Dashboard | Kings Pet Hospital';
@@ -55,6 +57,8 @@ function App() {
         <Route path="/booking" element={<Home />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/pets-care" element={<PetsCareLanding />} />
+        <Route path="/pet-foods" element={<PetFoodsPage />} />
+        <Route path="/pets-for-sale" element={<PetListingsPage />} />
         <Route path="/blog" element={<AllBlogsPage />} />
         <Route path="/blog/:id" element={<BlogDetailPage />} />
 

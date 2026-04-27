@@ -118,8 +118,8 @@ const DoctorsPage = () => {
                   )}
                 </div>
                 <div className="p-7 text-center">
-                  <h2 className="text-[2.2rem] font-black text-slate-800 leading-tight">{doctor.name}</h2>
-                  <p className="text-blue-700 font-bold text-[1.9rem] mt-3">{doctor.designation}</p>
+                  <h2 className="text-xl font-bold text-slate-800 leading-tight">{doctor.name}</h2>
+                  <p className="text-blue-700 font-semibold text-sm mt-1">{doctor.designation}</p>
                 </div>
               </article>
             ))}

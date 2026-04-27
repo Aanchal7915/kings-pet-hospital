@@ -48,10 +48,10 @@ const AllBlogsPage = () => {
                     <span className="inline-block px-4 py-1.5 mb-4 text-xs font-bold tracking-[0.2em] uppercase bg-blue-500/30 backdrop-blur-md border border-blue-400/30 rounded-full">
                         Kings Pet Journal
                     </span>
-                    <h1 className="text-5xl md:text-7xl font-black mb-6 tracking-tighter uppercase italic">
+                    <h1 className="text-4xl md:text-6xl font-extrabold mb-6 tracking-tight uppercase">
                         The Pet <span className="text-blue-400">Journal</span>
                     </h1>
-                    <p className="text-blue-100 text-lg md:text-xl max-w-2xl mx-auto font-medium leading-relaxed">
+                    <p className="text-blue-100 text-base md:text-lg max-w-2xl mx-auto font-medium leading-relaxed">
                         Expert insights, professional pet care tips, and the latest heart-warming stories from our hospital.
                     </p>
                 </div>

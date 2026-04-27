@@ -65,10 +65,10 @@ const ServicesPage = () => {
       <main className="pt-28 pb-16">
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-8 text-center">
-            <h1 className="text-4xl md:text-6xl font-black text-transparent bg-gradient-to-r from-violet-500 to-fuchsia-500 bg-clip-text">
+            <h1 className="text-3xl md:text-5xl font-extrabold text-transparent bg-gradient-to-r from-violet-500 to-fuchsia-500 bg-clip-text">
               Our Premium Pet Services
             </h1>
-            <p className="text-gray-600 mt-4 text-lg md:text-4xl mx-auto max-w-3xl">
+            <p className="text-gray-600 mt-3 text-base md:text-xl mx-auto max-w-2xl">
               Providing top-quality care for your beloved furry friends with our comprehensive range of services
             </p>
           </div>
