@@ -23,7 +23,7 @@ const BlogFeed = () => {
     }, []);
 
     return (
-        <section id="blog" className="py-24 bg-gray-50/50 min-h-[600px]">
+        <section id="blog" className="py-8 md:py-24 bg-gray-50/50 min-h-[600px]">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Header Section */}
 

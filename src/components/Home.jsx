@@ -5,6 +5,8 @@ import { useLocation } from 'react-router-dom';
 import Header from './Header';
 import PremiumServices from './PremiumServices';
 import FeaturedServices from './FeaturedServices';
+import PetFoodsFeatured from './PetFoodsFeatured';
+import PetListingsFeatured from './PetListingsFeatured';
 import About from './About';
 import WhyChooseUs from './WhyChooseUs';
 import HowItWorks from './HowItWorks';
@@ -25,7 +27,8 @@ const Home = () => {
       '/team': 'team',
     };
 
-    const targetSectionId = sectionByPath[location.pathname];
+    const hash = location.hash.replace('#', '');
+    const targetSectionId = sectionByPath[location.pathname] || hash;
     if (!targetSectionId) return;
 
     const timer = setTimeout(() => {
@@ -36,7 +39,7 @@ const Home = () => {
     }, 120);
 
     return () => clearTimeout(timer);
-  }, [location.pathname]);
+  }, [location.pathname, location.hash]);
 
   return (
     <div className="min-h-screen bg-gray-50 font-sans antialiased">
@@ -52,6 +55,8 @@ const Home = () => {
       <main className="relative z-10">
         <PremiumServices />
         <FeaturedServices />
+        <PetFoodsFeatured />
+        <PetListingsFeatured />
         <About />
         <WhyChooseUs />
         <HowItWorks />

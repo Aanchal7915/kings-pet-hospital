@@ -15,7 +15,14 @@ import PolicyNotice from './components/PolicyNotice';
 import TermsOfService from './components/TermsOfService';
 import PetsCareLanding from './components/PetsCareLanding';
 import PetFoodsPage from './components/PetFoodsPage';
+import PetFoodDetailPage from './components/PetFoodDetailPage';
 import PetListingsPage from './components/PetListingsPage';
+import PetListingDetailPage from './components/PetListingDetailPage';
+import GalleryPage from './components/GalleryPage';
+import AboutPage from './components/AboutPage';
+import UserLogin from './components/UserLogin';
+import UserSignup from './components/UserSignup';
+import MyBookings from './components/MyBookings';
 
 const PUBLIC_TITLE = 'Kings Pet Hospital | Best Veterinary Care';
 const ADMIN_DASHBOARD_TITLE = 'Admin Dashboard | Kings Pet Hospital';
@@ -50,7 +57,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/services" element={<ServicesPage />} />
         <Route path="/services/:slug" element={<ServiceDetailPage />} />
-        <Route path="/gallery" element={<Home />} />
+        <Route path="/gallery" element={<GalleryPage />} />
         <Route path="/about" element={<Home />} />
         <Route path="/doctors" element={<Home />} />
         <Route path="/team" element={<Home />} />
@@ -58,9 +65,16 @@ function App() {
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/pets-care" element={<PetsCareLanding />} />
         <Route path="/pet-foods" element={<PetFoodsPage />} />
+        <Route path="/pet-foods/:id" element={<PetFoodDetailPage />} />
         <Route path="/pets-for-sale" element={<PetListingsPage />} />
+        <Route path="/pets-for-sale/:id" element={<PetListingDetailPage />} />
         <Route path="/blog" element={<AllBlogsPage />} />
         <Route path="/blog/:id" element={<BlogDetailPage />} />
+
+        {/* User Auth Routes */}
+        <Route path="/login" element={<UserLogin />} />
+        <Route path="/signup" element={<UserSignup />} />
+        <Route path="/my-bookings" element={<MyBookings />} />
 
         {/* Admin Routes */}
         <Route path="/admin/login" element={<AdminLogin />} />

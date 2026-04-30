@@ -84,7 +84,7 @@ const About = () => {
   }, [counters.years]);
 
   return (
-    <section id="about" className="py-10 md:py-20 bg-gradient-to-b from-white via-blue-50/30 to-white relative overflow-hidden">
+    <section id="about" className="py-6 md:py-20 bg-gradient-to-b from-white via-blue-50/30 to-white relative overflow-hidden">
       {/* Animated background */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-float"></div>
 

@@ -128,20 +128,20 @@ const AdminPetFoods = () => {
             <input type="number" min="0" className="border rounded-lg px-3 py-2" placeholder="Price (₹)" value={form.price} onChange={(e) => setForm((p) => ({ ...p, price: e.target.value }))} required />
             <input type="number" min="0" className="border rounded-lg px-3 py-2" placeholder="Booking / Advance amount (₹)" value={form.bookingAmount} onChange={(e) => setForm((p) => ({ ...p, bookingAmount: e.target.value }))} />
             <input type="number" min="0" className="border rounded-lg px-3 py-2" placeholder="Stock" value={form.stock} onChange={(e) => setForm((p) => ({ ...p, stock: e.target.value }))} />
-            <input className="border rounded-lg px-3 py-2 md:col-span-2" placeholder="Image URL" value={form.image} onChange={(e) => setForm((p) => ({ ...p, image: e.target.value }))} />
-            <label className="border rounded-lg px-3 py-2 bg-gray-50 text-sm text-gray-600 flex items-center gap-2 cursor-pointer md:col-span-2">
-              Upload Image
+            <div className="flex flex-col md:col-span-2">
+              <label className="text-sm text-gray-500 mb-1">Upload Product Image</label>
               <input
                 type="file"
                 accept="image/*"
-                className="hidden"
+                className="border rounded-lg px-3 py-2 bg-white"
                 onChange={async (e) => {
                   if (!e.target.files?.[0]) return;
                   const image = await toDataUrl(e.target.files[0]);
                   setForm((p) => ({ ...p, image }));
                 }}
               />
-            </label>
+            </div>
+
             {form.image && (
               <img src={form.image} alt="preview" className="w-24 h-20 object-contain rounded-lg border bg-white p-1" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
             )}

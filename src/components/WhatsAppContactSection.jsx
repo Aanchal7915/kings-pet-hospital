@@ -37,10 +37,10 @@ const WhatsAppContactSection = () => {
   };
 
   return (
-    <section id="booking" className="py-16 bg-gradient-to-br from-emerald-50 via-white to-blue-50">
+    <section id="booking" className="py-8 md:py-16 bg-gradient-to-br from-emerald-50 via-white to-blue-50">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-8">
-          <h2 className="text-3xl md:text-4xl font-black text-gray-900">Contact on WhatsApp</h2>
+          <h2 className="text-3xl md:text-5xl font-bold text-gray-800 text-gradient-animate underline-animate mt-2">Contact on WhatsApp</h2>
           <p className="text-gray-600 mt-2">Share your details and we will help you with appointments quickly.</p>
         </div>
 

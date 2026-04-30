@@ -3,7 +3,7 @@ import axios from 'axios';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
-const STATUS_TABS = ['all', 'pending', 'confirmed', 'in_progress', 'completed', 'cancelled'];
+const STATUS_TABS = ['all', 'pending', 'confirmed', 'in_progress', 'completed', 'rejected', 'cancelled', 'cancelled_refunded'];
 const TYPE_TABS = ['all', 'food', 'pet'];
 
 const STATUS_LABELS = {
@@ -12,7 +12,10 @@ const STATUS_LABELS = {
   confirmed: 'Confirmed',
   in_progress: 'In Progress',
   completed: 'Completed',
+  rejected: 'Rejected',
   cancelled: 'Cancelled',
+  cancelled_refunded: 'Cancelled & Refunded',
+  rejected_refunded: 'Rejected & Refunded',
 };
 
 const STATUS_BADGE = {
@@ -20,13 +23,16 @@ const STATUS_BADGE = {
   confirmed: 'bg-blue-100 text-blue-700',
   in_progress: 'bg-violet-100 text-violet-700',
   completed: 'bg-emerald-100 text-emerald-700',
-  cancelled: 'bg-rose-100 text-rose-700',
+  rejected: 'bg-rose-100 text-rose-700',
+  cancelled: 'bg-orange-100 text-orange-700',
+  cancelled_refunded: 'bg-gray-100 text-gray-700',
+  rejected_refunded: 'bg-gray-100 text-gray-700',
 };
 
 const ALLOWED_NEXT = {
   pending: ['confirmed', 'cancelled'],
-  confirmed: ['in_progress', 'completed', 'cancelled'],
-  in_progress: ['completed', 'cancelled'],
+  confirmed: ['in_progress', 'completed', 'rejected', 'rejected_refunded', 'cancelled', 'cancelled_refunded'],
+  in_progress: ['completed', 'cancelled', 'cancelled_refunded'],
 };
 
 const AdminPetOrders = () => {
@@ -68,6 +74,16 @@ const AdminPetOrders = () => {
       fetchOrders();
     } catch (error) {
       alert(error.response?.data?.error || 'Failed to update status');
+    }
+  };
+
+  const markRemaining = async (order) => {
+    try {
+      await axios.patch(`${API_URL}/api/petorders/admin/${order._id}/mark-remaining-received`, {}, authConfig);
+      alert('Marked remaining amount received');
+      fetchOrders();
+    } catch (error) {
+      alert(error.response?.data?.error || 'Failed to update payment');
     }
   };
 
@@ -162,15 +178,23 @@ const AdminPetOrders = () => {
                               next === 'confirmed' ? 'bg-blue-600' :
                               next === 'in_progress' ? 'bg-violet-600' :
                               next === 'completed' ? 'bg-emerald-600' :
-                              'bg-rose-600'
+                              next === 'rejected' ? 'bg-rose-600' :
+                              next === 'cancelled' ? 'bg-orange-600' :
+                              'bg-gray-700'
                             }`}
                           >
                             {next === 'confirmed' ? 'Confirm' :
                              next === 'in_progress' ? 'In Progress' :
                              next === 'completed' ? 'Mark Completed' :
-                             'Cancel'}
+                             next === 'rejected' ? 'Reject' :
+                             next === 'rejected_refunded' ? 'Reject & Refund' :
+                             next === 'cancelled' ? 'Cancel' :
+                             'Cancel & Refund'}
                           </button>
                         ))}
+                        {order.status !== 'completed' && order.status !== 'cancelled_refunded' && order.status !== 'rejected_refunded' && (
+                          <button onClick={() => markRemaining(order)} className="px-2 py-1 rounded bg-blue-600 text-white text-xs font-bold">Mark Remaining Received</button>
+                        )}
                         <button onClick={() => setExpandedId(expandedId === order._id ? '' : order._id)} className="px-2 py-1 rounded border border-gray-300 text-xs font-bold">{expandedId === order._id ? 'Collapse' : 'Expand'}</button>
                         <button onClick={() => remove(order._id)} className="px-2 py-1 rounded bg-gray-700 text-white text-xs font-bold">Delete</button>
                       </div>

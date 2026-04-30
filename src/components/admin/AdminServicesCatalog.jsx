@@ -43,10 +43,13 @@ const AdminServicesCatalog = () => {
   const [form, setForm] = useState(emptyForm);
   const [editingId, setEditingId] = useState('');
 
-  const filteredSubCategories = useMemo(
-    () => subCategories.filter((sub) => sub.category?._id === form.category),
-    [subCategories, form.category]
-  );
+  const filteredSubCategories = useMemo(() => {
+    if (!form.category) return subCategories;
+    return subCategories.filter((sub) => {
+      const catId = typeof sub.category === 'object' ? sub.category?._id : sub.category;
+      return String(catId) === String(form.category);
+    });
+  }, [subCategories, form.category]);
 
   const fetchAll = async () => {
     const [categoriesRes, subCategoriesRes, servicesRes] = await Promise.all([
@@ -164,7 +167,19 @@ const AdminServicesCatalog = () => {
         <form onSubmit={submit} className="mt-4 space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <input className="border rounded-lg px-3 py-2" placeholder="Service name" value={form.name} onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))} required />
-            <input className="border rounded-lg px-3 py-2" placeholder="Service image URL" value={form.image} onChange={(e) => setForm((p) => ({ ...p, image: e.target.value }))} />
+            <div className="flex flex-col">
+              <label className="text-sm text-gray-500 mb-1">Service Image</label>
+              <input
+                type="file"
+                accept="image/*"
+                className="border rounded-lg px-3 py-2 bg-white"
+                onChange={async (e) => {
+                  if (!e.target.files?.[0]) return;
+                  const image = await toDataUrl(e.target.files[0]);
+                  setForm((p) => ({ ...p, image }));
+                }}
+              />
+            </div>
             <select className="border rounded-lg px-3 py-2" value={form.category} onChange={(e) => setForm((p) => ({ ...p, category: e.target.value, subCategory: '' }))} required>
               <option value="">Select category</option>
               {categories.map((category) => (
@@ -213,20 +228,21 @@ const AdminServicesCatalog = () => {
                     <input type="number" min="0" className="border rounded px-2 py-1" placeholder="Price" value={variant.price} onChange={(e) => setVariant(index, 'price', e.target.value)} required />
                     <input type="number" min="0" className="border rounded px-2 py-1" placeholder="Booking Amount" value={variant.bookingAmount} onChange={(e) => setVariant(index, 'bookingAmount', e.target.value)} required />
                     <input type="number" min="5" className="border rounded px-2 py-1" placeholder="Duration (mins)" value={variant.duration} onChange={(e) => setVariant(index, 'duration', e.target.value)} required />
-                    <input className="border rounded px-2 py-1" placeholder="Image URL (or upload below)" value={variant.image} onChange={(e) => setVariant(index, 'image', e.target.value)} />
-                    <label className="border rounded px-2 py-1 bg-white text-sm text-gray-600 flex items-center gap-2 cursor-pointer">
-                      Upload Image
-                      <input
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        onChange={async (e) => {
-                          if (!e.target.files?.[0]) return;
-                          const image = await toDataUrl(e.target.files[0]);
-                          setVariant(index, 'image', image);
-                        }}
-                      />
-                    </label>
+                    <div className="md:col-span-2 flex flex-col justify-center">
+                      <label className="border rounded px-2 py-1.5 bg-white text-sm text-gray-600 flex items-center justify-center gap-2 cursor-pointer hover:bg-gray-50 transition-colors">
+                        <span>Upload Variant Image</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={async (e) => {
+                            if (!e.target.files?.[0]) return;
+                            const image = await toDataUrl(e.target.files[0]);
+                            setVariant(index, 'image', image);
+                          }}
+                        />
+                      </label>
+                    </div>
                     <textarea className="md:col-span-3 border rounded px-2 py-1" rows={2} placeholder="Variant description" value={variant.description} onChange={(e) => setVariant(index, 'description', e.target.value)} />
                   </div>
 

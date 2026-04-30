@@ -50,6 +50,25 @@ const Header = ({ showHero = true }) => {
   const [waErrors, setWaErrors] = useState({});
   const location = useLocation();
   const navigate = useNavigate();
+  const [userToken, setUserToken] = useState(() => localStorage.getItem('userToken'));
+
+  useEffect(() => {
+    const sync = () => setUserToken(localStorage.getItem('userToken'));
+    window.addEventListener('storage', sync);
+    return () => window.removeEventListener('storage', sync);
+  }, []);
+
+  useEffect(() => {
+    setUserToken(localStorage.getItem('userToken'));
+  }, [location.pathname]);
+
+  const handleUserLogout = () => {
+    localStorage.removeItem('userToken');
+    localStorage.removeItem('userInfo');
+    setUserToken(null);
+    setIsMenuOpen(false);
+    navigate('/');
+  };
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -70,17 +89,7 @@ const Header = ({ showHero = true }) => {
 
   const goToSection = (sectionId) => {
     setIsMenuOpen(false);
-    if (location.pathname !== '/') {
-      navigate('/');
-      setTimeout(() => {
-        const section = document.getElementById(sectionId);
-        if (section) section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 120);
-      return;
-    }
-
-    const section = document.getElementById(sectionId);
-    if (section) section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    navigate(`/#${sectionId}`);
   };
 
   const navButtonClass = isNavbarActive ? 'text-gray-600 hover:text-blue-600' : 'text-white hover:text-blue-200';
@@ -126,17 +135,25 @@ const Header = ({ showHero = true }) => {
             </Link>
 
             <div className="hidden md:flex items-center gap-3 lg:gap-4">
-              <button type="button" onClick={() => goTo('/')} className={`text-sm font-medium whitespace-nowrap transition-colors duration-300 ${navButtonClass}`}>Home</button>
-              <button type="button" onClick={() => goTo('/services')} className={`text-sm font-medium whitespace-nowrap transition-colors duration-300 ${navButtonClass}`}>Services</button>
-              <button type="button" onClick={() => goTo('/pet-foods')} className={`text-sm font-medium whitespace-nowrap transition-colors duration-300 ${navButtonClass}`}>Pet Food</button>
-              <button type="button" onClick={() => goTo('/pets-for-sale')} className={`text-sm font-medium whitespace-nowrap transition-colors duration-300 ${navButtonClass}`}>Pets For Sale</button>
-              <button type="button" onClick={() => goTo('/gallery')} className={`text-sm font-medium whitespace-nowrap transition-colors duration-300 ${navButtonClass}`}>Gallery</button>
-              <button type="button" onClick={() => goToSection('about')} className={`text-sm font-medium whitespace-nowrap transition-colors duration-300 ${navButtonClass}`}>About</button>
-              <button type="button" onClick={() => goToSection('team')} className={`text-sm font-medium whitespace-nowrap transition-colors duration-300 ${navButtonClass}`}>Doctors</button>
-              <button type="button" onClick={() => goTo('/blog')} className={`text-sm font-medium whitespace-nowrap transition-colors duration-300 ${navButtonClass}`}>Blog</button>
-              <button type="button" onClick={() => goTo('/contact')} className={`text-sm font-medium whitespace-nowrap transition-colors duration-300 ${navButtonClass}`}>Contact</button>
+              <button type="button" onClick={() => goTo('/')} className={`text-base font-medium whitespace-nowrap transition-colors duration-300 ${navButtonClass}`}>Home</button>
+              <button type="button" onClick={() => goTo('/services')} className={`text-base font-medium whitespace-nowrap transition-colors duration-300 ${navButtonClass}`}>Services</button>
+              <button type="button" onClick={() => goTo('/pet-foods')} className={`text-base font-medium whitespace-nowrap transition-colors duration-300 ${navButtonClass}`}>Pet Food</button>
+              <button type="button" onClick={() => goTo('/pets-for-sale')} className={`text-base font-medium whitespace-nowrap transition-colors duration-300 ${navButtonClass}`}>Pets For Sale</button>
+              <button type="button" onClick={() => goTo('/gallery')} className={`text-base font-medium whitespace-nowrap transition-colors duration-300 ${navButtonClass}`}>Gallery</button>
+              <button type="button" onClick={() => goToSection('about')} className={`text-base font-medium whitespace-nowrap transition-colors duration-300 ${navButtonClass}`}>About</button>
+              <button type="button" onClick={() => goToSection('team')} className={`text-base font-medium whitespace-nowrap transition-colors duration-300 ${navButtonClass}`}>Doctors</button>
+              <button type="button" onClick={() => goTo('/blog')} className={`text-base font-medium whitespace-nowrap transition-colors duration-300 ${navButtonClass}`}>Blog</button>
+              <button type="button" onClick={() => goTo('/contact')} className={`text-base font-medium whitespace-nowrap transition-colors duration-300 ${navButtonClass}`}>Contact</button>
+              {userToken ? (
+                <>
+                  <button type="button" onClick={() => goTo('/my-bookings')} className={`text-base font-medium whitespace-nowrap transition-colors duration-300 ${navButtonClass}`}>My Bookings</button>
+                  <button type="button" onClick={handleUserLogout} className={`px-3 py-1.5 rounded-full text-sm font-semibold whitespace-nowrap border transition-all ${isNavbarActive ? 'border-rose-200 text-rose-600 hover:bg-rose-600 hover:text-white' : 'border-white/40 text-white hover:bg-white hover:text-rose-600'}`}>Logout</button>
+                </>
+              ) : (
+                <button type="button" onClick={() => goTo('/login')} className={`text-base font-medium whitespace-nowrap transition-colors duration-300 ${navButtonClass}`}>Login</button>
+              )}
               <button
-                className={`px-4 py-1.5 rounded-full text-sm font-semibold whitespace-nowrap transition-all duration-300 ${isNavbarActive ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-white text-blue-600 hover:bg-blue-50'}`}
+                className={`px-4 py-1.5 rounded-full text-base font-semibold whitespace-nowrap transition-all duration-300 ${isNavbarActive ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-white text-blue-600 hover:bg-blue-50'}`}
                 onClick={() => openWhatsApp()}
               >
                 WhatsApp
@@ -171,6 +188,17 @@ const Header = ({ showHero = true }) => {
                 <button type="button" onClick={() => goToSection('team')} className="block w-full px-3 py-2 text-left text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md">Doctors</button>
                 <button type="button" onClick={() => goTo('/blog')} className="block w-full px-3 py-2 text-left text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md">Blog</button>
                 <button type="button" onClick={() => goTo('/contact')} className="block w-full px-3 py-2 text-left text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md">Contact</button>
+                {userToken ? (
+                  <>
+                    <button type="button" onClick={() => goTo('/my-bookings')} className="block w-full px-3 py-2 text-left text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md">My Bookings</button>
+                    <button type="button" onClick={handleUserLogout} className="block w-full px-3 py-2 text-left text-rose-600 hover:bg-rose-50 rounded-md font-semibold">Logout</button>
+                  </>
+                ) : (
+                  <>
+                    <button type="button" onClick={() => goTo('/login')} className="block w-full px-3 py-2 text-left text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md">Login</button>
+                    <button type="button" onClick={() => goTo('/signup')} className="block w-full px-3 py-2 text-left text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md">Sign Up</button>
+                  </>
+                )}
                 <button className="w-full mt-2 px-6 py-3 bg-blue-600 text-white rounded-full font-semibold hover:bg-blue-700" onClick={() => openWhatsApp()}>
                   WhatsApp Booking
                 </button>
@@ -228,12 +256,12 @@ const Header = ({ showHero = true }) => {
                   ))}
                 </div>
 
-                <div className="flex flex-col sm:flex-row gap-3 md:gap-4 w-full max-w-[560px] animate-slide-in-right" style={{ animationDelay: '0.55s' }}>
-                  <button className="px-8 py-3 bg-white text-blue-700 rounded-full font-bold hover:bg-blue-50 transition-all hover:-translate-y-0.5" onClick={() => goTo('/services')}>
+                <div className="flex flex-row gap-2 sm:gap-4 w-full max-w-[560px] animate-slide-in-right" style={{ animationDelay: '0.55s' }}>
+                  <button className="flex-1 px-4 py-2.5 bg-white text-blue-700 rounded-full font-bold hover:bg-blue-50 transition-all hover:-translate-y-0.5 text-xs sm:text-base" onClick={() => goTo('/services')}>
                     View Services
                   </button>
-                  <button className="px-8 py-3 bg-emerald-600 text-white rounded-full font-bold hover:bg-emerald-700 transition-all hover:-translate-y-0.5" onClick={() => openWhatsApp()}>
-                    Contact on WhatsApp
+                  <button className="flex-1 px-4 py-2.5 bg-emerald-600 text-white rounded-full font-bold hover:bg-emerald-700 transition-all hover:-translate-y-0.5 text-xs sm:text-base" onClick={() => openWhatsApp()}>
+                    WhatsApp
                   </button>
                 </div>
               </div>
@@ -241,8 +269,8 @@ const Header = ({ showHero = true }) => {
               <div className="animate-fade-in-up min-w-0" style={{ animationDelay: '0.35s' }}>
                 <form onSubmit={submitWhatsAppBooking} className="rounded-3xl overflow-hidden shadow-[0_22px_60px_rgba(7,16,52,0.38)] border border-white/25 bg-white/95 backdrop-blur-md w-full max-w-xl xl:max-w-[490px] ml-auto">
                   <div className="px-6 py-5 bg-gradient-to-r from-indigo-600 via-violet-600 to-fuchsia-600 text-white">
-                    <h3 className="text-3xl font-black flex items-center gap-3">
-                      <FaRegCalendarAlt className="text-2xl" />
+                    <h3 className="text-xl sm:text-3xl font-black flex items-center gap-2 sm:gap-3 whitespace-nowrap">
+                      <FaRegCalendarAlt className="text-xl sm:text-2xl flex-shrink-0" />
                       WhatsApp Booking
                     </h3>
                     <p className="text-white/90 text-sm mt-1 ml-9">Quick & Easy WhatsApp Booking</p>

@@ -130,74 +130,31 @@ const AdminDashboard = () => {
                 <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
                     <AdminCatalogOverview />
 
-                    {/* Mobile Navigation */}
-                    <div className="flex md:hidden items-center gap-2 mb-4 bg-white p-2 rounded-2xl shadow-sm">
-                        <button
-                            onClick={() => setActiveTab('blogs')}
-                            className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${activeTab === 'blogs' ? 'bg-blue-600 text-white' : 'text-gray-500'}`}
-                        >
-                            Blogs
-                        </button>
-                        <button
-                            onClick={() => setActiveTab('seo')}
-                            className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${activeTab === 'seo' ? 'bg-blue-600 text-white' : 'text-gray-500'}`}
-                        >
-                            SEO
-                        </button>
-                        <button
-                            onClick={() => setActiveTab('bookings')}
-                            className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${activeTab === 'bookings' ? 'bg-blue-600 text-white' : 'text-gray-500'}`}
-                        >
-                            Bookings
-                        </button>
-                        <button
-                            onClick={() => setActiveTab('analytics')}
-                            className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${activeTab === 'analytics' ? 'bg-blue-600 text-white' : 'text-gray-500'}`}
-                        >
-                            Analytics
-                        </button>
-                        <button
-                            onClick={() => setActiveTab('categories')}
-                            className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${activeTab === 'categories' ? 'bg-blue-600 text-white' : 'text-gray-500'}`}
-                        >
-                            Categories
-                        </button>
-                        <button
-                            onClick={() => setActiveTab('subCategories')}
-                            className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${activeTab === 'subCategories' ? 'bg-blue-600 text-white' : 'text-gray-500'}`}
-                        >
-                            Subcategories
-                        </button>
-                        <button
-                            onClick={() => setActiveTab('servicesCatalog')}
-                            className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${activeTab === 'servicesCatalog' ? 'bg-blue-600 text-white' : 'text-gray-500'}`}
-                        >
-                            Services
-                        </button>
-                        <button
-                            onClick={() => setActiveTab('pages')}
-                            className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${activeTab === 'pages' ? 'bg-blue-600 text-white' : 'text-gray-500'}`}
-                        >
-                            Pages
-                        </button>
-                        <button
-                            onClick={() => setActiveTab('petFoods')}
-                            className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${activeTab === 'petFoods' ? 'bg-blue-600 text-white' : 'text-gray-500'}`}
-                        >
-                            Pet Foods
-                        </button>
-                        <button
-                            onClick={() => setActiveTab('petListings')}
-                            className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${activeTab === 'petListings' ? 'bg-blue-600 text-white' : 'text-gray-500'}`}
-                        >
-                            Pets For Sale
-                        </button>
-                        <button
-                            onClick={() => setActiveTab('petOrders')}
-                            className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${activeTab === 'petOrders' ? 'bg-blue-600 text-white' : 'text-gray-500'}`}
-                        >
-                            Pet Orders
-                        </button>
+                    {/* Mobile Navigation - horizontal scroll */}
+                    <div className="md:hidden mb-4 bg-white p-2 rounded-2xl shadow-sm overflow-x-auto">
+                        <div className="flex items-center gap-1.5 w-max">
+                            {[
+                                { key: 'blogs', label: 'Blogs' },
+                                { key: 'seo', label: 'SEO' },
+                                { key: 'bookings', label: 'Bookings' },
+                                { key: 'analytics', label: 'Analytics' },
+                                { key: 'categories', label: 'Categories' },
+                                { key: 'subCategories', label: 'Subcategories' },
+                                { key: 'servicesCatalog', label: 'Services' },
+                                { key: 'pages', label: 'Pages' },
+                                { key: 'petFoods', label: 'Pet Foods' },
+                                { key: 'petListings', label: 'Pets For Sale' },
+                                { key: 'petOrders', label: 'Pet Orders' },
+                            ].map((tab) => (
+                                <button
+                                    key={tab.key}
+                                    onClick={() => setActiveTab(tab.key)}
+                                    className={`px-3 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${activeTab === tab.key ? 'bg-blue-600 text-white' : 'text-gray-500 bg-gray-50'}`}
+                                >
+                                    {tab.label}
+                                </button>
+                            ))}
+                        </div>
                     </div>
 
                     {activeTab === 'blogs' && <AdminBlog isEmbedded={true} />}

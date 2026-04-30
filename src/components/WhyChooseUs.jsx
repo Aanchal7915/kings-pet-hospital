@@ -10,10 +10,10 @@ const items = [
 
 const WhyChooseUs = () => {
   return (
-    <section className="py-16 bg-white" id="why-choose-us">
+    <section className="py-8 md:py-16 bg-white" id="why-choose-us">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-10">
-          <h2 className="text-3xl md:text-4xl font-black text-gray-900">Why Choose Us</h2>
+          <h2 className="text-3xl md:text-5xl font-bold text-gray-800 text-gradient-animate underline-animate mt-2">Why Choose Us</h2>
           <p className="text-gray-600 mt-2">Trusted pet healthcare with transparent processes and expert care.</p>
         </div>
 

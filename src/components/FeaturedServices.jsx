@@ -10,7 +10,7 @@ const FeaturedServices = () => {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+  const API_URL = import.meta.env.VITE_API_URL || '';
 
   useEffect(() => {
     const fetchFeaturedServices = async () => {
@@ -27,7 +27,7 @@ const FeaturedServices = () => {
     fetchFeaturedServices();
   }, [API_URL]);
 
-  const visibleServices = useMemo(() => services.slice(0, 6), [services]);
+  const visibleServices = useMemo(() => services.slice(0, 8), [services]);
   const mobileServices = useMemo(() => visibleServices.slice(0, 4), [visibleServices]);
 
   const getStartingPrice = (service) => {
@@ -46,11 +46,11 @@ const FeaturedServices = () => {
 
   if (loading) {
     return (
-      <section className="py-14 bg-gray-50" id="featured-services">
+      <section className="py-8 md:py-14 bg-gray-50" id="featured-services">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
             <p className="text-xs uppercase tracking-widest font-bold text-blue-600">Featured Services</p>
-            <h2 className="text-3xl md:text-4xl font-black text-gray-900 mt-2">Featured Services</h2>
+            <h2 className="text-3xl md:text-5xl font-bold text-gray-800 text-gradient-animate underline-animate mt-2">Featured Services</h2>
             <p className="text-gray-600 mt-2 max-w-2xl mx-auto">Only admin-selected featured services are shown here</p>
           </div>
           <SkeletonGrid count={3} />
@@ -65,7 +65,7 @@ const FeaturedServices = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
             <p className="text-xs uppercase tracking-widest font-bold text-blue-600">Featured Services</p>
-            <h2 className="text-3xl md:text-4xl font-black text-gray-900 mt-2">Featured Services</h2>
+            <h2 className="text-3xl md:text-5xl font-bold text-gray-800 text-gradient-animate underline-animate mt-2">Featured Services</h2>
             <p className="text-gray-600 mt-2 max-w-2xl mx-auto">Only admin-selected featured services are shown here</p>
           </div>
           <EmptyState
@@ -79,15 +79,15 @@ const FeaturedServices = () => {
   }
 
   return (
-    <section className="py-14 bg-gray-50" id="featured-services">
+    <section className="pt-12 pb-10 md:pt-14 md:pb-8 bg-gray-50" id="featured-services">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-10">
           <p className="text-xs uppercase tracking-widest font-bold text-blue-600">Featured Services</p>
-          <h2 className="text-3xl md:text-4xl font-black text-gray-900 mt-2">Featured Services</h2>
+          <h2 className="text-3xl md:text-5xl font-bold text-gray-800 text-gradient-animate underline-animate mt-2">Featured Services</h2>
           <p className="text-gray-600 mt-2 max-w-2xl mx-auto">Only admin-selected featured services are shown here</p>
         </div>
 
-        <div className="hidden md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="hidden md:grid grid-cols-2 lg:grid-cols-4 gap-6">
           {visibleServices.map((service) => {
             const startingPrice = getStartingPrice(service);
 
@@ -100,7 +100,7 @@ const FeaturedServices = () => {
                   <img
                     src={service.variants?.[0]?.image || '/logo.jpg'}
                     alt={service.name}
-                    className="w-full h-44 object-cover group-hover:scale-105 transition-transform duration-500"
+                    className="w-full h-32 object-cover group-hover:scale-105 transition-transform duration-500"
                     loading="lazy"
                     onError={(e) => {
                       if (e.currentTarget.src.endsWith('/logo.jpg')) return;
@@ -112,8 +112,8 @@ const FeaturedServices = () => {
                   </div>
                 </div>
 
-                <div className="p-5">
-                  <h3 className="text-3xl font-black text-gray-800 mb-2 leading-tight">{service.name}</h3>
+                <div className="p-3">
+                  <h3 className="text-base font-black text-gray-800 mb-2 leading-tight">{service.name}</h3>
                   <p className="text-gray-600 text-sm leading-relaxed line-clamp-2 mb-3">
                     {service.description || 'Comprehensive and trusted veterinary care for your pet.'}
                   </p>
@@ -141,7 +141,7 @@ const FeaturedServices = () => {
           })}
         </div>
 
-        <div className="md:hidden grid grid-cols-2 gap-3">
+        <div className="md:hidden grid grid-cols-2 gap-4">
           {mobileServices.map((service) => {
             const startingPrice = getStartingPrice(service);
 
@@ -154,7 +154,7 @@ const FeaturedServices = () => {
                   <img
                     src={service.variants?.[0]?.image || '/logo.jpg'}
                     alt={service.name}
-                    className="w-full h-28 object-cover"
+                    className="w-full h-20 object-cover"
                     loading="lazy"
                     onError={(e) => {
                       if (e.currentTarget.src.endsWith('/logo.jpg')) return;
@@ -166,7 +166,7 @@ const FeaturedServices = () => {
                   </div>
                 </div>
 
-                <div className="p-3">
+                <div className="p-2">
                   <h3 className="text-sm font-black text-gray-800 line-clamp-2 min-h-10">{service.name}</h3>
                   <p className="text-gray-600 text-[11px] mt-1 line-clamp-2">{service.description || 'Trusted care service'}</p>
 

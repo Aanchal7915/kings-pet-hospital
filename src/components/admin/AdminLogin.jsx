@@ -14,6 +14,13 @@ const AdminLogin = () => {
         try {
             const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
             const { data } = await axios.post(`${API_URL}/api/auth/login`, { email, password });
+            const role = data?.data?.user?.role;
+            if (role !== 'admin') {
+                setError('This account is not an admin. Please use the user login.');
+                return;
+            }
+            localStorage.removeItem('userToken');
+            localStorage.removeItem('userInfo');
             localStorage.setItem('adminToken', data.token);
             navigate('/admin/dashboard');
         } catch (err) {

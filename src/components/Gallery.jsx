@@ -31,7 +31,7 @@ const Gallery = () => {
       <div className="absolute bottom-20 left-10 w-64 h-64 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse-slow" style={{ animationDelay: '1s' }}></div>
 
       <div className="max-w-7xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8 relative z-10">
-        <div className="text-center mb-6 md:mb-10 reveal">
+        <div className="text-center mb-6 md:mb-10">
           <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4 text-gradient-animate animate-text-reveal underline-animate">
             Gallery
           </h2>
