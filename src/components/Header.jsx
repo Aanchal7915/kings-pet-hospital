@@ -140,7 +140,7 @@ const Header = ({ showHero = true }) => {
               <button type="button" onClick={() => goTo('/pet-foods')} className={`text-base font-medium whitespace-nowrap transition-colors duration-300 ${navButtonClass}`}>Pet Food</button>
               <button type="button" onClick={() => goTo('/pets-for-sale')} className={`text-base font-medium whitespace-nowrap transition-colors duration-300 ${navButtonClass}`}>Pets For Sale</button>
               <button type="button" onClick={() => goTo('/gallery')} className={`text-base font-medium whitespace-nowrap transition-colors duration-300 ${navButtonClass}`}>Gallery</button>
-              <button type="button" onClick={() => goToSection('about')} className={`text-base font-medium whitespace-nowrap transition-colors duration-300 ${navButtonClass}`}>About</button>
+              <button type="button" onClick={() => goTo('/about')} className={`text-base font-medium whitespace-nowrap transition-colors duration-300 ${navButtonClass}`}>About</button>
               <button type="button" onClick={() => goToSection('team')} className={`text-base font-medium whitespace-nowrap transition-colors duration-300 ${navButtonClass}`}>Doctors</button>
               <button type="button" onClick={() => goTo('/blog')} className={`text-base font-medium whitespace-nowrap transition-colors duration-300 ${navButtonClass}`}>Blog</button>
               <button type="button" onClick={() => goTo('/contact')} className={`text-base font-medium whitespace-nowrap transition-colors duration-300 ${navButtonClass}`}>Contact</button>
@@ -184,7 +184,7 @@ const Header = ({ showHero = true }) => {
                 <button type="button" onClick={() => goTo('/pet-foods')} className="block w-full px-3 py-2 text-left text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md">Pet Food</button>
                 <button type="button" onClick={() => goTo('/pets-for-sale')} className="block w-full px-3 py-2 text-left text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md">Pets For Sale</button>
                 <button type="button" onClick={() => goTo('/gallery')} className="block w-full px-3 py-2 text-left text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md">Gallery</button>
-                <button type="button" onClick={() => goToSection('about')} className="block w-full px-3 py-2 text-left text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md">About</button>
+                <button type="button" onClick={() => goTo('/about')} className="block w-full px-3 py-2 text-left text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md">About</button>
                 <button type="button" onClick={() => goToSection('team')} className="block w-full px-3 py-2 text-left text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md">Doctors</button>
                 <button type="button" onClick={() => goTo('/blog')} className="block w-full px-3 py-2 text-left text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md">Blog</button>
                 <button type="button" onClick={() => goTo('/contact')} className="block w-full px-3 py-2 text-left text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md">Contact</button>
