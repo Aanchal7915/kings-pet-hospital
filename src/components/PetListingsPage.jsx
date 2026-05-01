@@ -106,7 +106,7 @@ const PetListingsPage = () => {
                         {pet.petType} {pet.gender && pet.gender !== 'Unknown' ? `• ${pet.gender}` : ''}
                       </span>
                       <h2 className="text-base font-black text-gray-800 mb-2">{pet.name}</h2>
-                      <p className="text-gray-600 text-sm leading-relaxed line-clamp-2 mb-3">
+                      <p className="text-gray-600 text-sm leading-relaxed truncate mb-3">
                         {pet.description || 'A healthy and lovable pet looking for a caring home.'}
                       </p>
 
@@ -165,8 +165,8 @@ const PetListingsPage = () => {
                       <span className="inline-block text-[9px] uppercase font-bold bg-violet-100 text-violet-700 px-2 py-0.5 rounded-full mb-1">
                         {pet.petType} {pet.gender && pet.gender !== 'Unknown' ? `• ${pet.gender}` : ''}
                       </span>
-                      <h3 className="text-sm font-black text-gray-800 line-clamp-2 min-h-10">{pet.name}</h3>
-                      <p className="text-gray-600 text-[11px] mt-1 line-clamp-2">{pet.description || 'Healthy pet for adoption'}</p>
+                      <h3 className="text-sm font-black text-gray-800 line-clamp-2">{pet.name}</h3>
+                      <p className="text-gray-600 text-[11px] mt-1 truncate">{pet.description || 'Healthy pet for adoption'}</p>
 
                       <div className="mt-2 border-t border-gray-200 pt-2 mb-2">
                         <ul className="space-y-1">

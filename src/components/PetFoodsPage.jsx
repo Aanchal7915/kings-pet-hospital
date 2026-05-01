@@ -105,7 +105,7 @@ const PetFoodsPage = () => {
                         {food.petType} • {food.foodType}
                       </span>
                       <h2 className="text-base font-black text-gray-800 mb-2">{food.name}</h2>
-                      <p className="text-gray-600 text-sm leading-relaxed line-clamp-2 mb-3">
+                      <p className="text-gray-600 text-sm leading-relaxed truncate mb-3">
                         {food.description || 'Premium quality pet food for a healthy and happy pet.'}
                       </p>
 
@@ -165,8 +165,8 @@ const PetFoodsPage = () => {
                       <span className="inline-block text-[9px] uppercase font-bold bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full mb-1">
                         {food.petType} • {food.foodType}
                       </span>
-                      <h3 className="text-sm font-black text-gray-800 line-clamp-2 min-h-10">{food.name}</h3>
-                      <p className="text-gray-600 text-[11px] mt-1 line-clamp-2">{food.description || 'Premium pet food'}</p>
+                      <h3 className="text-sm font-black text-gray-800 line-clamp-2">{food.name}</h3>
+                      <p className="text-gray-600 text-[11px] mt-1 truncate">{food.description || 'Premium pet food'}</p>
 
                       <div className="mt-2 border-t border-gray-200 pt-2 mb-2">
                         <ul className="space-y-1">

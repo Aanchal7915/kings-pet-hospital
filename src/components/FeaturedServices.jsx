@@ -167,7 +167,7 @@ const FeaturedServices = () => {
                 </div>
 
                 <div className="p-2">
-                  <h3 className="text-sm font-black text-gray-800 line-clamp-2 min-h-10">{service.name}</h3>
+                  <h3 className="text-sm font-black text-gray-800 line-clamp-2">{service.name}</h3>
                   <p className="text-gray-600 text-[11px] mt-1 line-clamp-2">{service.description || 'Trusted care service'}</p>
 
                   <div className="mt-2 border-t border-gray-200 pt-2 mb-2">
