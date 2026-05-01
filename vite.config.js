@@ -78,6 +78,11 @@ export default defineConfig(({ command }) => ({
           .replace(/{{SEO_CANONICAL}}/g, canonical);
       }
     }
-  ]
+  ],
+  server: {
+    proxy: {
+      '/api': 'http://localhost:5000'
+    }
+  }
 }))
 
