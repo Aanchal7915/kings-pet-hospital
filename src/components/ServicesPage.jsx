@@ -111,7 +111,7 @@ const ServicesPage = () => {
                   <article key={service._id} className="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden group hover:shadow-xl transition-all duration-300">
                     <div className="relative overflow-hidden">
                       <img
-                        src={service.variants?.[0]?.image || '/logo.jpg'}
+                        src={service.image || service.variants?.[0]?.image || '/logo.jpg'}
                         alt={service.name}
                         className="w-full h-32 object-cover group-hover:scale-105 transition-transform duration-500"
                         onError={(e) => {
@@ -157,7 +157,7 @@ const ServicesPage = () => {
                   <article key={`m-${service._id}`} className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden">
                     <div className="relative overflow-hidden">
                       <img
-                        src={service.variants?.[0]?.image || '/logo.jpg'}
+                        src={service.image || service.variants?.[0]?.image || '/logo.jpg'}
                         alt={service.name}
                         className="w-full h-20 object-cover"
                         loading="lazy"

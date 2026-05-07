@@ -110,7 +110,7 @@ const PremiumServices = () => {
               >
                 <div className="relative overflow-hidden">
                   <img
-                    src={service.variants?.[0]?.image || '/logo.jpg'}
+                    src={service.image || service.variants?.[0]?.image || '/logo.jpg'}
                     alt={service.name}
                     className="w-full h-32 object-cover group-hover:scale-105 transition-transform duration-500"
                     loading="lazy"
@@ -164,7 +164,7 @@ const PremiumServices = () => {
               >
                 <div className="relative overflow-hidden">
                   <img
-                    src={service.variants?.[0]?.image || '/logo.jpg'}
+                    src={service.image || service.variants?.[0]?.image || '/logo.jpg'}
                     alt={service.name}
                     className="w-full h-20 object-cover"
                     loading="lazy"
