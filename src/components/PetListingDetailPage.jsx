@@ -39,6 +39,11 @@ const PetListingDetailPage = () => {
   }, [id]);
 
   const openBook = () => {
+    const userToken = localStorage.getItem('userToken');
+    if (!userToken) {
+      alert('Please log in or sign up first to book a pet.');
+      return;
+    }
     let prefill = { name: '', email: '' };
     try {
       const info = JSON.parse(localStorage.getItem('userInfo') || '{}');
@@ -169,7 +174,7 @@ const PetListingDetailPage = () => {
               <div className="flex flex-col bg-gray-50/50 border-r border-gray-100">
                 <div className="relative flex items-start justify-center min-h-[250px] md:min-h-[300px] overflow-hidden">
                   {isValidImage(pet.image)
-                    ? <img src={pet.image} alt={pet.name} className="w-full max-h-[350px] object-cover"/>
+                    ? <img src={pet.image} alt={pet.name} className="w-full max-h-[350px] object-cover object-center"/>
                     : <FaPaw size={80} className="text-gray-200"/>}
                   {/* Health badges overlay */}
                   <div className="absolute bottom-4 left-4 flex flex-wrap gap-2">
@@ -179,7 +184,7 @@ const PetListingDetailPage = () => {
                 </div>
 
                 {pet.description && (
-                  <div className="p-8 mt-4">
+                  <div className="px-8 pt-0 pb-3 md:p-8 md:pb-8 mt-0 md:mt-4">
                     <h3 className="text-sm font-black text-gray-800 mb-2">About this pet</h3>
                     <p className={`text-sm text-gray-600 leading-relaxed break-words whitespace-pre-wrap ${!descExpanded ? 'line-clamp-3' : ''}`}>{pet.description}</p>
                     {pet.description.length > 150 && (
@@ -192,7 +197,7 @@ const PetListingDetailPage = () => {
               </div>
 
               {/* Details */}
-              <div className="py-6 pl-10 pr-6 md:py-8 md:pl-14 md:pr-8 flex flex-col">
+              <div className="pt-0 pb-6 pl-10 pr-6 md:py-8 md:pl-14 md:pr-8 flex flex-col">
                 <span className="inline-block self-start text-[10px] uppercase font-bold bg-violet-100 text-violet-700 px-3 py-1 rounded-full mb-3">{pet.petType}</span>
                 <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-gradient-animate underline-animate leading-tight mb-1">{pet.name}</h1>
                 {pet.breed && <p className="text-sm text-gray-500 mb-3">{pet.breed}{pet.gender && pet.gender !== 'Unknown' ? ` • ${pet.gender}` : ''}{pet.age ? ` • ${pet.age}` : ''}{pet.color ? ` • ${pet.color}` : ''}</p>}

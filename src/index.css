@@ -387,3 +387,7 @@
 .animation-delay-4000 {
   animation-delay: 4s;
 }
+
+img {
+  object-position: center !important;
+}

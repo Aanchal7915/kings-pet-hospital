@@ -39,6 +39,11 @@ const PetFoodDetailPage = () => {
   }, [id]);
 
   const openOrder = () => {
+    const userToken = localStorage.getItem('userToken');
+    if (!userToken) {
+      alert('Please log in or sign up first to place an order.');
+      return;
+    }
     let prefill = { name: '', email: '' };
     try {
       const info = JSON.parse(localStorage.getItem('userInfo') || '{}');
@@ -172,7 +177,7 @@ const PetFoodDetailPage = () => {
               <div className="flex flex-col bg-gray-50/50 border-r border-gray-100">
                 <div className="relative flex items-start justify-center min-h-[250px] md:min-h-[300px] p-8 pt-12">
                   {isValidImage(food.image)
-                    ? <img src={food.image} alt={food.name} className="w-full max-h-[350px] object-contain" />
+                    ? <img src={food.image} alt={food.name} className="w-full max-h-[350px] object-contain object-center" />
                     : <FaPaw size={80} className="text-gray-200" />}
                   <div className={`absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-bold ${food.stock === 0 ? 'bg-red-100 text-red-700' : 'bg-emerald-100 text-emerald-700'}`}>
                     {food.stock === 0 ? 'Out of Stock' : `In Stock (${food.stock})`}
@@ -180,7 +185,7 @@ const PetFoodDetailPage = () => {
                 </div>
                 
                 {food.description && (
-                  <div className="p-8 pt-0 mt-4 md:mt-8">
+                  <div className="p-8 pt-0 pb-4 md:pb-8 mt-4 md:mt-8">
                     <h3 className="text-sm font-black text-gray-800 mb-2">About this product</h3>
                     <p className={`text-sm text-gray-600 leading-relaxed break-words whitespace-pre-wrap ${!descExpanded ? 'line-clamp-3' : ''}`}>{food.description}</p>
                     {food.description.length > 150 && (

@@ -111,6 +111,12 @@ const ServiceDetailPage = () => {
   };
 
   const handlePay = async () => {
+    const liveToken = localStorage.getItem('userToken');
+    if (!liveToken) {
+      triggerToast('Please log in or sign up first to book an appointment.', 'error');
+      return;
+    }
+
     const error = validate();
     if (error) {
       triggerToast(error, 'error');
@@ -118,7 +124,6 @@ const ServiceDetailPage = () => {
     }
 
     setProcessing(true);
-    const liveToken = localStorage.getItem('userToken');
     const authHeaders = liveToken ? { Authorization: `Bearer ${liveToken}` } : {};
     try {
       const orderRes = await axios.post(`${API_URL}/api/bookings/create-order`, {
@@ -319,7 +324,7 @@ const ServiceDetailPage = () => {
               <img
                 src={selectedVariant?.image || '/logo.jpg'}
                 alt={service.name}
-                className="w-full h-96 object-cover rounded-2xl border border-gray-200"
+                className="w-full h-96 object-cover object-center rounded-2xl border border-gray-200"
                 onError={(e) => {
                   if (e.currentTarget.src.endsWith('/logo.jpg')) return;
                   e.currentTarget.src = '/logo.jpg';
@@ -333,7 +338,7 @@ const ServiceDetailPage = () => {
                     onClick={() => setSelectedVariantName(variant.variantName)}
                     className={`rounded-lg border ${selectedVariantName === variant.variantName ? 'border-blue-600' : 'border-gray-200'}`}
                   >
-                    <img src={variant.image || '/logo.jpg'} alt={variant.variantName} className="w-20 h-20 object-cover rounded-lg" />
+                    <img src={variant.image || '/logo.jpg'} alt={variant.variantName} className="w-20 h-20 object-cover object-center rounded-lg" />
                   </button>
                 ))}
               </div>
