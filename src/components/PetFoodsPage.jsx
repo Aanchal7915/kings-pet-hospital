@@ -11,6 +11,7 @@ const isValidImage = (s) => typeof s === 'string' && (s.startsWith('http') || s.
 const PetFoodsPage = () => {
   const [foods, setFoods] = useState([]);
   const [filter, setFilter] = useState('All');
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -20,6 +21,8 @@ const PetFoodsPage = () => {
         setFoods(data.data || []);
       } catch (_) {
         setFoods([]);
+      } finally {
+        setLoading(false);
       }
     })();
   }, []);
@@ -70,7 +73,11 @@ const PetFoodsPage = () => {
             ))}
           </div>
 
-          {visible.length === 0 ? (
+          {loading ? (
+            <div className="flex items-center justify-center py-20">
+              <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-600 border-t-transparent"></div>
+            </div>
+          ) : visible.length === 0 ? (
             <p className="text-center text-gray-500">No pet foods available right now.</p>
           ) : (
             <>

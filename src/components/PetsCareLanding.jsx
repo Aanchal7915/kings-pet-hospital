@@ -63,6 +63,7 @@ const Counter = ({ end, duration = 2000, suffix = '' }) => {
 const PetsCareLanding = () => {
     const [showAllServices, setShowAllServices] = useState(false);
     const [services, setServices] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchServices = async () => {
@@ -72,6 +73,8 @@ const PetsCareLanding = () => {
                 setServices(list.map(mapServiceForCard));
             } catch (_error) {
                 setServices([]);
+            } finally {
+                setLoading(false);
             }
         };
         fetchServices();
@@ -253,6 +256,12 @@ const PetsCareLanding = () => {
                             <div className="w-24 h-1 bg-gradient-to-r from-blue-600 to-indigo-600 mx-auto mt-4 rounded-full"></div>
                         </div>
 
+                        {loading ? (
+                            <div className="flex items-center justify-center py-20">
+                                <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-600 border-t-transparent"></div>
+                            </div>
+                        ) : (
+                        <>
                         {/* Compact Grid with smaller gap */}
                         <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
                             {visibleServices.map((service, index) => (
@@ -316,6 +325,8 @@ const PetsCareLanding = () => {
                                 </svg>
                             </button>
                         </div>
+                        </>
+                        )}
 
                     </div>
                 </section>
