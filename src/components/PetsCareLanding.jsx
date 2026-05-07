@@ -1,121 +1,27 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import Footer from './Footer';
 import BookingForm from './BookingForm';
 
-const services = [
-    {
-        name: 'Vaccination',
-        description: 'Protect your furry friend with our comprehensive vaccination packages. We offer core and lifestyle vaccines administered by experienced veterinarians.',
-        imageUrl: '15.jpg',
-        price: 'Starting from ₹500',
-        features: ['Core vaccines available', 'Pet vaccination record', 'Free consultation']
-    },
-    {
-        name: 'Major Surgery',
-        description: 'Comprehensive surgical care for complex and critical conditions with advanced anesthesia and monitoring.',
-        imageUrl: '31.jpeg',
-        price: 'Consultation required',
-        features: ['Pre-operative evaluation', 'Advanced anesthesia', 'ICU-level post-op care']
-    },
-    {
-        name: 'Soft Tissue Surgery',
-        description: 'Procedures involving skin, muscles, and internal organs including spay/neuter, mass removal, and more.',
-        imageUrl: '32.jpg',
-        price: 'Consultation required',
-        features: ['Spay/Neuter', 'Wound reconstruction', 'Abdominal procedures']
-    },
-    {
-        name: 'Orthopaedic Surgery',
-        description: 'Bone and joint surgeries for fractures, ligament injuries, and developmental conditions.',
-        imageUrl: '33.jpeg',
-        price: 'Consultation required',
-        features: ['Fracture repair', 'Cruciate ligament (TPLO/ELSS)', 'Joint stabilization']
-    },
-    {
-        name: 'Minor Surgery',
-        description: 'Quick outpatient procedures performed under local or short anesthesia.',
-        imageUrl: '4.jpg',
-        price: 'From ₹2,000',
-        features: ['Laceration repair', 'Abscess drainage', 'Simple lump removal']
-    },
-    {
-        name: 'Tumor Removal',
-        description: 'Mass and tumor excision with histopathology and comprehensive follow-up care.',
-        imageUrl: '35.jpeg',
-        price: 'Consultation required',
-        features: ['Pre-op staging', 'Wide-margin excision', 'Biopsy & lab reports']
-    },
-    {
-        name: 'Surgery',
-        description: 'State-of-the-art surgical facilities with advanced monitoring equipment and experienced surgical team.',
-        imageUrl: '7.jpg',
-        price: 'Consultation required',
-        features: ['Pre-surgery assessment', 'Modern equipment', 'Post-op care']
-    },
-    {
-        name: 'Grooming',
-        description: 'Premium grooming services to keep your dog looking and feeling their absolute best. From basic baths to full makeovers.',
-        imageUrl: '25.jpg',
-        price: 'From ₹699',
-        features: ['Bath & brush', 'Nail trimming', 'Ear cleaning']
-    },
-    {
-        name: 'Premium Dog Feed',
-        description: 'High-quality, nutritionally balanced dog food for all life stages. We carry top brands and prescription diets.',
-        imageUrl: '18.jpg',
-        price: 'Various options',
-        features: ['Premium brands', 'Prescription diets', 'Nutritional advice']
-    },
-    {
-        name: 'Luxury Leash & Collar',
-        description: 'Stylish and durable accessories for your dog. From everyday wear to special occasions.',
-        imageUrl: '27.jpeg',
-        price: 'From ₹2,000',
-        features: ['Quality materials', 'Various sizes', 'Custom fitting']
-    },
-    {
-        name: 'Veterinary Medicine',
-        description: "Full-service pharmacy with prescription and over-the-counter medications for all your pet's needs.",
-        imageUrl: '28.jpeg',
-        price: 'Varies by prescription',
-        features: ['Prescription filling', 'OTC medications', 'Expert advice']
-    },
-    {
-        name: 'Dental Scaling',
-        description: "Professional dental cleaning services to maintain your dog's oral health and prevent dental diseases.",
-        imageUrl: '2.jpg',
-        price: 'From ₹3999',
-        features: ['Ultrasonic cleaning', 'Polishing', 'Dental check-up']
-    },
-    {
-        name: 'Physiotherapy',
-        description: 'Specialized rehabilitation services for injured or recovering pets. Customized treatment plans.',
-        imageUrl: 'https://images.unsplash.com/photo-1450778869180-41d0601e046e?w=500&auto=format',
-        price: 'From ₹1000/session',
-        features: ['Custom treatment plans', 'Progress tracking', 'Home exercise plans']
-    },
-    {
-        name: 'Medical Treatment',
-        description: 'Comprehensive medical care for various conditions, from routine check-ups to specialized treatments.',
-        imageUrl: '12.jpg',
-        price: 'Consultation required',
-        features: ['Expert diagnosis', 'Treatment plans', 'Follow-up care']
-    },
-    {
-        name: 'Blood Tests',
-        description: 'Advanced diagnostic testing with quick and accurate results for better healthcare decisions.',
-        imageUrl: '16.jpg',
-        price: 'From ₹6,999',
-        features: ['Quick results', 'Complete analysis', 'Expert interpretation']
-    },
-    {
-        name: 'Blood Pressure Check',
-        description: 'Non-invasive blood pressure monitoring for early detection and management of hypertension in pets.',
-        imageUrl: '3.jpg',
-        price: 'From ₹299',
-        features: ['Oscillometric method', 'Hypertension screening', 'Report with vet advice']
-    },
-];
+const API_URL = import.meta.env.VITE_API_URL || '';
+
+const mapServiceForCard = (service) => {
+    const prices = (service.variants || [])
+        .map((variant) => Number(variant.price || 0))
+        .filter((price) => price > 0);
+    const priceLabel = prices.length ? `Starting from ₹${Math.min(...prices).toLocaleString('en-IN')}` : 'Consultation required';
+    const features = (service.variants || [])
+        .map((variant) => variant.variantName)
+        .filter(Boolean)
+        .slice(0, 3);
+    return {
+        name: service.name,
+        description: service.description || 'Comprehensive and trusted veterinary care for your pet.',
+        imageUrl: service.image || service.variants?.[0]?.image || '/logo.jpg',
+        price: priceLabel,
+        features: features.length ? features : ['Expert vet-supervised care', 'Personalized treatment plan'],
+    };
+};
 
 const whatsappNumber = import.meta.env.VITE_WHATSAPP_NUMBER;
 
@@ -156,7 +62,20 @@ const Counter = ({ end, duration = 2000, suffix = '' }) => {
 
 const PetsCareLanding = () => {
     const [showAllServices, setShowAllServices] = useState(false);
-    // ... existing ...
+    const [services, setServices] = useState([]);
+
+    useEffect(() => {
+        const fetchServices = async () => {
+            try {
+                const { data } = await axios.get(`${API_URL}/api/catalog/services`);
+                const list = Array.isArray(data?.data) ? data.data : [];
+                setServices(list.map(mapServiceForCard));
+            } catch (_error) {
+                setServices([]);
+            }
+        };
+        fetchServices();
+    }, []);
 
     const visibleServices = showAllServices ? services : services.slice(0, 6);
 
