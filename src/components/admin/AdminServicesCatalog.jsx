@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import axios from 'axios';
 
 const toDataUrl = (file) =>
@@ -42,6 +42,7 @@ const AdminServicesCatalog = () => {
   const [services, setServices] = useState([]);
   const [form, setForm] = useState(emptyForm);
   const [editingId, setEditingId] = useState('');
+  const formRef = useRef(null);
 
   const filteredSubCategories = useMemo(() => {
     if (!form.category) return subCategories;
@@ -146,6 +147,7 @@ const AdminServicesCatalog = () => {
         isActive: v.isActive !== false,
       })),
     });
+    setTimeout(() => formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
   };
 
   const remove = async (id) => {
@@ -160,7 +162,7 @@ const AdminServicesCatalog = () => {
 
   return (
     <div className="space-y-5">
-      <section className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
+      <section ref={formRef} className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
         <h3 className="text-2xl font-black text-gray-900">Services</h3>
         <p className="text-sm text-gray-500">Manage services and their variant pricing cards.</p>
 

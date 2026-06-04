@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import axios from 'axios';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
@@ -28,6 +28,7 @@ const toDataUrl = (file) =>
 const AdminPetFoods = () => {
   const token = useMemo(() => localStorage.getItem('adminToken'), []);
   const authConfig = useMemo(() => ({ headers: { Authorization: `Bearer ${token}` } }), [token]);
+  const formRef = useRef(null);
 
   const [foods, setFoods] = useState([]);
   const [form, setForm] = useState(emptyForm);
@@ -91,7 +92,7 @@ const AdminPetFoods = () => {
       description: item.description || '',
       isActive: item.isActive !== false,
     });
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setTimeout(() => formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
   };
 
   const remove = async (id) => {
@@ -114,7 +115,7 @@ const AdminPetFoods = () => {
 
   return (
     <div className="space-y-5">
-      <section className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
+      <section ref={formRef} className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
         <h3 className="text-2xl font-black text-gray-900">Pet Foods</h3>
         <p className="text-sm text-gray-500">Add and manage food items for dogs, cats, and other pets.</p>
 

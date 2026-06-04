@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import axios from 'axios';
 import { triggerToast } from '../utils/Toast';
 
@@ -22,6 +22,7 @@ const AdminSubCategories = () => {
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
   const token = useMemo(() => localStorage.getItem('adminToken'), []);
   const authConfig = useMemo(() => ({ headers: { Authorization: `Bearer ${token}` } }), [token]);
+  const formRef = useRef(null);
 
   const [categories, setCategories] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
@@ -75,6 +76,7 @@ const AdminSubCategories = () => {
       image: item.image || '',
       isActive: item.isActive !== false,
     });
+    setTimeout(() => formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
   };
 
   const remove = async (id) => {
@@ -90,7 +92,7 @@ const AdminSubCategories = () => {
 
   return (
     <div className="space-y-5">
-      <section className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
+      <section ref={formRef} className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
         <h3 className="text-2xl font-black text-gray-900">Sub-categories</h3>
         <p className="text-sm text-gray-500">Add or manage sub-categories under categories.</p>
 

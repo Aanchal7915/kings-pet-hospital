@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import axios from 'axios';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
@@ -33,6 +33,7 @@ const toDataUrl = (file) =>
 const AdminPetListings = () => {
   const token = useMemo(() => localStorage.getItem('adminToken'), []);
   const authConfig = useMemo(() => ({ headers: { Authorization: `Bearer ${token}` } }), [token]);
+  const formRef = useRef(null);
 
   const [listings, setListings] = useState([]);
   const [form, setForm] = useState(emptyForm);
@@ -97,7 +98,7 @@ const AdminPetListings = () => {
       isAvailable: item.isAvailable !== false,
       isActive: item.isActive !== false,
     });
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setTimeout(() => formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
   };
 
   const remove = async (id) => {
@@ -129,7 +130,7 @@ const AdminPetListings = () => {
 
   return (
     <div className="space-y-5">
-      <section className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
+      <section ref={formRef} className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
         <h3 className="text-2xl font-black text-gray-900">Pets For Sale</h3>
         <p className="text-sm text-gray-500">List puppies, kittens, and other pets available for booking.</p>
 
