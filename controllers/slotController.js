@@ -162,7 +162,8 @@ exports.generateSlots = async (req, res) => {
             created = Number(result.upsertedCount || 0);
         }
 
-        res.status(200).json({ success: true, created });
+        const skipped = operations.length - created;
+        res.status(200).json({ success: true, created, skipped, total: operations.length });
     } catch (error) {
         res.status(500).json({ success: false, error: error.message });
     }

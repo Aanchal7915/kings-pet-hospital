@@ -82,9 +82,9 @@ const AdminBookings = () => {
 
   useEffect(() => {
     fetchBookings().catch((error) => triggerToast(error.response?.data?.error || 'Failed to load bookings', 'error'));
-    fetchServices().catch(() => {});
-    fetchAdvance().catch(() => {});
-    fetchSlots().catch(() => {});
+    fetchServices().catch(() => { });
+    fetchAdvance().catch(() => { });
+    fetchSlots().catch(() => { });
   }, [status, from, to, search]);
 
   useEffect(() => {
@@ -106,8 +106,27 @@ const AdminBookings = () => {
     event.preventDefault();
     try {
       const { data } = await axios.post(`${API_URL}/api/slots/generate`, slotForm, authConfig);
-      triggerToast(`Generated ${data.created || 0} slots`, 'success');
-      fetchSlots();
+      const created = data.created || 0;
+
+      // Re-fetch slots and detect how many already exist for the requested date & time.
+      // Works even with older backends that only return `created` (no skipped/total).
+      const { data: slotData } = await axios.get(`${API_URL}/api/slots?includeBlocked=true`, authConfig);
+      const allSlots = slotData.data || [];
+      setSlots(allSlots);
+      const existingInRange = allSlots.filter((slot) => {
+        const key = toDateKey(slot.date);
+        return key >= slotForm.fromDate && key <= slotForm.toDate
+          && slot.startTime >= slotForm.startTime && slot.endTime <= slotForm.endTime;
+      }).length;
+
+      if (created > 0) {
+        const already = Math.max(existingInRange - created, 0);
+        triggerToast(`Generated ${created} new slot${created === 1 ? '' : 's'}${already ? ` — ${already} already existed` : ''}`, 'success');
+      } else if (existingInRange > 0) {
+        triggerToast(`Slots already available for this date & time (${existingInRange} slot${existingInRange === 1 ? '' : 's'}). Please choose a different date.`, 'info');
+      } else {
+        triggerToast('No slots generated — check the date and time range', 'error');
+      }
     } catch (error) {
       triggerToast(error.response?.data?.error || 'Failed to generate slots', 'error');
     }

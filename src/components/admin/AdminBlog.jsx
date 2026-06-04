@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { triggerToast } from '../utils/Toast';
 
 const AdminBlog = ({ isEmbedded = false }) => {
     const [blogs, setBlogs] = useState([]);
@@ -52,19 +53,16 @@ const AdminBlog = ({ isEmbedded = false }) => {
 
     // Handle Delete
     const handleDelete = async (id) => {
-        if (window.confirm('Are you sure you want to delete this blog?')) {
-            try {
-                const token = localStorage.getItem('adminToken');
-                const config = {
-                    headers: { Authorization: `Bearer ${token}` }
-                };
-                const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-                await axios.delete(`${API_URL}/api/blogs/${id}`, config);
-                fetchBlogs();
-            } catch (error) {
-                console.error(error);
-                alert(error.response?.data?.error || 'Failed to delete blog');
-            }
+        if (!window.confirm('Are you sure you want to delete this blog?')) return;
+        try {
+            const token = localStorage.getItem('adminToken');
+            const config = { headers: { Authorization: `Bearer ${token}` } };
+            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+            await axios.delete(`${API_URL}/api/blogs/${id}`, config);
+            triggerToast('Blog post deleted successfully', 'success');
+            fetchBlogs();
+        } catch (error) {
+            triggerToast(error.response?.data?.error || 'Failed to delete blog', 'error');
         }
     };
 
@@ -73,22 +71,20 @@ const AdminBlog = ({ isEmbedded = false }) => {
         e.preventDefault();
         try {
             const token = localStorage.getItem('adminToken');
-            const config = {
-                headers: { Authorization: `Bearer ${token}` }
-            };
-
+            const config = { headers: { Authorization: `Bearer ${token}` } };
             const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
             if (isEditing) {
                 await axios.put(`${API_URL}/api/blogs/${currentBlog._id}`, currentBlog, config);
+                triggerToast('Blog post updated successfully', 'success');
             } else {
                 await axios.post(`${API_URL}/api/blogs`, currentBlog, config);
+                triggerToast('Blog post created successfully', 'success');
             }
             setShowModal(false);
             fetchBlogs();
             resetForm();
         } catch (error) {
-            console.error(error);
-            alert(error.response?.data?.error || 'Operation failed: ' + error.message);
+            triggerToast(error.response?.data?.error || 'Operation failed: ' + error.message, 'error');
         }
     };
 

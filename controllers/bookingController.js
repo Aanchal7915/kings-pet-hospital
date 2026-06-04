@@ -279,6 +279,14 @@ exports.updateBookingStatus = async (req, res) => {
       return res.status(400).json({ success: false, error: `Cannot change status from ${booking.bookingStatus} to ${status}` });
     }
 
+    // Free up the reserved slot when an active booking is cancelled/rejected,
+    // so capacity-limited slots don't stay "full" forever.
+    const SLOT_RELEASING = ['rejected', 'cancelled', 'rejected_refunded', 'cancelled_refunded'];
+    const wasHoldingSlot = booking.bookingStatus === 'confirmed';
+    if (wasHoldingSlot && SLOT_RELEASING.includes(status) && booking.slot) {
+      await Slot.findByIdAndUpdate(booking.slot, { $inc: { bookedCount: -1 } });
+    }
+
     booking.bookingStatus = status;
     if (status === 'cancelled_refunded' || status === 'rejected_refunded') {
       booking.paymentStatus = 'refunded';

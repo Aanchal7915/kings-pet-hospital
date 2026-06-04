@@ -94,7 +94,21 @@ const ServiceDetailPage = () => {
     return Array.from(dates).sort();
   }, [allSlots]);
 
+  // Auto-select the first date that actually has slots so the user
+  // doesn't land on an empty date and see "no slots available".
+  useEffect(() => {
+    if (!selectedDate && availableDates.length > 0) {
+      setSelectedDate(availableDates[0]);
+    }
+  }, [availableDates, selectedDate]);
 
+  const formatDateLabel = (dateKey) =>
+    new Date(`${dateKey}T00:00:00`).toLocaleDateString('en-IN', {
+      weekday: 'short',
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    });
 
   const dateSlots = useMemo(() => {
     if (!selectedDate) return [];
@@ -262,7 +276,7 @@ const ServiceDetailPage = () => {
       <ToastContainer />
       <Header showHero={false} />
 
-      <main className="pt-28 pb-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <main className="pt-28 pb-40 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {confirmation ? (
           <section className="bg-white rounded-3xl border border-gray-100 shadow-xl p-8 md:p-12 max-w-2xl mx-auto text-center animate-in fade-in zoom-in duration-300">
             <div className="inline-flex w-20 h-20 rounded-full bg-emerald-100 items-center justify-center mb-6">
@@ -374,16 +388,26 @@ const ServiceDetailPage = () => {
 
               <div className="rounded-xl border border-gray-200 p-4 bg-white space-y-3">
                 <label className="block text-sm font-semibold text-gray-700">Select Date</label>
-                <input
-                  type="date"
-                  className="w-full border rounded-lg px-3 py-2 bg-white"
-                  value={selectedDate}
-                  min={new Date().toISOString().split('T')[0]}
-                  onChange={(e) => {
-                    setSelectedDate(e.target.value);
-                    setSelectedSlotId('');
-                  }}
-                />
+                {availableDates.length === 0 ? (
+                  <p className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+                    No available dates right now. Please check back soon.
+                  </p>
+                ) : (
+                  <select
+                    className="w-full border rounded-lg px-3 py-2 bg-white text-base"
+                    value={selectedDate}
+                    onChange={(e) => {
+                      setSelectedDate(e.target.value);
+                      setSelectedSlotId('');
+                    }}
+                  >
+                    {availableDates.map((dateKey) => (
+                      <option key={dateKey} value={dateKey}>
+                        {formatDateLabel(dateKey)}
+                      </option>
+                    ))}
+                  </select>
+                )}
 
 
                 <label className="block text-sm font-semibold text-gray-700">Select Time Slot</label>
@@ -410,25 +434,25 @@ const ServiceDetailPage = () => {
 
               <div className="rounded-xl border border-gray-200 p-4 bg-white grid grid-cols-1 md:grid-cols-2 gap-3">
                 <input
-                  className="border rounded-lg px-3 py-2"
+                  className="border rounded-lg px-3 py-2 text-base"
                   placeholder="Your Name *"
                   value={customer.name}
                   onChange={(e) => setCustomer((prev) => ({ ...prev, name: e.target.value }))}
                 />
                 <input
-                  className="border rounded-lg px-3 py-2"
+                  className="border rounded-lg px-3 py-2 text-base"
                   placeholder="Phone Number *"
                   value={customer.phone}
                   onChange={(e) => setCustomer((prev) => ({ ...prev, phone: e.target.value.replace(/[^0-9]/g, '').slice(0, 10) }))}
                 />
                 <input
-                  className="border rounded-lg px-3 py-2"
+                  className="border rounded-lg px-3 py-2 text-base"
                   placeholder="Pet Name *"
                   value={customer.petName}
                   onChange={(e) => setCustomer((prev) => ({ ...prev, petName: e.target.value }))}
                 />
                 <select
-                  className="border rounded-lg px-3 py-2 bg-white"
+                  className="border rounded-lg px-3 py-2 bg-white text-base"
                   value={customer.petType}
                   onChange={(e) => setCustomer((prev) => ({ ...prev, petType: e.target.value }))}
                 >
@@ -437,7 +461,7 @@ const ServiceDetailPage = () => {
                   ))}
                 </select>
                 <input
-                  className="md:col-span-2 border rounded-lg px-3 py-2"
+                  className="md:col-span-2 border rounded-lg px-3 py-2 text-base"
                   placeholder="Pet Breed (optional)"
                   value={customer.petBreed}
                   onChange={(e) => setCustomer((prev) => ({ ...prev, petBreed: e.target.value }))}

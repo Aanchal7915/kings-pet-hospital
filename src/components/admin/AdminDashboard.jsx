@@ -12,6 +12,7 @@ import AdminPagesCMS from './AdminPagesCMS';
 import AdminPetFoods from './AdminPetFoods';
 import AdminPetListings from './AdminPetListings';
 import AdminPetOrders from './AdminPetOrders';
+import ToastContainer from '../utils/Toast';
 
 const AdminDashboard = () => {
     const navigate = useNavigate();
@@ -44,67 +45,67 @@ const AdminDashboard = () => {
                             <div className="hidden md:flex items-center gap-1">
                                 <button
                                     onClick={() => setActiveTab('blogs')}
-                                    className={`px-2.5 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${activeTab === 'blogs' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-500 hover:bg-gray-50'}`}
+                                    className={`px-2.5 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${activeTab === 'blogs' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-800'}`}
                                 >
                                     Blogs
                                 </button>
                                 <button
                                     onClick={() => setActiveTab('seo')}
-                                    className={`px-2.5 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${activeTab === 'seo' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-500 hover:bg-gray-50'}`}
+                                    className={`px-2.5 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${activeTab === 'seo' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-800'}`}
                                 >
                                     Page SEO
                                 </button>
                                 <button
                                     onClick={() => setActiveTab('bookings')}
-                                    className={`px-2.5 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${activeTab === 'bookings' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-500 hover:bg-gray-50'}`}
+                                    className={`px-2.5 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${activeTab === 'bookings' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-800'}`}
                                 >
                                     Bookings
                                 </button>
                                 <button
                                     onClick={() => setActiveTab('analytics')}
-                                    className={`px-2.5 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${activeTab === 'analytics' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-500 hover:bg-gray-50'}`}
+                                    className={`px-2.5 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${activeTab === 'analytics' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-800'}`}
                                 >
                                     Analytics
                                 </button>
                                 <button
                                     onClick={() => setActiveTab('categories')}
-                                    className={`px-2.5 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${activeTab === 'categories' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-500 hover:bg-gray-50'}`}
+                                    className={`px-2.5 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${activeTab === 'categories' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-800'}`}
                                 >
                                     Categories
                                 </button>
                                 <button
                                     onClick={() => setActiveTab('subCategories')}
-                                    className={`px-2.5 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${activeTab === 'subCategories' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-500 hover:bg-gray-50'}`}
+                                    className={`px-2.5 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${activeTab === 'subCategories' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-800'}`}
                                 >
                                     Subcategories
                                 </button>
                                 <button
                                     onClick={() => setActiveTab('servicesCatalog')}
-                                    className={`px-2.5 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${activeTab === 'servicesCatalog' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-500 hover:bg-gray-50'}`}
+                                    className={`px-2.5 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${activeTab === 'servicesCatalog' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-800'}`}
                                 >
                                     Services
                                 </button>
                                 <button
                                     onClick={() => setActiveTab('pages')}
-                                    className={`px-2.5 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${activeTab === 'pages' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-500 hover:bg-gray-50'}`}
+                                    className={`px-2.5 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${activeTab === 'pages' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-800'}`}
                                 >
                                     Pages
                                 </button>
                                 <button
                                     onClick={() => setActiveTab('petFoods')}
-                                    className={`px-2.5 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${activeTab === 'petFoods' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-500 hover:bg-gray-50'}`}
+                                    className={`px-2.5 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${activeTab === 'petFoods' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-800'}`}
                                 >
                                     Pet Foods
                                 </button>
                                 <button
                                     onClick={() => setActiveTab('petListings')}
-                                    className={`px-2.5 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${activeTab === 'petListings' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-500 hover:bg-gray-50'}`}
+                                    className={`px-2.5 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${activeTab === 'petListings' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-800'}`}
                                 >
                                     Pets For Sale
                                 </button>
                                 <button
                                     onClick={() => setActiveTab('petOrders')}
-                                    className={`px-2.5 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${activeTab === 'petOrders' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-500 hover:bg-gray-50'}`}
+                                    className={`px-2.5 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${activeTab === 'petOrders' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-800'}`}
                                 >
                                     Pet Orders
                                 </button>
@@ -170,6 +171,7 @@ const AdminDashboard = () => {
                     {activeTab === 'petOrders' && <AdminPetOrders />}
                 </div>
             </main>
+            <ToastContainer />
         </div>
     );
 };

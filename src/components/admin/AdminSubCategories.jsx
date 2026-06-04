@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
+import { triggerToast } from '../utils/Toast';
 
 const toDataUrl = (file) =>
   new Promise((resolve, reject) => {
@@ -52,14 +53,16 @@ const AdminSubCategories = () => {
     try {
       if (editingId) {
         await axios.put(`${API_URL}/api/catalog/subcategories/${editingId}`, form, authConfig);
+        triggerToast('Sub-category updated successfully', 'success');
       } else {
         await axios.post(`${API_URL}/api/catalog/subcategories`, form, authConfig);
+        triggerToast('Sub-category added successfully', 'success');
       }
       setForm(emptyForm);
       setEditingId('');
       fetchData();
     } catch (error) {
-      alert(error.response?.data?.error || 'Failed to save sub-category');
+      triggerToast(error.response?.data?.error || 'Failed to save sub-category', 'error');
     }
   };
 
@@ -78,9 +81,10 @@ const AdminSubCategories = () => {
     if (!window.confirm('Delete this sub-category?')) return;
     try {
       await axios.delete(`${API_URL}/api/catalog/subcategories/${id}`, authConfig);
+      triggerToast('Sub-category deleted successfully', 'success');
       fetchData();
     } catch (error) {
-      alert(error.response?.data?.error || 'Failed to delete sub-category');
+      triggerToast(error.response?.data?.error || 'Failed to delete sub-category', 'error');
     }
   };
 
