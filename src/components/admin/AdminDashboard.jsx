@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminBlog from './AdminBlog';
 import AdminSEO from './AdminSEO';
@@ -22,6 +22,13 @@ const AdminDashboard = () => {
         localStorage.removeItem('adminToken');
         navigate('/admin/login');
     };
+
+    useEffect(() => {
+        const token = localStorage.getItem('adminToken');
+        if (!token) {
+            navigate('/admin/login');
+        }
+    }, [navigate]);
 
     return (
         <div className="min-h-screen bg-gray-100">

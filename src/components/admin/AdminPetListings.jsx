@@ -72,9 +72,12 @@ const AdminPetListings = () => {
       setEditingId('');
       fetchListings();
     } catch (error) {
-      const message = error.response?.data?.error || 'Failed to save listing';
+      const message = error.response?.data?.error || 'Failed to save pet listing';
       alert(message);
-      if (error.response?.status === 404) {
+      if (error.response?.status === 401 || error.response?.status === 403) {
+        localStorage.removeItem('adminToken');
+        window.location.href = '/admin/login';
+      } else if (error.response?.status === 404) {
         setEditingId('');
         setForm(emptyForm);
         fetchListings();
