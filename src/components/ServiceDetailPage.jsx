@@ -393,20 +393,18 @@ const ServiceDetailPage = () => {
                     No available dates right now. Please check back soon.
                   </p>
                 ) : (
-                  <select
-                    className="w-full border rounded-lg px-3 py-2 bg-white text-base"
-                    value={selectedDate}
-                    onChange={(e) => {
-                      setSelectedDate(e.target.value);
-                      setSelectedSlotId('');
-                    }}
-                  >
-                    {availableDates.map((dateKey) => (
-                      <option key={dateKey} value={dateKey}>
-                        {formatDateLabel(dateKey)}
-                      </option>
-                    ))}
-                  </select>
+                  <>
+                    <input
+                      type="date"
+                      className="w-full border rounded-lg px-3 py-2 bg-white text-base"
+                      value={selectedDate}
+                      onChange={(e) => {
+                        setSelectedDate(e.target.value);
+                        setSelectedSlotId('');
+                      }}
+                    />
+                    {selectedDate && <p className="text-xs text-gray-500">{formatDateLabel(selectedDate)}</p>}
+                  </>
                 )}
 
 
