@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import axios from 'axios';
+import { triggerToast } from '../utils/Toast';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
@@ -41,7 +42,7 @@ const AdminPetFoods = () => {
       const { data } = await axios.get(`${API_URL}/api/petfoods?includeInactive=true`);
       setFoods(data.data || []);
     } catch (error) {
-      alert(error.response?.data?.error || 'Failed to load pet foods');
+      triggerToast(error.response?.data?.error || 'Failed to load pet foods', 'error');
     }
   };
 
@@ -62,15 +63,17 @@ const AdminPetFoods = () => {
     try {
       if (editingId) {
         await axios.put(`${API_URL}/api/petfoods/${editingId}`, payload, authConfig);
+        triggerToast('Pet food updated successfully', 'success');
       } else {
         await axios.post(`${API_URL}/api/petfoods`, payload, authConfig);
+        triggerToast('Pet food added successfully', 'success');
       }
       setForm(emptyForm);
       setEditingId('');
       fetchFoods();
     } catch (error) {
       const message = error.response?.data?.error || 'Failed to save pet food';
-      alert(message);
+      triggerToast(message, 'error');
       if (error.response?.status === 401 || error.response?.status === 403) {
         localStorage.removeItem('adminToken');
         window.location.href = '/admin/login';
@@ -105,9 +108,10 @@ const AdminPetFoods = () => {
     if (!window.confirm('Delete this pet food?')) return;
     try {
       await axios.delete(`${API_URL}/api/petfoods/${id}`, authConfig);
+      triggerToast('Pet food deleted successfully', 'success');
       fetchFoods();
     } catch (error) {
-      alert(error.response?.data?.error || 'Failed to delete pet food');
+      triggerToast(error.response?.data?.error || 'Failed to delete pet food', 'error');
     }
   };
 

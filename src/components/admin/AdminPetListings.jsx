@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import axios from 'axios';
+import { triggerToast } from '../utils/Toast';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
@@ -46,7 +47,7 @@ const AdminPetListings = () => {
       const { data } = await axios.get(`${API_URL}/api/petlistings?includeInactive=true&includeSold=true`);
       setListings(data.data || []);
     } catch (error) {
-      alert(error.response?.data?.error || 'Failed to load listings');
+      triggerToast(error.response?.data?.error || 'Failed to load listings', 'error');
     }
   };
 
@@ -65,15 +66,17 @@ const AdminPetListings = () => {
     try {
       if (editingId) {
         await axios.put(`${API_URL}/api/petlistings/${editingId}`, payload, authConfig);
+        triggerToast('Pet listing updated successfully', 'success');
       } else {
         await axios.post(`${API_URL}/api/petlistings`, payload, authConfig);
+        triggerToast('Pet listing added successfully', 'success');
       }
       setForm(emptyForm);
       setEditingId('');
       fetchListings();
     } catch (error) {
       const message = error.response?.data?.error || 'Failed to save pet listing';
-      alert(message);
+      triggerToast(message, 'error');
       if (error.response?.status === 401 || error.response?.status === 403) {
         localStorage.removeItem('adminToken');
         window.location.href = '/admin/login';
@@ -111,18 +114,20 @@ const AdminPetListings = () => {
     if (!window.confirm('Delete this pet listing?')) return;
     try {
       await axios.delete(`${API_URL}/api/petlistings/${id}`, authConfig);
+      triggerToast('Pet listing deleted successfully', 'success');
       fetchListings();
     } catch (error) {
-      alert(error.response?.data?.error || 'Failed to delete listing');
+      triggerToast(error.response?.data?.error || 'Failed to delete listing', 'error');
     }
   };
 
   const toggleAvailable = async (item) => {
     try {
       await axios.put(`${API_URL}/api/petlistings/${item._id}`, { ...item, isAvailable: !item.isAvailable }, authConfig);
+      triggerToast(item.isAvailable ? 'Marked as Sold' : 'Marked as Available', 'success');
       fetchListings();
     } catch (error) {
-      alert(error.response?.data?.error || 'Failed to update');
+      triggerToast(error.response?.data?.error || 'Failed to update', 'error');
     }
   };
 
