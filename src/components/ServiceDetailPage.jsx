@@ -398,6 +398,7 @@ const ServiceDetailPage = () => {
                       type="date"
                       className="w-full border rounded-lg px-3 py-2 bg-white text-base"
                       value={selectedDate}
+                      min={toDateKey(new Date())}
                       onChange={(e) => {
                         setSelectedDate(e.target.value);
                         setSelectedSlotId('');
