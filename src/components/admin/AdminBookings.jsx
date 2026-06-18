@@ -220,7 +220,8 @@ const AdminBookings = () => {
     const results = await Promise.allSettled(
       deletable.map((s) => axios.delete(`${API_URL}/api/slots/${s._id}`, authConfig))
     );
-    const ok = results.filter((r) => r.status === 'fulfilled').length;
+    // Count 404 (already deleted) as success too.
+    const ok = results.filter((r) => r.status === 'fulfilled' || r.reason?.response?.status === 404).length;
     triggerToast(`Deleted ${ok} slot${ok === 1 ? '' : 's'} for this date`, ok > 0 ? 'success' : 'error');
     fetchSlots();
   };
