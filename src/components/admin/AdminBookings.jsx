@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
+import { FaPen, FaChevronDown, FaChevronRight, FaTrash } from 'react-icons/fa';
 import { triggerToast } from '../utils/Toast';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
@@ -51,6 +52,13 @@ const AdminBookings = () => {
   const [slots, setSlots] = useState([]);
   const [advanceAmount, setAdvanceAmount] = useState('');
   const [slotForm, setSlotForm] = useState({ fromDate: '', toDate: '', startTime: '09:00', endTime: '18:00', intervalMinutes: 30, capacity: 1 });
+  const [autoConfig, setAutoConfig] = useState({ enabled: false, startTime: '', endTime: '', intervalMinutes: '', capacity: '', daysAhead: '' });
+  const [savingAuto, setSavingAuto] = useState(false);
+  const [slotFilterDate, setSlotFilterDate] = useState('');
+  const [slotFilterTime, setSlotFilterTime] = useState('');
+  const [deletingIds, setDeletingIds] = useState([]);
+  const [expandedDates, setExpandedDates] = useState({});
+  const [slotEditModal, setSlotEditModal] = useState({ open: false, slot: null, startTime: '', endTime: '', capacity: 1 });
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [statusModal, setStatusModal] = useState({ open: false, booking: null, nextStatus: '', note: '' });
   const [rescheduleModal, setRescheduleModal] = useState({ open: false, booking: null, slotId: '', note: '' });
@@ -80,11 +88,20 @@ const AdminBookings = () => {
     setSlots(data.data || []);
   };
 
+  const fetchAutoConfig = async () => {
+    // Only sync the On/Off state — keep the input fields blank so the form is always
+    // fresh for entering a new schedule. The saved schedule lives in the DB and keeps
+    // generating slots daily regardless of what's shown here.
+    const { data } = await axios.get(`${API_URL}/api/slots/auto-config`, authConfig);
+    if (data?.data) setAutoConfig((prev) => ({ ...prev, enabled: !!data.data.enabled }));
+  };
+
   useEffect(() => {
     fetchBookings().catch((error) => triggerToast(error.response?.data?.error || 'Failed to load bookings', 'error'));
     fetchServices().catch(() => { });
     fetchAdvance().catch(() => { });
     fetchSlots().catch(() => { });
+    fetchAutoConfig().catch(() => { });
   }, [status, from, to, search]);
 
   useEffect(() => {
@@ -99,6 +116,33 @@ const AdminBookings = () => {
       triggerToast('Advance amount updated', 'success');
     } catch (error) {
       triggerToast(error.response?.data?.error || 'Failed to update advance amount', 'error');
+    }
+  };
+
+  const saveAutoConfig = async () => {
+    if (autoConfig.enabled && (!autoConfig.startTime || !autoConfig.endTime || !autoConfig.intervalMinutes || !autoConfig.capacity || !autoConfig.daysAhead)) {
+      triggerToast('Please fill all fields before saving', 'error');
+      return;
+    }
+    setSavingAuto(true);
+    try {
+      const { data } = await axios.put(`${API_URL}/api/slots/auto-config`, autoConfig, authConfig);
+      const savedEnabled = data?.data?.enabled ?? autoConfig.enabled;
+      const created = data?.generated?.created || 0;
+      triggerToast(
+        autoConfig.enabled
+          ? `Auto slot generation saved${created ? ` — ${created} new slot${created === 1 ? '' : 's'} created` : ''}. View them under Manage Slots.`
+          : 'Auto slot generation turned off',
+        'success'
+      );
+      // Clear the form after saving — the generated slots are visible under Manage Slots.
+      // Toggle stays in sync so you can still see whether auto-generation is On/Off.
+      setAutoConfig({ enabled: savedEnabled, startTime: '', endTime: '', intervalMinutes: '', capacity: '', daysAhead: '' });
+      fetchSlots();
+    } catch (error) {
+      triggerToast(error.response?.data?.error || 'Failed to save auto slot settings', 'error');
+    } finally {
+      setSavingAuto(false);
     }
   };
 
@@ -122,6 +166,8 @@ const AdminBookings = () => {
       if (created > 0) {
         const already = Math.max(existingInRange - created, 0);
         triggerToast(`Generated ${created} new slot${created === 1 ? '' : 's'}${already ? ` — ${already} already existed` : ''}`, 'success');
+        // Clear the entered dates after a successful generation so the form is ready for the next range.
+        setSlotForm((prev) => ({ ...prev, fromDate: '', toDate: '' }));
       } else if (existingInRange > 0) {
         triggerToast(`Slots already available for this date & time (${existingInRange} slot${existingInRange === 1 ? '' : 's'}). Please choose a different date.`, 'info');
       } else {
@@ -135,6 +181,7 @@ const AdminBookings = () => {
   const toggleSlot = async (slot) => {
     try {
       await axios.put(`${API_URL}/api/slots/${slot._id}/block`, { isBlocked: !slot.isBlocked }, authConfig);
+      triggerToast(!slot.isBlocked ? 'Slot blocked' : 'Slot unblocked', 'success');
       fetchSlots();
     } catch (error) {
       triggerToast(error.response?.data?.error || 'Failed to update slot', 'error');
@@ -142,11 +189,57 @@ const AdminBookings = () => {
   };
 
   const deleteSlot = async (slotId) => {
+    if (deletingIds.includes(slotId)) return; // guard against double-click
+    setDeletingIds((prev) => [...prev, slotId]);
     try {
       await axios.delete(`${API_URL}/api/slots/${slotId}`, authConfig);
+      triggerToast('Slot deleted', 'success');
       fetchSlots();
     } catch (error) {
-      triggerToast(error.response?.data?.error || 'Failed to delete slot', 'error');
+      if (error.response?.status === 404) {
+        // Slot already gone (e.g. a double-click) — treat as success, just refresh.
+        fetchSlots();
+      } else {
+        triggerToast(error.response?.data?.error || 'Failed to delete slot', 'error');
+      }
+    } finally {
+      setDeletingIds((prev) => prev.filter((id) => id !== slotId));
+    }
+  };
+
+  const toggleDateGroup = (key) => setExpandedDates((prev) => ({ ...prev, [key]: !prev[key] }));
+
+  const deleteDate = async (key) => {
+    const group = slotGroups[key] || [];
+    const deletable = group.filter((s) => Number(s.bookedCount) === 0);
+    if (deletable.length === 0) {
+      triggerToast('No deletable slots for this date (all have bookings)', 'info');
+      return;
+    }
+    if (!window.confirm(`Delete all ${deletable.length} slot${deletable.length === 1 ? '' : 's'} for this date?`)) return;
+    const results = await Promise.allSettled(
+      deletable.map((s) => axios.delete(`${API_URL}/api/slots/${s._id}`, authConfig))
+    );
+    const ok = results.filter((r) => r.status === 'fulfilled').length;
+    triggerToast(`Deleted ${ok} slot${ok === 1 ? '' : 's'} for this date`, ok > 0 ? 'success' : 'error');
+    fetchSlots();
+  };
+
+  const openSlotEdit = (slot) => setSlotEditModal({ open: true, slot, startTime: slot.startTime, endTime: slot.endTime, capacity: Number(slot.capacity) });
+
+  const submitSlotEdit = async () => {
+    const { slot, startTime, endTime, capacity } = slotEditModal;
+    if (Number(capacity) < Number(slot.bookedCount)) {
+      triggerToast(`Capacity can't be less than ${slot.bookedCount} already booked`, 'error');
+      return;
+    }
+    try {
+      await axios.put(`${API_URL}/api/slots/${slot._id}`, { startTime, endTime, capacity: Number(capacity) }, authConfig);
+      triggerToast('Slot updated', 'success');
+      setSlotEditModal({ open: false, slot: null, startTime: '', endTime: '', capacity: 1 });
+      fetchSlots();
+    } catch (error) {
+      triggerToast(error.response?.data?.error || 'Failed to update slot', 'error');
     }
   };
 
@@ -193,6 +286,20 @@ const AdminBookings = () => {
     return slotDate >= new Date() && !slot.isBlocked && Number(slot.bookedCount) < Number(slot.capacity);
   });
 
+  // Slots filtered by the selected date and/or time, grouped by day (for the collapsible list).
+  const filteredSlots = slots.filter((slot) => {
+    if (slotFilterDate && toDateKey(slot.date) !== slotFilterDate) return false;
+    // Match slots whose time window contains the selected time (e.g. 09:10 → 09:00-09:20).
+    if (slotFilterTime && !(slot.startTime <= slotFilterTime && slotFilterTime < slot.endTime)) return false;
+    return true;
+  });
+  const slotGroups = filteredSlots.reduce((acc, slot) => {
+    const key = toDateKey(slot.date);
+    (acc[key] = acc[key] || []).push(slot);
+    return acc;
+  }, {});
+  const slotGroupKeys = Object.keys(slotGroups).sort();
+
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap gap-2 bg-white rounded-2xl border border-gray-100 p-2 shadow-sm">
@@ -202,14 +309,59 @@ const AdminBookings = () => {
       </div>
 
       {tab === 'settings' && (
-        <section className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm max-w-xl">
-          <h3 className="text-xl font-black text-gray-900">Global Advance Payment</h3>
-          <p className="text-sm text-gray-500 mt-1">Applies to all services unless a service has a custom override.</p>
-          <div className="mt-4 flex gap-3">
-            <input type="number" min="0" value={advanceAmount} onChange={(e) => setAdvanceAmount(e.target.value)} className="flex-1 border rounded-lg px-3 py-2" />
-            <button onClick={saveAdvance} className="px-4 py-2 rounded-lg bg-blue-600 text-white font-bold">Save</button>
-          </div>
-        </section>
+        <div className="space-y-6 max-w-xl">
+          <section className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
+            <h3 className="text-xl font-black text-gray-900">Global Advance Payment</h3>
+            <p className="text-sm text-gray-500 mt-1">Applies to all services unless a service has a custom override.</p>
+            <div className="mt-4 flex gap-3">
+              <input type="number" min="0" value={advanceAmount} onChange={(e) => setAdvanceAmount(e.target.value)} className="flex-1 border rounded-lg px-3 py-2" />
+              <button onClick={saveAdvance} className="px-4 py-2 rounded-lg bg-blue-600 text-white font-bold">Save</button>
+            </div>
+          </section>
+
+          <section className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <h3 className="text-xl font-black text-gray-900">Automatic Slot Generation</h3>
+                <p className="text-sm text-gray-500 mt-1">Auto-creates slots daily for the next few days. Manual generation still works alongside this.</p>
+              </div>
+              <label className="flex items-center gap-2 shrink-0 cursor-pointer">
+                <input type="checkbox" checked={autoConfig.enabled} onChange={(e) => setAutoConfig((p) => ({ ...p, enabled: e.target.checked }))} className="h-5 w-5 accent-emerald-600" />
+                <span className="text-sm font-bold text-gray-700">{autoConfig.enabled ? 'On' : 'Off'}</span>
+              </label>
+            </div>
+
+            <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <label className="text-sm">
+                <span className="block text-gray-600 mb-1 font-semibold">Start time</span>
+                <input type="time" value={autoConfig.startTime} onChange={(e) => setAutoConfig((p) => ({ ...p, startTime: e.target.value }))} className="w-full border rounded-lg px-3 py-2" />
+              </label>
+              <label className="text-sm">
+                <span className="block text-gray-600 mb-1 font-semibold">End time</span>
+                <input type="time" value={autoConfig.endTime} onChange={(e) => setAutoConfig((p) => ({ ...p, endTime: e.target.value }))} className="w-full border rounded-lg px-3 py-2" />
+              </label>
+              <label className="text-sm">
+                <span className="block text-gray-600 mb-1 font-semibold">Slot length</span>
+                <select value={autoConfig.intervalMinutes} onChange={(e) => setAutoConfig((p) => ({ ...p, intervalMinutes: e.target.value === '' ? '' : Number(e.target.value) }))} className="w-full border rounded-lg px-3 py-2 bg-white">
+                  <option value="">Select</option>
+                  {[15, 20, 30, 45, 60].map((min) => <option key={min} value={min}>{min} min</option>)}
+                </select>
+              </label>
+              <label className="text-sm">
+                <span className="block text-gray-600 mb-1 font-semibold">Capacity per slot</span>
+                <input type="number" min="1" placeholder="e.g. 5" value={autoConfig.capacity} onChange={(e) => setAutoConfig((p) => ({ ...p, capacity: e.target.value === '' ? '' : Number(e.target.value) }))} className="w-full border rounded-lg px-3 py-2" />
+              </label>
+              <label className="text-sm sm:col-span-2">
+                <span className="block text-gray-600 mb-1 font-semibold">Generate slots for the next (days)</span>
+                <input type="number" min="1" max="60" placeholder="e.g. 7" value={autoConfig.daysAhead} onChange={(e) => setAutoConfig((p) => ({ ...p, daysAhead: e.target.value === '' ? '' : Number(e.target.value) }))} className="w-full border rounded-lg px-3 py-2" />
+              </label>
+            </div>
+
+            <button onClick={saveAutoConfig} disabled={savingAuto} className="mt-4 w-full px-4 py-2 rounded-lg bg-emerald-600 text-white font-bold disabled:opacity-60">
+              {savingAuto ? 'Saving…' : 'Save Auto Settings'}
+            </button>
+          </section>
+        </div>
       )}
 
       {tab === 'slots' && (
@@ -227,21 +379,55 @@ const AdminBookings = () => {
           </form>
 
           <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm space-y-4">
-            {slots.length === 0 ? (
-              <p className="text-gray-500">No slots loaded.</p>
+            <div className="flex flex-wrap items-center gap-3">
+              <span className="text-sm font-semibold text-gray-600">Filter by date</span>
+              <input type="date" value={slotFilterDate} onChange={(e) => setSlotFilterDate(e.target.value)} className="border rounded-lg px-3 py-2" />
+              <span className="text-sm font-semibold text-gray-600">time</span>
+              <input type="time" value={slotFilterTime} onChange={(e) => setSlotFilterTime(e.target.value)} className="border rounded-lg px-3 py-2" />
+              {(slotFilterDate || slotFilterTime) && <button onClick={() => { setSlotFilterDate(''); setSlotFilterTime(''); }} className="text-sm font-bold text-blue-600">Clear</button>}
+              <span className="text-sm text-gray-500 ml-auto">{filteredSlots.length} slot{filteredSlots.length === 1 ? '' : 's'}</span>
+            </div>
+
+            {slotGroupKeys.length === 0 ? (
+              <p className="text-gray-500">{slots.length === 0 ? 'No slots loaded.' : 'No slots for the selected date.'}</p>
             ) : (
-              slots.map((slot) => (
-                <div key={slot._id} className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-100 pb-3">
-                  <div>
-                    <p className="font-bold text-gray-900">{new Date(slot.date).toLocaleDateString()} {slot.startTime} - {slot.endTime}</p>
-                    <p className="text-sm text-gray-500">{slot.bookedCount}/{slot.capacity} booked</p>
+              slotGroupKeys.map((key) => {
+                const daySlots = slotGroups[key];
+                const isOpen = !!expandedDates[key];
+                return (
+                  <div key={key} className="border border-gray-100 rounded-xl overflow-hidden">
+                    <div className="w-full flex items-center gap-3 px-4 py-3 bg-gray-50">
+                      <button onClick={() => toggleDateGroup(key)} className="flex-1 flex items-center justify-between gap-3 hover:opacity-80">
+                        <span className="font-bold text-gray-900">{new Date(`${key}T00:00:00`).toLocaleDateString()}</span>
+                        <span className="flex items-center gap-2 text-sm text-gray-500">
+                          {daySlots.length} slot{daySlots.length === 1 ? '' : 's'}
+                          {isOpen ? <FaChevronDown /> : <FaChevronRight />}
+                        </span>
+                      </button>
+                      <button onClick={() => deleteDate(key)} title="Delete all slots for this date" className="shrink-0 text-rose-600 hover:text-rose-700 p-1">
+                        <FaTrash size={15} />
+                      </button>
+                    </div>
+                    {isOpen && (
+                      <div className="divide-y divide-gray-100">
+                        {daySlots.map((slot) => (
+                          <div key={slot._id} className="flex flex-wrap items-center justify-between gap-3 px-4 py-3">
+                            <div>
+                              <p className="font-bold text-gray-900">{slot.startTime} - {slot.endTime}{slot.isBlocked && <span className="ml-2 text-xs font-bold text-amber-600">(Blocked)</span>}</p>
+                              <p className="text-sm text-gray-500">{slot.bookedCount}/{slot.capacity} booked</p>
+                            </div>
+                            <div className="flex gap-2">
+                              <button onClick={() => openSlotEdit(slot)} title="Edit slot" className="px-3 py-1 rounded-lg bg-blue-600 text-white text-sm font-bold flex items-center gap-1"><FaPen size={12} /> Edit</button>
+                              <button onClick={() => toggleSlot(slot)} className="px-3 py-1 rounded-lg bg-amber-500 text-white text-sm font-bold">{slot.isBlocked ? 'Unblock' : 'Block'}</button>
+                              {Number(slot.bookedCount) === 0 && <button onClick={() => deleteSlot(slot._id)} disabled={deletingIds.includes(slot._id)} className="px-3 py-1 rounded-lg bg-rose-600 text-white text-sm font-bold disabled:opacity-50">{deletingIds.includes(slot._id) ? 'Deleting…' : 'Delete'}</button>}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                  <div className="flex gap-2">
-                    <button onClick={() => toggleSlot(slot)} className="px-3 py-1 rounded-lg bg-amber-500 text-white text-sm font-bold">{slot.isBlocked ? 'Unblock' : 'Block'}</button>
-                    {Number(slot.bookedCount) === 0 && <button onClick={() => deleteSlot(slot._id)} className="px-3 py-1 rounded-lg bg-rose-600 text-white text-sm font-bold">Delete</button>}
-                  </div>
-                </div>
-              ))
+                );
+              })
             )}
           </div>
         </section>
@@ -391,6 +577,35 @@ const AdminBookings = () => {
             <div className="flex justify-end gap-2">
               <button onClick={() => setRescheduleModal({ open: false, booking: null, slotId: '', note: '' })} className="px-4 py-2 rounded-lg border border-gray-300">Cancel</button>
               <button onClick={submitReschedule} className="px-4 py-2 rounded-lg bg-amber-500 text-white font-bold">Save</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {slotEditModal.open && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl w-full max-w-md p-5 space-y-4">
+            <h3 className="text-xl font-black text-gray-900">Edit slot</h3>
+            <p className="text-sm text-gray-500">
+              {slotEditModal.slot ? new Date(`${toDateKey(slotEditModal.slot.date)}T00:00:00`).toLocaleDateString() : ''} • {slotEditModal.slot?.bookedCount}/{slotEditModal.slot?.capacity} booked
+            </p>
+            <div className="grid grid-cols-2 gap-3">
+              <label className="text-sm">
+                <span className="block text-gray-600 mb-1 font-semibold">Start time</span>
+                <input type="time" value={slotEditModal.startTime} onChange={(e) => setSlotEditModal((p) => ({ ...p, startTime: e.target.value }))} className="w-full border rounded-lg px-3 py-2" />
+              </label>
+              <label className="text-sm">
+                <span className="block text-gray-600 mb-1 font-semibold">End time</span>
+                <input type="time" value={slotEditModal.endTime} onChange={(e) => setSlotEditModal((p) => ({ ...p, endTime: e.target.value }))} className="w-full border rounded-lg px-3 py-2" />
+              </label>
+              <label className="text-sm col-span-2">
+                <span className="block text-gray-600 mb-1 font-semibold">Capacity</span>
+                <input type="number" min="1" value={slotEditModal.capacity} onChange={(e) => setSlotEditModal((p) => ({ ...p, capacity: Number(e.target.value) }))} className="w-full border rounded-lg px-3 py-2" />
+              </label>
+            </div>
+            <div className="flex justify-end gap-2">
+              <button onClick={() => setSlotEditModal({ open: false, slot: null, startTime: '', endTime: '', capacity: 1 })} className="px-4 py-2 rounded-lg border border-gray-300">Cancel</button>
+              <button onClick={submitSlotEdit} className="px-4 py-2 rounded-lg bg-blue-600 text-white font-bold">Save</button>
             </div>
           </div>
         </div>

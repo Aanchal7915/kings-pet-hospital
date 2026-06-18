@@ -61,15 +61,29 @@ const PetListingsFeatured = () => {
                     e.currentTarget.src = '/logo.jpg';
                   }}
                 />
-                <div className="absolute top-0 right-0 bg-gradient-to-r from-blue-600 to-violet-600 text-white px-3 py-1.5 rounded-bl-xl text-sm font-bold shadow-lg">
-                  ₹{Number(pet.price).toLocaleString('en-IN')}
+                <div className="absolute top-0 right-0 bg-gradient-to-r from-blue-600 to-violet-600 text-white px-3 py-1.5 rounded-bl-xl text-sm font-bold shadow-lg flex flex-col items-end">
+                  {pet.discount > 0 ? (
+                    <>
+                      <span className="text-[10px] line-through opacity-80 leading-none">₹{Number(pet.price).toLocaleString('en-IN')}</span>
+                      <span>₹{Number(pet.price - pet.discount).toLocaleString('en-IN')}</span>
+                    </>
+                  ) : (
+                    <span>₹{Number(pet.price).toLocaleString('en-IN')}</span>
+                  )}
                 </div>
               </div>
 
               <div className="p-3">
-                <span className="inline-block text-[10px] uppercase font-bold bg-violet-100 text-violet-700 px-2 py-0.5 rounded-full mb-2">
-                  {pet.petType} {pet.gender && pet.gender !== 'Unknown' ? `• ${pet.gender}` : ''}
-                </span>
+                <div className="flex flex-wrap items-center gap-2 mb-2">
+                  <span className="inline-block text-[10px] uppercase font-bold bg-violet-100 text-violet-700 px-2 py-0.5 rounded-full">
+                    {pet.petType} {pet.gender && pet.gender !== 'Unknown' ? `• ${pet.gender}` : ''}
+                  </span>
+                  {Number(pet.discount) > 0 && (
+                    <span className="inline-block text-[10px] uppercase font-bold bg-red-100 text-red-700 px-2 py-0.5 rounded-full">
+                      Save ₹{Number(pet.discount).toLocaleString('en-IN')}
+                    </span>
+                  )}
+                </div>
                 <h3 className="text-base font-black text-gray-800 mb-2 leading-tight">{pet.name}</h3>
                 <p className="text-gray-600 text-sm leading-relaxed truncate mb-3">
                   {pet.description || 'A healthy and lovable pet looking for a caring home.'}
@@ -112,14 +126,28 @@ const PetListingsFeatured = () => {
                     e.currentTarget.src = '/logo.jpg';
                   }}
                 />
-                <div className="absolute top-0 right-0 bg-gradient-to-r from-blue-600 to-violet-600 text-white px-2 py-0.5 rounded-bl-lg text-[10px] font-bold">
-                  ₹{Number(pet.price).toLocaleString('en-IN')}
+                <div className="absolute top-0 right-0 bg-gradient-to-r from-blue-600 to-violet-600 text-white px-2 py-0.5 rounded-bl-lg text-[10px] font-bold flex flex-col items-end">
+                  {pet.discount > 0 ? (
+                    <>
+                      <span className="text-[8px] line-through opacity-80 leading-none">₹{Number(pet.price).toLocaleString('en-IN')}</span>
+                      <span>₹{Number(pet.price - pet.discount).toLocaleString('en-IN')}</span>
+                    </>
+                  ) : (
+                    <span>₹{Number(pet.price).toLocaleString('en-IN')}</span>
+                  )}
                 </div>
               </div>
               <div className="p-2">
-                <span className="inline-block text-[8px] uppercase font-bold bg-violet-100 text-violet-700 px-2 py-0.5 rounded-full mb-1">
-                  {pet.petType} {pet.gender && pet.gender !== 'Unknown' ? `• ${pet.gender}` : ''}
-                </span>
+                <div className="flex flex-wrap items-center gap-2 mb-1">
+                  <span className="inline-block text-[8px] uppercase font-bold bg-violet-100 text-violet-700 px-2 py-0.5 rounded-full">
+                    {pet.petType} {pet.gender && pet.gender !== 'Unknown' ? `• ${pet.gender}` : ''}
+                  </span>
+                  {Number(pet.discount) > 0 && (
+                    <span className="inline-block text-[8px] uppercase font-bold bg-red-100 text-red-700 px-2 py-0.5 rounded-full">
+                      Save ₹{Number(pet.discount).toLocaleString('en-IN')}
+                    </span>
+                  )}
+                </div>
                 <h3 className="text-sm font-black text-gray-800 line-clamp-2">{pet.name}</h3>
                 <p className="text-gray-600 text-[11px] mt-1 truncate">{pet.description || 'Healthy pet for adoption'}</p>
                 <div className="mt-2 border-t border-gray-200 pt-2 mb-2">

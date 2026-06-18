@@ -10,6 +10,7 @@ const emptyForm = {
   brand: '',
   weight: '',
   price: '',
+  discount: '',
   bookingAmount: '',
   stock: 0,
   image: '',
@@ -53,6 +54,7 @@ const AdminPetFoods = () => {
     const payload = {
       ...form,
       price: Number(form.price || 0),
+      discount: Number(form.discount || 0),
       bookingAmount: Number(form.bookingAmount || 0),
       stock: Number(form.stock || 0),
     };
@@ -86,6 +88,7 @@ const AdminPetFoods = () => {
       brand: item.brand || '',
       weight: item.weight || '',
       price: item.price ?? '',
+      discount: item.discount ?? '',
       bookingAmount: item.bookingAmount ?? '',
       stock: item.stock ?? 0,
       image: item.image || '',
@@ -127,6 +130,7 @@ const AdminPetFoods = () => {
             <input className="border rounded-lg px-3 py-2" placeholder="Food type (e.g. Dry, Wet, Treats)" value={form.foodType} onChange={(e) => setForm((p) => ({ ...p, foodType: e.target.value }))} />
             <input className="border rounded-lg px-3 py-2" placeholder="Weight (e.g. 1kg, 500g)" value={form.weight} onChange={(e) => setForm((p) => ({ ...p, weight: e.target.value }))} />
             <input type="number" min="0" className="border rounded-lg px-3 py-2" placeholder="Price (₹)" value={form.price} onChange={(e) => setForm((p) => ({ ...p, price: e.target.value }))} required />
+            <input type="number" min="0" className="border rounded-lg px-3 py-2" placeholder="Discount (₹)" value={form.discount} onChange={(e) => setForm((p) => ({ ...p, discount: e.target.value }))} />
             <input type="number" min="0" className="border rounded-lg px-3 py-2" placeholder="Booking / Advance amount (₹)" value={form.bookingAmount} onChange={(e) => setForm((p) => ({ ...p, bookingAmount: e.target.value }))} />
             <input type="number" min="0" className="border rounded-lg px-3 py-2" placeholder="Stock" value={form.stock} onChange={(e) => setForm((p) => ({ ...p, stock: e.target.value }))} />
             <div className="flex flex-col md:col-span-2">
@@ -188,7 +192,10 @@ const AdminPetFoods = () => {
               <h5 className="font-black text-gray-900 mt-2">{item.name}</h5>
               <p className="text-xs text-gray-500">{item.brand} {item.weight && `• ${item.weight}`}</p>
               <p className="text-xs text-gray-600 mt-1">{item.petType} / {item.foodType}</p>
-              <p className="text-sm font-bold text-blue-700 mt-1">₹{Number(item.price).toLocaleString('en-IN')}</p>
+              <div className="flex items-center gap-2 mt-1">
+                <p className="text-sm font-bold text-blue-700">₹{Number(item.discount > 0 ? item.price - item.discount : item.price).toLocaleString('en-IN')}</p>
+                {item.discount > 0 && <span className="text-xs line-through text-gray-400">₹{Number(item.price).toLocaleString('en-IN')}</span>}
+              </div>
               <p className="text-xs text-gray-500">Advance: ₹{Number(item.bookingAmount || 0).toLocaleString('en-IN')} | Stock: {item.stock}</p>
               <p className={`text-xs font-bold mt-1 ${item.isActive ? 'text-emerald-600' : 'text-rose-600'}`}>{item.isActive ? 'Active' : 'Inactive'}</p>
               <div className="mt-2 flex gap-2">

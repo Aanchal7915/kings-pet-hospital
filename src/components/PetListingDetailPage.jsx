@@ -156,7 +156,8 @@ const PetListingDetailPage = () => {
     <Footer /></div>
   );
 
-  const remainingAmount = Math.max(Number(pet.price) - Number(pet.bookingAmount || 0), 0);
+  const currentPrice = Number(pet.discount) > 0 ? Number(pet.price - pet.discount) : Number(pet.price);
+  const remainingAmount = Math.max(currentPrice - Number(pet.bookingAmount || 0), 0);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -202,8 +203,14 @@ const PetListingDetailPage = () => {
                 <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-gradient-animate underline-animate leading-tight mb-1">{pet.name}</h1>
                 {pet.breed && <p className="text-sm text-gray-500 mb-3">{pet.breed}{pet.gender && pet.gender !== 'Unknown' ? ` • ${pet.gender}` : ''}{pet.age ? ` • ${pet.age}` : ''}{pet.color ? ` • ${pet.color}` : ''}</p>}
 
-                <div className="flex items-end gap-3 mb-2">
-                  <span className="text-3xl font-black text-blue-700">₹{Number(pet.price).toLocaleString('en-IN')}</span>
+                <div className="flex flex-wrap items-baseline gap-3 mb-2">
+                  <span className="text-3xl font-black text-blue-700">₹{currentPrice.toLocaleString('en-IN')}</span>
+                  {Number(pet.discount) > 0 && (
+                    <>
+                      <span className="text-lg line-through text-gray-400">₹{Number(pet.price).toLocaleString('en-IN')}</span>
+                      <span className="text-xs font-bold text-red-600 bg-red-100 px-2 py-1 rounded-full">Save ₹{Number(pet.discount).toLocaleString('en-IN')}</span>
+                    </>
+                  )}
                 </div>
                 {Number(pet.bookingAmount) > 0 && (
                   <p className="text-sm text-emerald-700 font-semibold mb-4">✅ Booking: ₹{Number(pet.bookingAmount).toLocaleString('en-IN')} (₹{remainingAmount.toLocaleString('en-IN')} remaining on pickup)</p>
@@ -257,7 +264,7 @@ const PetListingDetailPage = () => {
             ) : (
               <form onSubmit={submit} className="p-4 space-y-2.5">
                 <div className="flex items-start justify-between">
-                  <div><h3 className="text-base font-black text-gray-900">Book: {pet.name}</h3><p className="text-xs text-gray-500">{pet.breed} • ₹{Number(pet.price).toLocaleString('en-IN')}</p></div>
+                  <div><h3 className="text-base font-black text-gray-900">Book: {pet.name}</h3><p className="text-xs text-gray-500">{pet.breed} • ₹{currentPrice.toLocaleString('en-IN')}</p></div>
                   <button type="button" onClick={closeBook} className="text-gray-400 hover:text-gray-600"><svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
@@ -276,7 +283,7 @@ const PetListingDetailPage = () => {
                   <div className="md:col-span-2"><label className="text-[11px] font-bold text-gray-700">City</label><input className="w-full border rounded-md px-2 py-1 text-sm mt-0.5" value={form.city} onChange={(e)=>setForm(p=>({...p,city:e.target.value}))}/></div>
                   <div className="md:col-span-2"><label className="text-[11px] font-bold text-gray-700">Message (optional)</label><textarea className="w-full border rounded-md px-2 py-1 text-sm mt-0.5" rows={1} value={form.message} onChange={(e)=>setForm(p=>({...p,message:e.target.value}))} placeholder="Any specific questions?"/></div>
                 </div>
-                <div className="bg-blue-50 rounded-lg p-2 text-xs"><p>Total: <span className="font-black text-blue-700">₹{Number(pet.price).toLocaleString('en-IN')}</span></p>{Number(pet.bookingAmount)>0&&<p className="text-[11px] text-gray-600">Booking: ₹{Number(pet.bookingAmount).toLocaleString('en-IN')} (₹{remainingAmount.toLocaleString('en-IN')} on pickup)</p>}</div>
+                <div className="bg-blue-50 rounded-lg p-2 text-xs"><p>Total: <span className="font-black text-blue-700">₹{currentPrice.toLocaleString('en-IN')}</span></p>{Number(pet.bookingAmount)>0&&<p className="text-[11px] text-gray-600">Booking: ₹{Number(pet.bookingAmount).toLocaleString('en-IN')} (₹{remainingAmount.toLocaleString('en-IN')} on pickup)</p>}</div>
                 <button type="submit" disabled={submitting} className="w-full py-2 rounded-lg bg-blue-600 text-white text-sm font-black disabled:opacity-60">{submitting?'Submitting...':'Submit Booking Request'}</button>
                 <p className="text-[10px] text-gray-500 text-center">Booking valid 7 days. Our team will contact you shortly.</p>
               </form>

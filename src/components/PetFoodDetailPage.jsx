@@ -158,7 +158,8 @@ const PetFoodDetailPage = () => {
     <Footer /></div>
   );
 
-  const totalPrice = Number(food.price) * Number(form.quantity || 1);
+  const currentPrice = Number(food.discount) > 0 ? Number(food.price - food.discount) : Number(food.price);
+  const totalPrice = currentPrice * Number(form.quantity || 1);
   const advanceTotal = Number(food.bookingAmount) * Number(form.quantity || 1);
 
   return (
@@ -205,9 +206,15 @@ const PetFoodDetailPage = () => {
                 <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-gradient-animate underline-animate leading-tight mb-1">{food.name}</h1>
                 {food.brand && <p className="text-sm text-gray-500 mb-3">{food.brand}{food.weight ? ` • ${food.weight}` : ''}</p>}
 
-                <div className="flex items-end gap-3 mb-2">
-                  <span className="text-3xl font-black text-blue-700">₹{Number(food.price).toLocaleString('en-IN')}</span>
-                  <span className="text-sm text-gray-500 mb-1">per unit</span>
+                <div className="flex flex-wrap items-baseline gap-3 mb-2">
+                  <span className="text-3xl font-black text-blue-700">₹{currentPrice.toLocaleString('en-IN')}</span>
+                  {Number(food.discount) > 0 && (
+                    <>
+                      <span className="text-lg line-through text-gray-400">₹{Number(food.price).toLocaleString('en-IN')}</span>
+                      <span className="text-xs font-bold text-red-600 bg-red-100 px-2 py-1 rounded-full">Save ₹{Number(food.discount).toLocaleString('en-IN')}</span>
+                    </>
+                  )}
+                  <span className="text-sm text-gray-500">per unit</span>
                 </div>
                 {Number(food.bookingAmount) > 0 && (
                   <p className="text-sm text-emerald-700 font-semibold mb-4">✅ Advance: ₹{Number(food.bookingAmount).toLocaleString('en-IN')} to confirm order</p>
@@ -257,7 +264,7 @@ const PetFoodDetailPage = () => {
             ) : (
               <form onSubmit={submit} className="p-4 space-y-2.5">
                 <div className="flex items-start justify-between">
-                  <div><h3 className="text-base font-black text-gray-900">Order: {food.name}</h3><p className="text-xs text-gray-500">₹{Number(food.price).toLocaleString('en-IN')} per unit</p></div>
+                  <div><h3 className="text-base font-black text-gray-900">Order: {food.name}</h3><p className="text-xs text-gray-500">₹{currentPrice.toLocaleString('en-IN')} per unit</p></div>
                   <button type="button" onClick={closeOrder} className="text-gray-400 hover:text-gray-600"><svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2">

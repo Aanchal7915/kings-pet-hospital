@@ -13,6 +13,7 @@ const emptyForm = {
   gender: 'Unknown',
   color: '',
   price: '',
+  discount: '',
   bookingAmount: '',
   vaccinated: false,
   dewormed: false,
@@ -58,6 +59,7 @@ const AdminPetListings = () => {
     const payload = {
       ...form,
       price: Number(form.price || 0),
+      discount: Number(form.discount || 0),
       bookingAmount: Number(form.bookingAmount || 0),
     };
     try {
@@ -90,6 +92,7 @@ const AdminPetListings = () => {
       gender: item.gender || 'Unknown',
       color: item.color || '',
       price: item.price ?? '',
+      discount: item.discount ?? '',
       bookingAmount: item.bookingAmount ?? '',
       vaccinated: Boolean(item.vaccinated),
       dewormed: Boolean(item.dewormed),
@@ -145,6 +148,7 @@ const AdminPetListings = () => {
             <input className="border rounded-lg px-3 py-2" placeholder="Age (e.g. 2 months)" value={form.age} onChange={(e) => setForm((p) => ({ ...p, age: e.target.value }))} />
             <input className="border rounded-lg px-3 py-2" placeholder="Color" value={form.color} onChange={(e) => setForm((p) => ({ ...p, color: e.target.value }))} />
             <input type="number" min="0" className="border rounded-lg px-3 py-2" placeholder="Price (₹)" value={form.price} onChange={(e) => setForm((p) => ({ ...p, price: e.target.value }))} required />
+            <input type="number" min="0" className="border rounded-lg px-3 py-2" placeholder="Discount (₹)" value={form.discount} onChange={(e) => setForm((p) => ({ ...p, discount: e.target.value }))} />
             <input type="number" min="0" className="border rounded-lg px-3 py-2" placeholder="Booking Amount (₹) - to confirm" value={form.bookingAmount} onChange={(e) => setForm((p) => ({ ...p, bookingAmount: e.target.value }))} />
             <div className="flex flex-col md:col-span-2">
               <label className="text-sm text-gray-500 mb-1">Upload Pet Image</label>
@@ -217,7 +221,10 @@ const AdminPetListings = () => {
               <h5 className="font-black text-gray-900 mt-2">{item.name}</h5>
               <p className="text-xs text-gray-500">{item.breed} • {item.gender} • {item.age}</p>
               <p className="text-xs text-gray-600 mt-1">{item.petType}</p>
-              <p className="text-sm font-bold text-blue-700 mt-1">₹{Number(item.price).toLocaleString('en-IN')}</p>
+              <div className="flex items-center gap-2 mt-1">
+                <p className="text-sm font-bold text-blue-700">₹{Number(item.discount > 0 ? item.price - item.discount : item.price).toLocaleString('en-IN')}</p>
+                {item.discount > 0 && <span className="text-xs line-through text-gray-400">₹{Number(item.price).toLocaleString('en-IN')}</span>}
+              </div>
               <p className="text-xs text-gray-500">Booking: ₹{Number(item.bookingAmount || 0).toLocaleString('en-IN')}</p>
               <div className="flex flex-wrap gap-1 mt-1">
                 {item.vaccinated && <span className="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-bold">Vaccinated</span>}

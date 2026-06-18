@@ -60,15 +60,29 @@ const PetFoodsFeatured = () => {
                     e.currentTarget.src = '/logo.jpg';
                   }}
                 />
-                <div className="absolute top-0 right-0 bg-gradient-to-r from-blue-600 to-violet-600 text-white px-3 py-1.5 rounded-bl-xl text-sm font-bold shadow-lg">
-                  ₹{Number(food.price).toLocaleString('en-IN')}
+                <div className="absolute top-0 right-0 bg-gradient-to-r from-blue-600 to-violet-600 text-white px-3 py-1.5 rounded-bl-xl text-sm font-bold shadow-lg flex flex-col items-end">
+                  {food.discount > 0 ? (
+                    <>
+                      <span className="text-[10px] line-through opacity-80 leading-none">₹{Number(food.price).toLocaleString('en-IN')}</span>
+                      <span>₹{Number(food.price - food.discount).toLocaleString('en-IN')}</span>
+                    </>
+                  ) : (
+                    <span>₹{Number(food.price).toLocaleString('en-IN')}</span>
+                  )}
                 </div>
               </div>
 
               <div className="p-3">
-                <span className="inline-block text-[10px] uppercase font-bold bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full mb-2">
-                  {food.petType} • {food.foodType}
-                </span>
+                <div className="flex flex-wrap items-center gap-2 mb-2">
+                  <span className="inline-block text-[10px] uppercase font-bold bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full">
+                    {food.petType} • {food.foodType}
+                  </span>
+                  {Number(food.discount) > 0 && (
+                    <span className="inline-block text-[10px] uppercase font-bold bg-red-100 text-red-700 px-2 py-0.5 rounded-full">
+                      Save ₹{Number(food.discount).toLocaleString('en-IN')}
+                    </span>
+                  )}
+                </div>
                 <h3 className="text-base font-black text-gray-800 mb-2 leading-tight">{food.name}</h3>
                 <p className="text-gray-600 text-sm leading-relaxed truncate mb-3">
                   {food.description || 'Premium quality pet food for a healthy and happy pet.'}
@@ -112,14 +126,28 @@ const PetFoodsFeatured = () => {
                     e.currentTarget.src = '/logo.jpg';
                   }}
                 />
-                <div className="absolute top-0 right-0 bg-gradient-to-r from-blue-600 to-violet-600 text-white px-2 py-0.5 rounded-bl-lg text-[10px] font-bold">
-                  ₹{Number(food.price).toLocaleString('en-IN')}
+                <div className="absolute top-0 right-0 bg-gradient-to-r from-blue-600 to-violet-600 text-white px-2 py-0.5 rounded-bl-lg text-[10px] font-bold flex flex-col items-end">
+                  {food.discount > 0 ? (
+                    <>
+                      <span className="text-[8px] line-through opacity-80 leading-none">₹{Number(food.price).toLocaleString('en-IN')}</span>
+                      <span>₹{Number(food.price - food.discount).toLocaleString('en-IN')}</span>
+                    </>
+                  ) : (
+                    <span>₹{Number(food.price).toLocaleString('en-IN')}</span>
+                  )}
                 </div>
               </div>
               <div className="p-2">
-                <span className="inline-block text-[8px] uppercase font-bold bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full mb-1">
-                  {food.petType} • {food.foodType}
-                </span>
+                <div className="flex flex-wrap items-center gap-2 mb-1">
+                  <span className="inline-block text-[8px] uppercase font-bold bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full">
+                    {food.petType} • {food.foodType}
+                  </span>
+                  {Number(food.discount) > 0 && (
+                    <span className="inline-block text-[8px] uppercase font-bold bg-red-100 text-red-700 px-2 py-0.5 rounded-full">
+                      Save ₹{Number(food.discount).toLocaleString('en-IN')}
+                    </span>
+                  )}
+                </div>
                 <h3 className="text-sm font-black text-gray-800 line-clamp-2">{food.name}</h3>
                 <p className="text-gray-600 text-[11px] mt-1 truncate">{food.description || 'Premium pet food'}</p>
                 <div className="mt-2 border-t border-gray-200 pt-2 mb-2">
